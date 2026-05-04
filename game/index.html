@@ -66,6 +66,16 @@
     </div>
   </div>
 
+  <!-- ══ STATIONSVAL (Nivå 2) ══ -->
+  <div id="station-screen" class="screen hidden">
+    <div class="station-wrapper">
+      <h2 class="section-title">Välj sorteringsstation</h2>
+      <p class="station-intro">Klara varje station med minst 90&nbsp;% batchkvalitet</p>
+      <div id="station-grid" class="station-grid"></div>
+      <button id="btn-station-back" class="btn-sec" style="margin-top:1.5rem">← Tillbaka</button>
+    </div>
+  </div>
+
   <!-- ══ INSTRUKTIONSSKÄRM ══ -->
   <div id="instruction-screen" class="screen hidden">
     <div class="panel">
@@ -134,6 +144,16 @@
       <div id="prog-val">1/10</div>
     </div>
 
+    <!-- Batchkvalitetsmätare (stationsläge) -->
+    <div id="quality-row" class="hidden">
+      <span id="quality-label">Batchkvalitet</span>
+      <div id="quality-bar-bg">
+        <div id="quality-threshold"></div>
+        <div id="quality-fill"></div>
+      </div>
+      <span id="quality-pct">100%</span>
+    </div>
+
     <!-- Löpande band -->
     <div id="belt-wrap">
       <div class="roller"></div>
@@ -188,6 +208,20 @@
         <kbd>5</kbd>
       </button>
     </div>
+
+    <!-- Stationsläge: Acceptera / Avvisa -->
+    <div id="station-sort-row" class="hidden">
+      <button id="btn-accept" class="sbtn station-accept">
+        <span class="sb-icon">✅</span>
+        <span class="sb-lbl">Acceptera — hör hit</span>
+        <kbd>1</kbd>
+      </button>
+      <button id="btn-reject" class="sbtn station-reject">
+        <span class="sb-icon">❌</span>
+        <span class="sb-lbl">Avvisa — hör ej hit</span>
+        <kbd>2</kbd>
+      </button>
+    </div>
   </div>
 
   <!-- ══ RESULTATSKÄRM ══ -->
@@ -199,8 +233,9 @@
       <div id="res-msg"></div>
       <div id="res-unlock" class="hidden"></div>
       <div class="res-btns">
-        <button id="btn-retry"  class="btn-main">Försök igen</button>
-        <button id="btn-levels" class="btn-sec">Nivåer</button>
+        <button id="btn-retry"        class="btn-main">Försök igen</button>
+        <button id="btn-next-station" class="btn-main hidden">Välj station →</button>
+        <button id="btn-levels"       class="btn-sec">Nivåer</button>
       </div>
     </div>
   </div>

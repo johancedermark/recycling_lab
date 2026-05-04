@@ -13,7 +13,7 @@ const LEVELS = [
   },
   {
     id: 2, name: "Sorteringsbandet", icon: "🏭",
-    mode: "belt",
+    mode: "stations",
     itemCount: 10, lives: 3,
     timePerItem: 9000,
     slideIn: 680,
@@ -241,6 +241,158 @@ const LEVEL_INSTRUCTIONS = {
 };
 
 // =====================================================
+// STATIONSDATA (Nivå 2)
+// =====================================================
+
+const STATIONS = [
+  {
+    id: "glas", name: "Glassortering", icon: "🫙", color: "#4CAF50",
+    desc: "Håll glasbatchen ren — rätt glas kan smältas om oändligt.",
+    instructions: [
+      "Din uppgift: <strong>acceptera</strong> rätt glasförpackningar, <strong>avvisa</strong> allt annat.",
+      "⚠️ Oljerester vid 1400°C ger missfärgning — <em>en enda flaska kan förstöra hela lasten</em>.",
+      "Keramik och porslin smälter vid fel temperatur och ger sprickor i det återvunna glaset.",
+      "Fönsterglas har annan kemisk sammansättning och hör inte till glasförpackningsflödet.",
+      "Tryck <kbd>1</kbd> för Acceptera &nbsp;·&nbsp; <kbd>2</kbd> för Avvisa &nbsp;·&nbsp; <kbd>Space</kbd> pausar.",
+    ],
+    items: [
+      { id:"sg_wine",    name:"Vinflaska (ren)",          emoji:"🍷", accept:true,  contamination:0,
+        fact:"Ren glasflaska — acceptera! Kan smältas om till ny flaska inom en månad." },
+      { id:"sg_beer",    name:"Ölflaska (utan pant)",     emoji:"🍺", accept:true,  contamination:0,
+        fact:"Glasflaskor utan pant går direkt till glasåtervinning." },
+      { id:"sg_jam",     name:"Syltburk (utan lock)",     emoji:"🫙", accept:true,  contamination:0,
+        fact:"Glasburkar sorteras som glasförpackning. Metallocket tas av och sorteras separat." },
+      { id:"sg_sauce",   name:"Kryddglasburk",            emoji:"🧂", accept:true,  contamination:0,
+        fact:"Alla rena glasförpackningar för mat accepteras i glassorteringen." },
+      { id:"sg_perfume", name:"Parfymflaska (tom)",       emoji:"💜", accept:true,  contamination:0,
+        fact:"Tomma glasflaskor av alla slag hör till glassorteringen." },
+      { id:"sg_oil",     name:"Glasflaska m. oljerester", emoji:"🫒", accept:false, contamination:25,
+        fact:"❗ Oljerester brinner vid 1400°C → missfärgning som förstör HELA lasten. Avvisa alltid!" },
+      { id:"sg_ceramic", name:"Keramikmugg",              emoji:"☕", accept:false, contamination:15,
+        fact:"Keramik smälter vid annan temperatur än glas — ger sprickor i den återvunna produkten." },
+      { id:"sg_window",  name:"Fönsterglas (skärva)",     emoji:"🪟", accept:false, contamination:20,
+        fact:"Fönsterglas innehåller andra mineral som ändrar glasbatchens egenskaper vid smältning." },
+    ],
+  },
+  {
+    id: "plast", name: "Plastsortering", icon: "♻️", color: "#F5A623",
+    desc: "Plast har många sorter — blandning förstör materialet.",
+    instructions: [
+      "Din uppgift: <strong>acceptera</strong> rätt plastförpackningar, <strong>avvisa</strong> allt annat.",
+      "⚠️ Svart plast: IR-sensorer kan inte läsa av polymersorten — okänd plast stoppar processen.",
+      "PVC (plastkod 3) frigör saltsyra vid smältning — farligt för maskiner och personal.",
+      "Matfett och matrester i plast stör fiberseparationen — kraftigt smutsig plast avvisas.",
+      "Tryck <kbd>1</kbd> för Acceptera &nbsp;·&nbsp; <kbd>2</kbd> för Avvisa &nbsp;·&nbsp; <kbd>Space</kbd> pausar.",
+    ],
+    items: [
+      { id:"sp_pet",    name:"PET-flaska (ren)",       emoji:"🍶", accept:true,  contamination:0,
+        fact:"Ren PET-flaska (kod 1) — acceptera! En av de lättaste plasterna att återvinna." },
+      { id:"sp_hdpe",   name:"HDPE-schampoflaska",     emoji:"🧴", accept:true,  contamination:0,
+        fact:"HDPE (kod 2) är robust — återvinns till rör, lekplatsutrustning och nya flaskor." },
+      { id:"sp_pp",     name:"PP-yoghurtburk (skölj)", emoji:"🫙", accept:true,  contamination:0,
+        fact:"PP (kod 5) behöver bara skölja lätt — inte diska. Acceptera!" },
+      { id:"sp_ldpe",   name:"Plastpåsar (knytte)",    emoji:"🛍️", accept:true,  contamination:0,
+        fact:"LDPE-påsar (kod 4) som knytte — acceptera!" },
+      { id:"sp_lid",    name:"Plastlock (PP)",          emoji:"🔵", accept:true,  contamination:0,
+        fact:"Plastlock av PP sorteras som plastförpackning — acceptera!" },
+      { id:"sp_black",  name:"Svart plastbehållare",   emoji:"⬛", accept:false, contamination:15,
+        fact:"Svart plast: IR-sensorer kan inte identifiera polymersorten → okänd plast i batchen. Avvisa!" },
+      { id:"sp_pvc",    name:"PVC-flaska (kod 3)",     emoji:"🧪", accept:false, contamination:20,
+        fact:"PVC (kod 3) frigör saltsyra (HCl) vid smältning — förstör maskiner och skadar miljön." },
+      { id:"sp_greasy", name:"Fettigt plastlock",      emoji:"🍕", accept:false, contamination:10,
+        fact:"Kraftiga matrester stör plastsmältningen. Lätt-smutsig plast ok — men detta avvisas." },
+    ],
+  },
+  {
+    id: "papper", name: "Papperssortering", icon: "📄", color: "#4A90E2",
+    desc: "Pappersfibrer förkortas varje cykel — föroreningar förstör hela omgången.",
+    instructions: [
+      "Din uppgift: <strong>acceptera</strong> rent papper/kartong, <strong>avvisa</strong> allt annat.",
+      "⚠️ Fettfläckar från pizza tränger in i fibrerna — kan <em>inte</em> tvättas bort i pappersmassaprocessen.",
+      "Pappersförpackningar med plastlaminat (muggar, smörpapper) är inte pappersåtervinning.",
+      "Blött papper ruttnar och sprider mögel till hela lasten — avvisa alltid.",
+      "Tryck <kbd>1</kbd> för Acceptera &nbsp;·&nbsp; <kbd>2</kbd> för Avvisa &nbsp;·&nbsp; <kbd>Space</kbd> pausar.",
+    ],
+    items: [
+      { id:"sk_news",     name:"Dagstidning (torr)",       emoji:"📰", accept:true,  contamination:0,
+        fact:"Torra tidningar och reklam — acceptera! Återvinns till nytt papper." },
+      { id:"sk_cardboard",name:"Wellpappkartong (ren)",    emoji:"📦", accept:true,  contamination:0,
+        fact:"Ren kartong — acceptera! Vik platt. Tejp behöver inte tas bort." },
+      { id:"sk_envelope", name:"Kuvert (utan plastfönster)",emoji:"✉️", accept:true,  contamination:0,
+        fact:"Vanliga kuvert utan plastfönster — acceptera!" },
+      { id:"sk_cereal",   name:"Flingpaket (tomt, rent)",  emoji:"🥣", accept:true,  contamination:0,
+        fact:"Tomma, rena matkartonger — acceptera!" },
+      { id:"sk_paperbag", name:"Papperspåse (ren)",        emoji:"🛍️", accept:true,  contamination:0,
+        fact:"Rena papperspåsar accepteras i papperssorteringen." },
+      { id:"sk_pizza",    name:"Pizzakartong (fettfläck)", emoji:"🍕", accept:false, contamination:15,
+        fact:"Fett tränger djupt in i pappersfibrer och kan inte tvättas bort — förstör pappersmassa." },
+      { id:"sk_wax",      name:"Smörpapper (vaxat)",       emoji:"🧈", accept:false, contamination:10,
+        fact:"Vaxlager hindrar fiberseparering och fastnar i maskinen." },
+      { id:"sk_cup",      name:"Pappersmugg (plastlaminat)",emoji:"☕", accept:false, contamination:12,
+        fact:"Pappersmuggar har ett plastskikt inuti — separeras inte bra och stör pappersmassan." },
+    ],
+  },
+  {
+    id: "metall", name: "Metallsortering", icon: "🔩", color: "#8E9EAB",
+    desc: "Metall återvinns oändligt — men farliga föremål stoppar processen.",
+    instructions: [
+      "Din uppgift: <strong>acceptera</strong> rena metallförpackningar, <strong>avvisa</strong> farliga föremål.",
+      "⚠️ Batterier innehåller litium — ett enda batteri kan orsaka brand i hela sorteringsanläggningen.",
+      "Halvfulla sprayburkar kan explodera i hydraulpressen — acceptera bara tomma.",
+      "Belagd metall (färg, gummipackning) kontaminerar metallsmältan och ger sämre kvalitet.",
+      "Tryck <kbd>1</kbd> för Acceptera &nbsp;·&nbsp; <kbd>2</kbd> för Avvisa &nbsp;·&nbsp; <kbd>Space</kbd> pausar.",
+    ],
+    items: [
+      { id:"sm_alu",     name:"Aluminiumburk (ren)",  emoji:"🥤", accept:true,  contamination:0,
+        fact:"Aluminium återvinns med bara 5 % av energin jämfört med primärproduktion. Acceptera!" },
+      { id:"sm_steel",   name:"Stålkonservburk",      emoji:"🥫", accept:true,  contamination:0,
+        fact:"Stålburkar kan vara tillbaka på hyllan inom 60 dagar. Acceptera!" },
+      { id:"sm_foil",    name:"Aluminiumfolie (boll)", emoji:"✨", accept:true,  contamination:0,
+        fact:"Hopbakad ren aluminiumfolie — acceptera!" },
+      { id:"sm_cap",     name:"Metallkapsyl",          emoji:"🔘", accept:true,  contamination:0,
+        fact:"Metallkapsylar sorteras som metallförpackning — acceptera!" },
+      { id:"sm_lid",     name:"Metalllock (rent)",     emoji:"⚙️", accept:true,  contamination:0,
+        fact:"Rena metalllock sorteras som metallförpackning — acceptera!" },
+      { id:"sm_battery", name:"Batteri (AAA)",         emoji:"🔋", accept:false, contamination:25,
+        fact:"❗ Litium-batterier kan orsaka brand i sorteringsanläggningen. Tillhör farligt avfall!" },
+      { id:"sm_aerosol", name:"Halvfull sprayburk",    emoji:"💨", accept:false, contamination:20,
+        fact:"Trycksatta sprayburkar kan explodera i hydraulpressen — bara tomma accepteras." },
+      { id:"sm_painted", name:"Målad metalldel",       emoji:"🎨", accept:false, contamination:10,
+        fact:"Färgrester kontaminerar metallsmältan och ger en svagare slutprodukt." },
+    ],
+  },
+  {
+    id: "organiskt", name: "Matavfallsstationen", icon: "🌱", color: "#66BB6A",
+    desc: "Matavfall blir biogas och biogödsel — plast stoppar hela processen.",
+    instructions: [
+      "Din uppgift: <strong>acceptera</strong> rent matavfall, <strong>avvisa</strong> plast och föroreningar.",
+      "⚠️ Plastpåsar med matavfall fastnar i rötningsanläggningens maskiner — stoppar biogasproduktionen.",
+      "'Komposterbara' plastpåsar bryts ned för långsamt i biogasprocessen — avvisa dem också.",
+      "Metalldelar (häftklamrar, kapsylar) i matavfall sliter sönder maskiner.",
+      "Tryck <kbd>1</kbd> för Acceptera &nbsp;·&nbsp; <kbd>2</kbd> för Avvisa &nbsp;·&nbsp; <kbd>Space</kbd> pausar.",
+    ],
+    items: [
+      { id:"so_banana",   name:"Bananskal",                emoji:"🍌", accept:true,  contamination:0,
+        fact:"Bananskal och fruktrester — acceptera! Ger biogas och biogödsel." },
+      { id:"so_coffee",   name:"Kaffesump (med filter)",   emoji:"☕", accept:true,  contamination:0,
+        fact:"Kaffesump och pappersfilter är 100 % biologiska — acceptera!" },
+      { id:"so_veg",      name:"Grönsaksskal",             emoji:"🥕", accept:true,  contamination:0,
+        fact:"Alla råa grönsaker och frukter sorteras som matavfall — acceptera!" },
+      { id:"so_eggshell", name:"Äggskalar",                emoji:"🥚", accept:true,  contamination:0,
+        fact:"Äggskalar bryts ned i kompost och tillför kalk till jordbruket — acceptera!" },
+      { id:"so_bread",    name:"Gammalt bröd",             emoji:"🍞", accept:true,  contamination:0,
+        fact:"Mat som inte ätits sorteras som matavfall — acceptera!" },
+      { id:"so_plastic",  name:"Plastpåse med mat",        emoji:"🛍️", accept:false, contamination:20,
+        fact:"❗ Plastpåsar fastnar i maskiner och stoppar biogasproduktionen helt. Avvisa alltid!" },
+      { id:"so_compost",  name:"'Kompostbar' plastpåse",   emoji:"🌿", accept:false, contamination:15,
+        fact:"'Komposterbara' påsar bryts ned för långsamt i biogasprocessen — avvisa!" },
+      { id:"so_teabag",   name:"Tepåse m. metallhäfta",   emoji:"🍵", accept:false, contamination:8,
+        fact:"Metallhäftklamrar sliter sönder maskiner. Klipp av häftan och sortera tepåsen rätt." },
+    ],
+  },
+];
+
+// =====================================================
 // SPELSTATUS
 // =====================================================
 
@@ -254,7 +406,21 @@ const state = {
   correct: 0,
   phase:   "start", // start | level-select | sliding-in | waiting | busy | paused | done
   pausedRemaining: 0,
+  // stations mode
+  station:         null,  // aktuellt STATIONS-objekt
+  quality:         100,   // batchkvalitet 0–100
+  isStationMode:   false,
 };
+
+// stations progress persistent i localStorage
+function loadStationsCleared() {
+  try { return JSON.parse(localStorage.getItem("stationsCleared") || "{}"); } catch { return {}; }
+}
+function saveStationCleared(stationId, quality) {
+  const d = loadStationsCleared();
+  if (!d[stationId] || quality > d[stationId]) d[stationId] = quality;
+  localStorage.setItem("stationsCleared", JSON.stringify(d));
+}
 
 // =====================================================
 // DOM-REFERENSER
@@ -265,6 +431,8 @@ const el = {
   bg:           $("bg"),
   startScr:     $("start-screen"),
   levelScr:     $("level-screen"),
+  stationScr:   $("station-screen"),
+  stationGrid:  $("station-grid"),
   gameScr:      $("game-screen"),
   resultScr:    $("result-screen"),
   lives:        $("lives"),
@@ -290,6 +458,14 @@ const el = {
   resMsg:       $("res-msg"),
   resUnlock:    $("res-unlock"),
   instructionScr: $("instruction-screen"),
+  // station mode
+  qualityRow:     $("quality-row"),
+  qualityFill:    $("quality-fill"),
+  qualityPct:     $("quality-pct"),
+  stationSortRow: $("station-sort-row"),
+  btnAccept:      $("btn-accept"),
+  btnReject:      $("btn-reject"),
+  btnNextStation: $("btn-next-station"),
   dragScr:      $("drag-screen"),
   dragLives:    $("drag-lives"),
   dragScore:    $("drag-score"),
@@ -371,26 +547,31 @@ function resumeGame() {
 // =====================================================
 
 function showScreen(name) {
-  [el.startScr, el.levelScr, el.instructionScr, el.gameScr, el.dragScr, el.resultScr]
+  [el.startScr, el.levelScr, el.stationScr, el.instructionScr, el.gameScr, el.dragScr, el.resultScr]
     .forEach(s => s.classList.add("hidden"));
-  if (name === "start")       el.startScr.classList.remove("hidden");
-  if (name === "levels")      el.levelScr.classList.remove("hidden");
-  if (name === "instruction") el.instructionScr.classList.remove("hidden");
-  if (name === "game")        el.gameScr.classList.remove("hidden");
-  if (name === "drag")        el.dragScr.classList.remove("hidden");
-  if (name === "result")      el.resultScr.classList.remove("hidden");
+  if (name === "start")          el.startScr.classList.remove("hidden");
+  if (name === "levels")         el.levelScr.classList.remove("hidden");
+  if (name === "station-select") el.stationScr.classList.remove("hidden");
+  if (name === "instruction")    el.instructionScr.classList.remove("hidden");
+  if (name === "game")           el.gameScr.classList.remove("hidden");
+  if (name === "drag")           el.dragScr.classList.remove("hidden");
+  if (name === "result")         el.resultScr.classList.remove("hidden");
 }
 
 // =====================================================
 // INSTRUKTIONER & SPELSTART
 // =====================================================
 
-let pendingLevelId = null;
+let pendingLevelId  = null;
+let pendingStation  = null;  // aktuellt STATIONS-objekt vid stationsläge
 
 function showInstructions(levelId) {
   const lvl  = LEVELS.find(l => l.id === levelId);
   if (!lvl || !lvl.unlocked) return;
   pendingLevelId = levelId;
+
+  // Nivå 2 (stations) skickar direkt till stationsval
+  if (lvl.mode === "stations") { showStationSelect(); return; }
 
   el.instIcon.textContent  = lvl.icon;
   el.instTitle.textContent = lvl.name;
@@ -398,6 +579,43 @@ function showInstructions(levelId) {
   const rows = LEVEL_INSTRUCTIONS[levelId]?.items ?? [];
   el.instList.innerHTML = rows.map(r => `<li>${r}</li>`).join("");
 
+  showScreen("instruction");
+}
+
+function showStationSelect() {
+  const cleared = loadStationsCleared();
+  el.stationGrid.innerHTML = STATIONS.map(st => {
+    const best    = cleared[st.id];
+    const isCleared = best && best >= 90;
+    const badge   = isCleared ? `<div class="scard-badge">✓ ${best}%</div>` : "";
+    return `
+      <div class="scard${isCleared ? " cleared" : ""}" data-station="${st.id}"
+           style="border-top: 3px solid ${st.color}">
+        ${badge}
+        <div class="scard-icon">${st.icon}</div>
+        <div class="scard-name">${st.name}</div>
+        <div class="scard-desc">${st.desc}</div>
+        <button class="scard-btn">Välj →</button>
+      </div>`;
+  }).join("");
+
+  el.stationGrid.querySelectorAll(".scard").forEach(card => {
+    card.addEventListener("click", e => {
+      if (e.target.classList.contains("scard-btn") || e.target.closest(".scard-btn")) {
+        const st = STATIONS.find(s => s.id === card.dataset.station);
+        if (st) showStationInstructions(st);
+      }
+    });
+  });
+
+  showScreen("station-select");
+}
+
+function showStationInstructions(station) {
+  pendingStation = station;
+  el.instIcon.textContent  = station.icon;
+  el.instTitle.textContent = station.name;
+  el.instList.innerHTML    = station.instructions.map(r => `<li>${r}</li>`).join("");
   showScreen("instruction");
 }
 
@@ -422,6 +640,164 @@ function startLevel(levelId) {
   updateHUD();
   showScreen("game");
   setTimeout(loadNextItem, 300);
+}
+
+// =====================================================
+// STATIONSLÄGE — start, sortering, avslut
+// =====================================================
+
+function startStation(station) {
+  pendingStation = null;
+  const lvl = LEVELS.find(l => l.mode === "stations");
+
+  state.level          = lvl || { id:2, name:station.name, icon:station.icon, lives:3, timePerItem:9000, slideIn:680, beltSpd:"0.44s" };
+  state.station        = station;
+  state.isStationMode  = true;
+  state.queue          = shuffle(station.items);
+  state.idx            = 0;
+  state.score          = 0;
+  state.lives          = 3;
+  state.streak         = 0;
+  state.correct        = 0;
+  state.quality        = 100;
+  state.phase          = "idle";
+
+  el.beltTrack.style.setProperty("--belt-spd", state.level.beltSpd || "0.44s");
+  el.sortRow        = document.getElementById("sort-row");
+  el.sortRow.classList.add("hidden");
+  el.restavfallRow.classList.add("hidden");
+  el.stationSortRow.classList.remove("hidden");
+  el.qualityRow.classList.remove("hidden");
+  el.gameScr.classList.remove("paused");
+  el.pauseBadge.classList.add("hidden");
+
+  updateHUD();
+  updateQualityMeter();
+  showScreen("game");
+  setTimeout(loadNextItem, 300);
+}
+
+function sortStation(accept) {
+  if (state.phase !== "waiting") return;
+  state.phase = "busy";
+  stopTimer();
+
+  const item    = state.queue[state.idx];
+  const correct = accept === item.accept;
+  const binBtn  = accept ? el.btnAccept : el.btnReject;
+
+  if (correct) {
+    handleStationCorrect(item, binBtn, accept);
+  } else {
+    handleStationWrong(item, binBtn, accept);
+  }
+}
+
+function handleStationCorrect(item, binBtn, accepted) {
+  state.correct++;
+  flashBtn(binBtn, "ok");
+
+  const r  = el.itemCard.getBoundingClientRect();
+  const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+  spawnParticles(cx, cy, accepted ? "#66bb6a" : "#ef5350");
+
+  const toastText = accepted
+    ? `✅ Rätt accepterat! ${item.fact}`
+    : `✅ Rätt avvisat! ${item.fact}`;
+  showToast(toastText, "ok");
+
+  flyToBin(binBtn, () => {
+    state.idx++;
+    state.phase = "idle";
+    hideToast();
+    updateHUD();
+    if (state.idx >= state.queue.length) endStation();
+    else setTimeout(loadNextItem, 120);
+  });
+}
+
+function handleStationWrong(item, binBtn, accepted) {
+  const penalty = accepted ? item.contamination : 3;
+  state.quality = Math.max(0, state.quality - penalty);
+  state.lives--;
+  updateHUD();
+  updateQualityMeter();
+
+  flashBtn(binBtn, "err");
+  el.itemCard.animate([
+    { transform: "translate(-50%,-50%)" },
+    { transform: "translate(calc(-50% - 13px),-50%) rotate(-3deg)" },
+    { transform: "translate(calc(-50% + 13px),-50%) rotate(3deg)" },
+    { transform: "translate(-50%,-50%)" },
+  ], { duration: 370, easing: "ease" });
+
+  const toastText = accepted
+    ? `❌ Fel! Du accepterade en kontaminant. ${item.fact}`
+    : `❌ Fel! Det föremålet hörde hit. ${item.fact}`;
+  showToast(toastText);
+
+  if (state.lives <= 0) { setTimeout(() => endStation(), 700); return; }
+
+  setTimeout(() => {
+    slideItemOut(() => {
+      state.idx++;
+      state.phase = "idle";
+      hideToast();
+      updateHUD();
+      if (state.idx >= state.queue.length) endStation();
+      else loadNextItem();
+    });
+  }, 2200);
+}
+
+function updateQualityMeter() {
+  const q = state.quality;
+  el.qualityFill.style.transform = `scaleX(${q / 100})`;
+  el.qualityPct.textContent = `${Math.round(q)}%`;
+  const color = q >= 90 ? "#66bb6a" : q >= 70 ? "#ff9800" : "#ef5350";
+  el.qualityPct.style.color = color;
+}
+
+function endStation() {
+  stopTimer();
+  state.phase = "done";
+  const q = Math.round(state.quality);
+  const cleared = q >= 90;
+
+  if (cleared) saveStationCleared(state.station.id, q);
+
+  const allCleared = STATIONS.every(s => {
+    const d = loadStationsCleared();
+    return d[s.id] && d[s.id] >= 90;
+  });
+
+  el.resStars.textContent = cleared ? "⭐⭐⭐" : q >= 70 ? "⭐⭐" : "⭐";
+  el.resTitle.textContent = cleared ? "Station klarad! 🎉" : "Försök igen";
+  el.resScore.innerHTML   = `Batchkvalitet: <strong style="font-size:1.6rem">${q}%</strong>`;
+  el.resMsg.textContent   = cleared
+    ? `Du höll batchen ren nog för återvinning på ${state.station.name}!`
+    : `Du behöver 90 % för att klara stationen. Du nådde ${q} %.`;
+
+  if (allCleared) {
+    el.resUnlock.textContent = "🏆 Alla 5 stationer klarade — Nivå 2 klar!";
+    el.resUnlock.classList.remove("hidden");
+  } else {
+    const nCleared = STATIONS.filter(s => { const d = loadStationsCleared(); return d[s.id] && d[s.id] >= 90; }).length;
+    el.resUnlock.textContent = `${nCleared} / 5 stationer klarade`;
+    el.resUnlock.classList.remove("hidden");
+  }
+
+  // Visa "Välj station" istället för "Försök igen" / "Nivåer" vid klarad
+  el.btnNextStation.classList.toggle("hidden", !cleared || allCleared);
+  el.btnRetry.classList.toggle("hidden", cleared);
+
+  // Återställ sorteringsraden (isStationMode = false, men behåll state.station för retry)
+  document.getElementById("sort-row").classList.remove("hidden");
+  el.stationSortRow.classList.add("hidden");
+  el.qualityRow.classList.add("hidden");
+  state.isStationMode = false;
+
+  showScreen("result");
 }
 
 // =====================================================
@@ -582,9 +958,27 @@ function onTimeout() {
   state.phase = "busy";
   state.streak = 0;
   state.lives--;
+
+  if (state.isStationMode) {
+    // Timeout i stationsläge: minus 5 % kvalitet (missad inspektion)
+    state.quality = Math.max(0, state.quality - 5);
+    updateHUD();
+    updateQualityMeter();
+    showToast(`⏱️ För långsamt! Föremålet passerade osorterat. ${state.queue[state.idx].fact}`);
+    if (state.lives <= 0) { setTimeout(() => endStation(), 700); return; }
+    slideItemOut(() => {
+      state.idx++;
+      state.phase = "idle";
+      hideToast();
+      updateHUD();
+      if (state.idx >= state.queue.length) endStation();
+      else loadNextItem();
+    });
+    return;
+  }
+
   updateHUD();
   updateMultDisplay();
-
   showToast(`⏱️ För långsamt! ${state.queue[state.idx].fact}`);
   if (state.lives <= 0) { setTimeout(() => endLevel(true), 700); return; }
 
@@ -648,7 +1042,12 @@ function endLevel(gameOver = false) {
 // =====================================================
 
 function updateHUD() {
-  el.scoreVal.textContent = state.score;
+  if (state.isStationMode) {
+    el.scoreVal.textContent = `${Math.round(state.quality)}%`;
+    el.multBadge.classList.add("hidden");
+  } else {
+    el.scoreVal.textContent = state.score;
+  }
   el.lives.textContent    = ["❤️","❤️","❤️"].map((_,i) => i < state.lives ? "❤️" : "🖤").join("");
   const total = state.queue.length;
   el.progVal.textContent  = `${Math.min(state.idx + 1, total)} / ${total}`;
@@ -816,7 +1215,13 @@ function catLabel(cat) {
 // =====================================================
 
 el.btnPlay.addEventListener("click", () => { renderLevelCards(); showScreen("levels"); });
-el.btnRetry.addEventListener("click",  () => showInstructions(state.level.id));
+el.btnRetry.addEventListener("click", () => {
+  if (state.station) {
+    showStationInstructions(state.station);
+  } else {
+    showInstructions(state.level.id);
+  }
+});
 el.btnLevels.addEventListener("click", () => { renderLevelCards(); showScreen("levels"); });
 
 document.querySelectorAll(".btn-level").forEach(btn => {
@@ -827,6 +1232,7 @@ document.querySelectorAll(".btn-level").forEach(btn => {
   });
 });
 el.btnStart.addEventListener("click", () => {
+  if (pendingStation) { startStation(pendingStation); return; }
   if (!pendingLevelId) return;
   const lvl = LEVELS.find(l => l.id === pendingLevelId);
   if (lvl?.mode === "drag") startDragLevel(pendingLevelId);
@@ -837,8 +1243,14 @@ el.sortBtns.forEach(btn => {
   btn.addEventListener("click", () => sortItem(btn.dataset.cat));
 });
 el.restavfallBtn.addEventListener("click", () => sortItem("restavfall"));
+el.btnAccept.addEventListener("click", () => sortStation(true));
+el.btnReject.addEventListener("click", () => sortStation(false));
+el.btnNextStation.addEventListener("click", () => showStationSelect());
 el.pauseBadge.addEventListener("click", resumeGame);
 el.beltTrack.addEventListener("click", resumeGame);
+
+document.getElementById("btn-station-back")
+  .addEventListener("click", () => { renderLevelCards(); showScreen("levels"); });
 
 document.addEventListener("keydown", e => {
   if (e.key === " ") {
@@ -848,6 +1260,11 @@ document.addEventListener("keydown", e => {
     return;
   }
   if (e.key === "Enter") return;
+  if (state.isStationMode && state.phase === "waiting") {
+    if (e.key === "1") sortStation(true);
+    if (e.key === "2") sortStation(false);
+    return;
+  }
   const map = { "1":"plast", "2":"papper", "3":"metall", "4":"glas" };
   if (state.level && state.level.id >= 2) map["5"] = "restavfall";
   if (map[e.key] && state.phase === "waiting") sortItem(map[e.key]);
