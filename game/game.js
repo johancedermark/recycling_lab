@@ -8,7 +8,7 @@ const LEVELS = [
   {
     id: 1, name: "Hemma", icon: "🏠",
     mode: "drag",
-    itemCount: 12, lives: 3,
+    itemCount: 15, lives: 3,
     unlocked: true,
   },
   {
@@ -129,6 +129,17 @@ const LEVEL1_ITEMS = [
     fact:"Alla glasförpackningar för mat och kryddor sorteras som glasförpackning." },
   { id:"h_glass_bottle",  name:"Glasflaska (olivolja)", emoji:"🫒", cat:"glas",
     fact:"Alla glasförpackningar sorteras som glasförpackning oavsett vad de innehöll." },
+  // ORGANISKT / MATRESTER
+  { id:"h_banana_peel",   name:"Banan&shy;skal",        emoji:"🍌", cat:"organiskt",
+    fact:"Bananskal och alla råa fruktrester är matavfall och görs till biogas eller kompost." },
+  { id:"h_coffee_grounds",name:"Kaffegrounds med filter",emoji:"☕", cat:"organiskt",
+    fact:"Kaffesump och pappersfilter sorteras som matavfall — de är 100 % biologiska." },
+  { id:"h_apple_core",    name:"Äppelskrot",            emoji:"🍎", cat:"organiskt",
+    fact:"Fruktskrot och kärnhus är matavfall. Inget matavfall är för litet att sortera." },
+  { id:"h_eggshells",     name:"Äggskalar",             emoji:"🥚", cat:"organiskt",
+    fact:"Äggskalar sorteras som matavfall och bryts ned i kompost till näring för ny mat." },
+  { id:"h_leftover_food", name:"Matrester (tallrik)",   emoji:"🍽️", cat:"organiskt",
+    fact:"Kokt mat, sås och brödskorpor — allt sorteras som matavfall, inte restavfall." },
 ];
 
 // =====================================================
@@ -867,6 +878,9 @@ function startDragLevel(levelId) {
   const hasRestavfall = pool.some(item => item.cat === "restavfall");
   document.querySelector('.dbin[data-cat="restavfall"]')
     ?.classList.toggle("hidden", !hasRestavfall);
+  const hasOrganiskt = pool.some(item => item.cat === "organiskt");
+  document.querySelector('.dbin[data-cat="organiskt"]')
+    ?.classList.toggle("hidden", !hasOrganiskt);
 
   updateDragHUD();
   showScreen("drag");
