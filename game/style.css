@@ -1,0 +1,528 @@
+/* =====================================================
+   ÅTERVINNINGSSTATIONEN — Löpande bandet v2
+   ===================================================== */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --plast:     #F5A623; --plast-hi: #FFD060; --plast-sh: #8A5200;
+  --papper:    #4A90E2; --papper-hi:#82BAFF; --papper-sh:#1A4888;
+  --metall:    #8E9EAB; --metall-hi:#C2D0D8; --metall-sh:#364a56;
+  --glas:      #55B040; --glas-hi:  #84E060; --glas-sh:  #255018;
+
+  --panel:  rgba(6, 16, 28, 0.80);
+  --border: rgba(255,255,255,0.13);
+  --text:   rgba(255,255,255,0.93);
+  --muted:  rgba(255,255,255,0.48);
+}
+
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  height: 100dvh;
+  overflow: hidden;
+  background: #060e18;
+  color: var(--text);
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* ── Bakgrund ── */
+#bg {
+  position: fixed; inset: 0; z-index: 0;
+  background: url('assets/bg.png') center / cover no-repeat;
+  filter: brightness(0.52) saturate(1.25);
+}
+
+/* ── Skärmar ── */
+.screen {
+  position: fixed; inset: 0; z-index: 10;
+  display: flex; align-items: center; justify-content: center;
+}
+.screen.hidden { display: none !important; }
+
+.panel {
+  background: var(--panel);
+  backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px);
+  border: 1px solid var(--border);
+  border-radius: 28px; padding: 36px 44px;
+  max-width: 440px; width: 90%; text-align: center;
+}
+.big-icon { font-size: 3.2rem; margin-bottom: 8px; }
+h1 { font-size: 1.9rem; font-weight: 800; line-height: 1.2; margin-bottom: 10px; }
+.panel > p { color: var(--muted); font-size: 0.95rem; line-height: 1.65; margin-bottom: 26px; }
+
+.btn-main {
+  background: linear-gradient(140deg, #56c55e, #2d7d34); color: #fff;
+  border: none; padding: 13px 38px; border-radius: 14px;
+  font-size: 1.1rem; font-weight: 700; cursor: pointer;
+  box-shadow: 0 5px 0 #1a4a1e, 0 8px 22px rgba(56,160,65,0.3);
+  transition: transform .1s, box-shadow .1s;
+}
+.btn-main:active { transform: translateY(4px); box-shadow: 0 1px 0 #1a4a1e; }
+.btn-sec {
+  background: rgba(255,255,255,0.09); color: var(--text);
+  border: 1px solid var(--border); padding: 12px 26px;
+  border-radius: 14px; font-size: 1rem; font-weight: 600; cursor: pointer;
+  transition: background .15s;
+}
+.btn-sec:hover { background: rgba(255,255,255,0.17); }
+
+kbd {
+  display: inline-block;
+  background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 5px; padding: 1px 7px; font-size: 0.7rem;
+  font-family: inherit; color: var(--muted);
+}
+
+/* ── Instruktionsskärm ── */
+.inst-list {
+  list-style: none; text-align: left;
+  margin: 0 0 26px; padding: 0;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.inst-list li {
+  font-size: 0.88rem; line-height: 1.55;
+  padding: 9px 14px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+/* ── Nivåval ── */
+#level-screen { align-items: center; padding: 16px; }
+.level-wrapper { width: 100%; max-width: 820px; }
+.section-title {
+  font-size: 1.4rem; font-weight: 700; text-align: center;
+  margin-bottom: 18px; text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+}
+.journey {
+  display: flex; align-items: stretch; gap: 8px;
+}
+.journey-arrow {
+  font-size: 1.2rem; color: var(--muted);
+  align-self: center; flex-shrink: 0;
+}
+.level-card {
+  flex: 1; background: var(--panel);
+  backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px);
+  border: 1px solid var(--border); border-radius: 20px;
+  padding: 20px 14px; text-align: center;
+  display: flex; flex-direction: column; gap: 7px;
+}
+.level-card.locked { opacity: 0.5; }
+.lc-header { display: flex; align-items: center; justify-content: center; gap: 7px; }
+.lc-badge {
+  font-size: 0.7rem; font-weight: 800;
+  background: rgba(255,255,255,0.12); border-radius: 50%;
+  width: 20px; height: 20px; display: flex; align-items: center; justify-content: center;
+}
+.lc-icon { font-size: 1.4rem; }
+.lc-name { font-size: 0.92rem; font-weight: 700; }
+.lc-desc { font-size: 0.73rem; color: var(--muted); line-height: 1.45; }
+.lc-lock { font-size: 0.72rem; color: var(--muted); }
+.btn-level {
+  margin-top: 2px; padding: 8px 14px;
+  background: linear-gradient(140deg, #56c55e, #2d7d34);
+  border: none; border-radius: 10px; color: #fff;
+  font-size: 0.83rem; font-weight: 700; cursor: pointer;
+  box-shadow: 0 3px 0 #1a4a1e; transition: transform .1s, box-shadow .1s;
+}
+.btn-level:active { transform: translateY(2px); box-shadow: 0 1px 0 #1a4a1e; }
+.level-card.locked .btn-level { display: none; }
+.level-card:not(.locked) .lc-lock { display: none; }
+
+/* ── Pausindikator ── */
+#pause-badge {
+  font-size: 0.82rem; color: var(--muted);
+  background: rgba(0,0,0,0.45); border: 1px solid var(--border);
+  border-radius: 20px; padding: 5px 16px; cursor: pointer;
+}
+#game-screen.paused #sort-row,
+#game-screen.paused #restavfall-row {
+  opacity: 0.25; pointer-events: none;
+  transition: opacity 0.2s;
+}
+#game-screen.paused #hud   { opacity: 0.4; transition: opacity 0.2s; }
+#game-screen.paused #timer-bg { opacity: 0.15; transition: opacity 0.2s; }
+
+/* ── Spelskärm ── */
+#game-screen {
+  position: fixed; inset: 0; z-index: 5;
+  display: flex; flex-direction: column; align-items: center;
+  padding: 12px 12px 10px; gap: 7px;
+}
+
+/* ── HUD ── */
+#hud {
+  display: flex; align-items: center; justify-content: space-between;
+  width: 100%; max-width: 640px;
+  background: var(--panel); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border); border-radius: 14px; padding: 8px 18px;
+}
+#lives { font-size: 1.1rem; letter-spacing: 3px; }
+#hud-center { display: flex; align-items: center; gap: 8px; }
+#score-val { font-size: 1.5rem; font-weight: 800; }
+#mult-badge {
+  font-size: 0.78rem; font-weight: 800;
+  background: linear-gradient(135deg,#FFD700,#FF8C00);
+  color: #000; padding: 2px 10px; border-radius: 20px;
+}
+#prog-val { font-size: 0.88rem; font-weight: 700; color: var(--muted); }
+
+/* ── Löpande band ── */
+#belt-wrap {
+  display: flex; align-items: center;
+  width: 100%; max-width: 640px;
+  flex: 1; min-height: 110px; max-height: 195px;
+  border-radius: 16px; overflow: hidden;
+  box-shadow: 0 14px 45px rgba(0,0,0,0.7), 0 0 0 2px rgba(255,255,255,0.07);
+}
+.roller {
+  width: 36px; height: 100%; flex-shrink: 0;
+  background: radial-gradient(ellipse at 34% 26%, #b0b0b0 0%, #505050 50%, #181818 100%);
+  position: relative; overflow: hidden;
+}
+.roller::after {
+  content: '';
+  position: absolute; left: 50%; top: 50%;
+  transform: translate(-50%,-50%);
+  width: 8px; height: 8px;
+  background: #1a1a1a; border-radius: 50%;
+  box-shadow: 0 0 0 3px #555;
+}
+#belt-track {
+  flex: 1; height: 100%; position: relative;
+  background: #1a1a1a; overflow: hidden;
+}
+/* Belt texture (moving lines) */
+#belt-track::before {
+  content: '';
+  position: absolute; inset: 0; z-index: 1;
+  background-image: repeating-linear-gradient(
+    90deg,
+    rgba(255,255,255,0.075) 0, rgba(255,255,255,0.075) 2px,
+    transparent 2px, transparent 34px
+  );
+  animation: belt-roll var(--belt-spd, 0.44s) linear infinite;
+}
+/* Belt top gloss + bottom shadow */
+#belt-track::after {
+  content: ''; position: absolute; inset: 0; z-index: 2; pointer-events: none;
+  background:
+    linear-gradient(to bottom, rgba(255,255,255,0.10) 0%, transparent 28%),
+    linear-gradient(to top,    rgba(0,0,0,0.50) 0%, transparent 35%);
+}
+@keyframes belt-roll { to { background-position: -34px 0; } }
+
+/* ── Föremålskort ── */
+#item-card {
+  position: absolute; top: 50%; left: 50%; z-index: 10;
+  background: rgba(6, 15, 26, 0.88);
+  backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255,255,255,0.22); border-radius: 14px;
+  padding: 11px 22px 13px; text-align: center; white-space: nowrap;
+  box-shadow: 0 3px 0 rgba(0,0,0,0.8), 0 6px 22px rgba(0,0,0,0.55);
+  /* position managed via JS transform */
+  transform: translate(-50%, -50%);
+}
+#ic-emoji { font-size: 3rem; line-height: 1; }
+#ic-name  { font-size: 0.95rem; font-weight: 700; margin-top: 4px; }
+
+/* Plastmärkning */
+.pb {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: rgba(245,166,35,0.14); border: 1px solid rgba(245,166,35,0.32);
+  border-radius: 8px; padding: 4px 10px; margin-top: 6px;
+}
+.pb-glyph { font-size: 1.4rem; color: var(--plast); line-height: 1; }
+.pb-meta  { text-align: left; }
+.pb-code  { font-size: 0.82rem; font-weight: 800; color: var(--plast); }
+.pb-name  { font-size: 0.62rem; color: var(--muted); }
+
+/* ── Timer ── */
+#timer-bg {
+  width: 100%; max-width: 640px; height: 8px;
+  background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden;
+}
+#timer-fill {
+  height: 100%; width: 100%; border-radius: 4px;
+  background: #4CAF50;
+}
+@keyframes timer-pulse { 0%,100%{opacity:1} 50%{opacity:0.35} }
+
+/* ── Toast / faktaruta ── */
+#toast {
+  padding: 10px 18px;
+  background: rgba(14, 26, 40, 0.93);
+  backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(239,83,80,0.4);
+  border-radius: 12px; font-size: 0.85rem; line-height: 1.55;
+  color: var(--text); max-width: 600px; width: 96%; text-align: center;
+  animation: toast-in 0.22s ease;
+}
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Sorteringsknappar ── */
+#sort-row {
+  display: flex; gap: 9px;
+  width: 100%; max-width: 640px;
+}
+.sbtn {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 4px;
+  padding: 10px 4px 8px; border: none; border-radius: 14px;
+  cursor: pointer; min-height: 96px;
+  transition: filter .12s;
+  position: relative;
+}
+.sbtn:hover  { filter: brightness(1.12); }
+.sbtn:active { transform: translateY(5px) !important; }
+.sb-icon { font-size: 1.8rem; line-height: 1; }
+.sb-lbl  { font-size: 0.66rem; font-weight: 700; line-height: 1.3; text-align: center; }
+
+/* 3-D press effect */
+.sbtn.plast  { background: linear-gradient(152deg, var(--plast-hi), var(--plast));  color:#3a2000; box-shadow: 0 6px 0 var(--plast-sh), 0 10px 18px rgba(0,0,0,.35); }
+.sbtn.papper { background: linear-gradient(152deg, var(--papper-hi),var(--papper)); color:#fff;    box-shadow: 0 6px 0 var(--papper-sh),0 10px 18px rgba(0,0,0,.35); }
+.sbtn.metall { background: linear-gradient(152deg, var(--metall-hi),var(--metall)); color:#fff;    box-shadow: 0 6px 0 var(--metall-sh),0 10px 18px rgba(0,0,0,.35); }
+.sbtn.glas   { background: linear-gradient(152deg, var(--glas-hi),  var(--glas));   color:#fff;    box-shadow: 0 6px 0 var(--glas-sh),  0 10px 18px rgba(0,0,0,.35); }
+
+.sbtn.plast:active  { box-shadow: 0 1px 0 var(--plast-sh); }
+.sbtn.papper:active { box-shadow: 0 1px 0 var(--papper-sh); }
+.sbtn.metall:active { box-shadow: 0 1px 0 var(--metall-sh); }
+.sbtn.glas:active   { box-shadow: 0 1px 0 var(--glas-sh); }
+
+/* Button flash animations */
+@keyframes flash-ok  { 0%,100%{filter:brightness(1)} 45%{filter:brightness(2.2) saturate(0.4)} }
+@keyframes flash-err { 0%,100%{filter:brightness(1)} 45%{filter:brightness(0.4) sepia(1)} }
+.sbtn.anim-ok  { animation: flash-ok  0.35s ease; }
+.sbtn.anim-err { animation: flash-err 0.35s ease; }
+
+/* ── Resultatskärm ── */
+#res-stars { font-size: 2.4rem; margin-bottom: 4px; letter-spacing: 4px; }
+#res-score { font-size: 3rem; font-weight: 800; color: #FFD700; margin: 10px 0 6px; }
+#res-msg   { color: var(--muted); font-size: 0.94rem; line-height: 1.65; margin-bottom: 12px; }
+#res-unlock {
+  background: rgba(84, 196, 88, 0.14); border: 1px solid rgba(84,196,88,0.36);
+  border-radius: 10px; padding: 9px 16px; font-size: 0.84rem; color: #84E060;
+  margin-bottom: 16px;
+}
+.res-btns { display: flex; gap: 10px; justify-content: center; }
+
+/* ══════════════════════════════════════════════════
+   DRAG-SKÄRM (Nivå 2 variant)
+   ══════════════════════════════════════════════════ */
+
+#drag-screen {
+  position: fixed; inset: 0; z-index: 5;
+  display: flex; flex-direction: column; align-items: center;
+  padding: 12px 12px 10px; gap: 8px;
+}
+
+/* ── Drag-HUD (klon av vanliga HUD) ── */
+#drag-hud {
+  display: flex; align-items: center; justify-content: space-between;
+  width: 100%; max-width: 640px;
+  background: var(--panel); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border); border-radius: 14px; padding: 8px 18px;
+  flex-shrink: 0;
+}
+#drag-lives { font-size: 1.1rem; letter-spacing: 3px; }
+#drag-hud-center { display: flex; align-items: center; gap: 8px; }
+#drag-score { font-size: 1.5rem; font-weight: 800; }
+#drag-prog  { font-size: 0.88rem; font-weight: 700; color: var(--muted); }
+
+/* ── Bordyta ── */
+#drag-table {
+  width: 100%; max-width: 640px;
+  flex: 1; min-height: 0;
+  border-radius: 16px; overflow: visible;
+  background:
+    url('assets/home_table_bg.png') center / cover no-repeat,
+    linear-gradient(160deg, #c8a06a 0%, #a07840 100%);
+  box-shadow: 0 14px 45px rgba(0,0,0,0.65), 0 0 0 2px rgba(255,255,255,0.07);
+  position: relative;
+}
+
+/* ── Föremålsrutnät ── */
+#drag-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  padding: 14px;
+  height: 100%;
+  align-content: start;
+}
+
+/* ── Drag-föremål — direkta objekt på bordet ── */
+.ditem {
+  background: none;
+  border-radius: 0;
+  padding: 0;
+  text-align: center;
+  cursor: grab;
+  position: relative;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+  transform: rotate(var(--rot, 0deg));
+  transition: transform 0.15s;
+}
+.ditem:hover {
+  transform: translateY(-8px) scale(1.18) !important;
+  z-index: 20;
+}
+.ditem.is-dragging { opacity: 0.25; transform: none !important; }
+
+.ditem-photo-wrap {
+  width: 100%; aspect-ratio: 1;
+  background: none;
+  filter: drop-shadow(0 5px 7px rgba(0,0,0,0.55)) drop-shadow(0 2px 2px rgba(0,0,0,0.3));
+}
+.ditem-photo {
+  width: 100%; height: 100%;
+  object-fit: contain;
+  display: block;
+}
+.ditem-emoji-fallback { font-size: 2rem; line-height: 1; padding: 10px; }
+.ditem-name {
+  font-size: 0.62rem; font-weight: 700; margin-top: 4px; line-height: 1.2;
+  color: #fff; text-shadow: 0 1px 4px rgba(0,0,0,0.9);
+}
+.ditem-badge {
+  display: inline-block;
+  border-radius: 6px; padding: 3px 8px;
+  font-size: 0.7rem; font-weight: 700;
+  margin-top: 6px;
+}
+
+/* ── Tooltip ── */
+.ditem-tip {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%; transform: translateX(-50%);
+  width: 200px;
+  background: rgba(4,12,22,0.97);
+  border: 1px solid rgba(255,255,255,0.22);
+  border-radius: 10px;
+  padding: 10px 13px;
+  font-size: 0.76rem; line-height: 1.55;
+  color: var(--text); text-align: left;
+  pointer-events: none;
+  opacity: 0; transition: opacity 0.18s;
+  z-index: 300;
+  white-space: normal;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.8);
+}
+.ditem-tip::after {
+  content: '';
+  position: absolute; top: 100%; left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: rgba(255,255,255,0.22);
+}
+.ditem:hover .ditem-tip { opacity: 1; }
+.ditem.is-dragging .ditem-tip { opacity: 0 !important; }
+
+/* ── Tunnor ── */
+#drag-bins {
+  display: flex; gap: 7px;
+  width: 100%; max-width: 640px;
+  flex-shrink: 0;
+}
+.dbin {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 4px;
+  padding: 10px 4px 8px; border: none; border-radius: 14px;
+  min-height: 84px; cursor: default;
+  transition: transform 0.12s, filter 0.12s;
+  position: relative;
+}
+.dbin[data-cat="plast"]      { background: linear-gradient(152deg, var(--plast-hi), var(--plast));   color:#3a2000; box-shadow: 0 6px 0 var(--plast-sh),  0 10px 18px rgba(0,0,0,.35); }
+.dbin[data-cat="papper"]     { background: linear-gradient(152deg, var(--papper-hi),var(--papper));  color:#fff;    box-shadow: 0 6px 0 var(--papper-sh), 0 10px 18px rgba(0,0,0,.35); }
+.dbin[data-cat="metall"]     { background: linear-gradient(152deg, var(--metall-hi),var(--metall));  color:#fff;    box-shadow: 0 6px 0 var(--metall-sh), 0 10px 18px rgba(0,0,0,.35); }
+.dbin[data-cat="glas"]       { background: linear-gradient(152deg, var(--glas-hi),  var(--glas));    color:#fff;    box-shadow: 0 6px 0 var(--glas-sh),   0 10px 18px rgba(0,0,0,.35); }
+.dbin[data-cat="restavfall"] { background: linear-gradient(152deg, #5a5a5a, #333); color:#ccc;      box-shadow: 0 6px 0 #111,              0 10px 18px rgba(0,0,0,.45); }
+.dbin.drop-active { transform: scale(1.1) translateY(-5px); filter: brightness(1.3); }
+@keyframes dbin-ok  { 0%,100%{filter:brightness(1)} 45%{filter:brightness(2.2) saturate(0.4)} }
+@keyframes dbin-err { 0%,100%{filter:brightness(1)} 45%{filter:brightness(0.4) sepia(1)} }
+.dbin.anim-ok  { animation: dbin-ok  0.38s ease; }
+.dbin.anim-err { animation: dbin-err 0.38s ease; }
+.dbin-img {
+  width: 56px; height: 56px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 5px rgba(0,0,0,0.4));
+}
+.dbin-lbl  { font-size: 0.57rem; font-weight: 700; text-align: center; line-height: 1.3; }
+
+/* ── Drag-toast ── */
+#drag-toast {
+  padding: 10px 18px;
+  background: rgba(14,26,40,0.95);
+  backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(239,83,80,0.4);
+  border-radius: 12px; font-size: 0.85rem; line-height: 1.55;
+  color: var(--text); max-width: 600px; width: 96%; text-align: center;
+  animation: toast-in 0.22s ease;
+  flex-shrink: 0;
+}
+
+/* ── Drag-screen responsiv ── */
+@media (max-width: 480px) {
+  #drag-bins { gap: 5px; }
+  .dbin { min-height: 68px; }
+  .dbin-icon { font-size: 1.3rem; }
+  .dbin-lbl  { font-size: 0.5rem; }
+  .ditem-emoji { font-size: 1.9rem; }
+  .ditem-name  { font-size: 0.72rem; }
+}
+
+/* ══════════════════════════════════════════════════ */
+
+/* ── Föroreningsbadge (nivå 2) ── */
+#ic-condition {
+  display: inline-flex; align-items: center; gap: 6px;
+  border-radius: 8px; padding: 4px 10px; margin-top: 5px;
+  font-size: 0.8rem; font-weight: 700;
+}
+#ic-condition.cond-ok {
+  background: rgba(84,196,88,0.18); border: 1px solid rgba(84,196,88,0.4);
+  color: #84E060;
+}
+#ic-condition.cond-warn {
+  background: rgba(255,152,0,0.18); border: 1px solid rgba(255,152,0,0.4);
+  color: #FFB74D;
+}
+
+/* ── Restavfall-knapp ── */
+#restavfall-row { width: 100%; max-width: 640px; }
+.sbtn.restavfall {
+  width: 100%; flex-direction: row; justify-content: center; gap: 10px;
+  min-height: 52px; padding: 10px 20px;
+  background: linear-gradient(152deg, #5a5a5a, #333);
+  color: #ccc;
+  box-shadow: 0 5px 0 #111, 0 8px 18px rgba(0,0,0,.5);
+}
+.sbtn.restavfall:active { box-shadow: 0 1px 0 #111; }
+.sbtn.restavfall .sb-lbl { font-size: 0.8rem; color: #ccc; }
+.sbtn.restavfall .sb-icon { font-size: 1.4rem; }
+
+/* ── Toast: rätt svar (grön variant) ── */
+#toast.toast-ok,
+#drag-toast.toast-ok {
+  border-color: rgba(84,196,88,0.4);
+  background: rgba(10,36,18,0.95);
+}
+
+/* ── Responsiv ── */
+@media (max-width: 480px) {
+  .journey { flex-direction: column; align-items: stretch; }
+  .journey-arrow { align-self: center; transform: rotate(90deg); }
+  #sort-row { gap: 6px; }
+  .sbtn { min-height: 78px; }
+  .sb-icon { font-size: 1.5rem; }
+  .sb-lbl  { font-size: 0.58rem; }
+  .panel { padding: 26px 20px; }
+}

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Återvinningsstationen</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="bg"></div>
+
+  <!-- ══ STARTSKÄRM ══ -->
+  <div id="start-screen" class="screen">
+    <div class="panel">
+      <div class="big-icon">♻️</div>
+      <h1>Återvinnings&shy;stationen</h1>
+      <p>Stå vid löpande bandet och sortera avfall rätt.<br>
+         Varje nivå följer materialet längre på sin resa.</p>
+      <button id="btn-play" class="btn-main">Välj nivå →</button>
+    </div>
+  </div>
+
+  <!-- ══ NIVÅVAL ══ -->
+  <div id="level-screen" class="screen hidden">
+    <div class="level-wrapper">
+      <h2 class="section-title">Materialets resa</h2>
+      <div class="journey">
+
+        <div class="level-card" data-level="1">
+          <div class="lc-header">
+            <span class="lc-badge">1</span>
+            <span class="lc-icon">🏠</span>
+          </div>
+          <div class="lc-name">Hemma</div>
+          <div class="lc-desc">Dra föremålen från köksbordet till rätt tunna. Lär dig grunderna!</div>
+          <button class="btn-level">Spela →</button>
+        </div>
+
+        <div class="journey-arrow">▶</div>
+
+        <div class="level-card locked" data-level="2">
+          <div class="lc-header">
+            <span class="lc-badge">2</span>
+            <span class="lc-icon">🏭</span>
+          </div>
+          <div class="lc-name">Sorteringsbandet</div>
+          <div class="lc-desc">Nu ökar tempot — sortera rätt på det löpande bandet.</div>
+          <div class="lc-lock">🔒 Klara nivå 1</div>
+          <button class="btn-level">Spela →</button>
+        </div>
+
+        <div class="journey-arrow">▶</div>
+
+        <div class="level-card locked" data-level="3">
+          <div class="lc-header">
+            <span class="lc-badge">3</span>
+            <span class="lc-icon">🔬</span>
+          </div>
+          <div class="lc-name">Materialresan</div>
+          <div class="lc-desc">Följ plastens resa från sopkorg till ny produkt.</div>
+          <div class="lc-lock">🔒 Klara nivå 2</div>
+          <button class="btn-level">Spela →</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ INSTRUKTIONSSKÄRM ══ -->
+  <div id="instruction-screen" class="screen hidden">
+    <div class="panel">
+      <div id="inst-icon" class="big-icon"></div>
+      <h1 id="inst-title"></h1>
+      <ul id="inst-list" class="inst-list"></ul>
+      <button id="btn-start" class="btn-main">Starta! →</button>
+    </div>
+  </div>
+
+  <!-- ══ DRAG-SKÄRM (Nivå 2) ══ -->
+  <div id="drag-screen" class="screen hidden">
+
+    <div id="drag-hud">
+      <div id="drag-lives"></div>
+      <div id="drag-hud-center">
+        <span id="drag-score">0</span>
+      </div>
+      <div id="drag-prog">0 / 12</div>
+    </div>
+
+    <div id="drag-table">
+      <div id="drag-grid"></div>
+    </div>
+
+    <div id="drag-bins">
+      <div class="dbin" data-cat="plast">
+        <img class="dbin-img" src="assets/bins/bin_plast.png" alt="" onerror="this.style.display='none'">
+        <span class="dbin-lbl">Plast&shy;förpackningar</span>
+      </div>
+      <div class="dbin" data-cat="papper">
+        <img class="dbin-img" src="assets/bins/bin_papper.png" alt="" onerror="this.style.display='none'">
+        <span class="dbin-lbl">Papper &amp; Kartong</span>
+      </div>
+      <div class="dbin" data-cat="metall">
+        <img class="dbin-img" src="assets/bins/bin_metall.png" alt="" onerror="this.style.display='none'">
+        <span class="dbin-lbl">Metall&shy;förpackningar</span>
+      </div>
+      <div class="dbin" data-cat="glas">
+        <img class="dbin-img" src="assets/bins/bin_glas.png" alt="" onerror="this.style.display='none'">
+        <span class="dbin-lbl">Glas&shy;förpackningar</span>
+      </div>
+      <div class="dbin" data-cat="restavfall">
+        <img class="dbin-img" src="assets/bins/bin_restavfall.png" alt="" onerror="this.style.display='none'">
+        <span class="dbin-lbl">Restavfall</span>
+      </div>
+    </div>
+
+    <div id="drag-toast" class="hidden"></div>
+  </div>
+
+  <!-- ══ SPELSKÄRM ══ -->
+  <div id="game-screen" class="screen hidden">
+
+    <!-- HUD -->
+    <div id="hud">
+      <div id="lives"></div>
+      <div id="hud-center">
+        <span id="score-val">0</span>
+        <span id="mult-badge" class="hidden">×1</span>
+      </div>
+      <div id="prog-val">1/10</div>
+    </div>
+
+    <!-- Löpande band -->
+    <div id="belt-wrap">
+      <div class="roller"></div>
+      <div id="belt-track">
+        <div id="item-card">
+          <div id="ic-emoji"></div>
+          <div id="ic-name"></div>
+          <div id="ic-condition" class="hidden"></div>
+          <div id="ic-symbol"></div>
+        </div>
+      </div>
+      <div class="roller"></div>
+    </div>
+
+    <!-- Timermätare -->
+    <div id="timer-bg"><div id="timer-fill"></div></div>
+
+    <!-- Pausindikator -->
+    <div id="pause-badge" class="hidden">⏸ Paus &nbsp;·&nbsp; <kbd>Space</kbd> för att fortsätta</div>
+
+    <!-- Faktaruta (visas vid fel / time-out) -->
+    <div id="toast" class="hidden"></div>
+
+    <!-- Sorteringsknappar — ETT KLICK -->
+    <div id="sort-row">
+      <button class="sbtn plast"  data-cat="plast">
+        <span class="sb-icon">♻️</span>
+        <span class="sb-lbl">Plast&shy;förpackningar</span>
+        <kbd>1</kbd>
+      </button>
+      <button class="sbtn papper" data-cat="papper">
+        <span class="sb-icon">📄</span>
+        <span class="sb-lbl">Papper &amp; Kartong</span>
+        <kbd>2</kbd>
+      </button>
+      <button class="sbtn metall" data-cat="metall">
+        <span class="sb-icon">🔩</span>
+        <span class="sb-lbl">Metall&shy;förpackningar</span>
+        <kbd>3</kbd>
+      </button>
+      <button class="sbtn glas"   data-cat="glas">
+        <span class="sb-icon">🫙</span>
+        <span class="sb-lbl">Glas&shy;förpackningar</span>
+        <kbd>4</kbd>
+      </button>
+    </div>
+
+    <div id="restavfall-row" class="hidden">
+      <button class="sbtn restavfall" id="restavfall-btn" data-cat="restavfall">
+        <span class="sb-icon">🗑️</span>
+        <span class="sb-lbl">Restavfall — kan ej återvinnas</span>
+        <kbd>5</kbd>
+      </button>
+    </div>
+  </div>
+
+  <!-- ══ RESULTATSKÄRM ══ -->
+  <div id="result-screen" class="screen hidden">
+    <div class="panel">
+      <div id="res-stars"></div>
+      <h1 id="res-title"></h1>
+      <div id="res-score"></div>
+      <div id="res-msg"></div>
+      <div id="res-unlock" class="hidden"></div>
+      <div class="res-btns">
+        <button id="btn-retry"  class="btn-main">Försök igen</button>
+        <button id="btn-levels" class="btn-sec">Nivåer</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
