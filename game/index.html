@@ -76,6 +76,16 @@
     </div>
   </div>
 
+  <!-- ══ RESEVÄLJARE (Nivå 3) ══ -->
+  <div id="journey-screen" class="screen hidden">
+    <div class="station-wrapper">
+      <h2 class="section-title">Välj materialets resa</h2>
+      <p class="station-intro">Följ ett material hela vägen — från sorterad batch till ny produkt</p>
+      <div id="journey-grid" class="station-grid"></div>
+      <button id="btn-journey-back" class="btn-sec" style="margin-top:1.5rem">← Tillbaka</button>
+    </div>
+  </div>
+
   <!-- ══ INSTRUKTIONSSKÄRM ══ -->
   <div id="instruction-screen" class="screen hidden">
     <div class="panel">
@@ -224,6 +234,53 @@
     </div>
   </div>
 
+  <!-- ══ SLIDERSKÄRM (Nivå 3 kalibrering) ══ -->
+  <div id="slider-screen" class="screen hidden">
+    <div class="panel slider-panel">
+      <div id="sldr-icon" class="big-icon"></div>
+      <h1 id="sldr-title"></h1>
+      <p id="sldr-body" class="sldr-body"></p>
+      <div class="sldr-zone">
+        <div id="sldr-track">
+          <div id="sldr-target-zone"></div>
+          <div id="sldr-handle"></div>
+        </div>
+        <div class="sldr-labels">
+          <span id="sldr-min-lbl"></span>
+          <span id="sldr-val-display"></span>
+          <span id="sldr-max-lbl"></span>
+        </div>
+      </div>
+      <div id="sldr-feedback" class="sldr-feedback"></div>
+      <div class="sldr-hint">Dra reglaget · Piltangenter · Klicka i spåret</div>
+      <button id="btn-sldr-confirm" class="btn-main" style="margin-top:16px">Bekräfta inställning →</button>
+    </div>
+  </div>
+
+  <!-- ══ KONSEKVENSKÄRM (Nivå 3 slutprodukt) ══ -->
+  <div id="consequence-screen" class="screen hidden">
+    <div class="panel csq-panel">
+      <p id="csq-step" class="csq-step"></p>
+      <h1 id="csq-title"></h1>
+      <p id="csq-subtitle" class="csq-subtitle"></p>
+      <div id="csq-card" class="csq-card">
+        <div id="csq-product-emoji" class="csq-emoji"></div>
+        <div id="csq-product-name" class="csq-product-name"></div>
+        <p id="csq-desc" class="csq-desc"></p>
+        <div id="csq-co2" class="csq-co2-badge"></div>
+        <p id="csq-fact" class="csq-fact"></p>
+      </div>
+      <div id="csq-quality-row" class="csq-quality-row">
+        <span class="csq-qlbl">Slutkvalitet:</span>
+        <div id="csq-bar-bg" class="csq-bar-bg">
+          <div id="csq-bar-fill" class="csq-bar-fill"></div>
+        </div>
+        <span id="csq-pct" class="csq-pct"></span>
+      </div>
+      <button id="btn-csq-next" class="btn-main" style="margin-top:18px">Fortsätt →</button>
+    </div>
+  </div>
+
   <!-- ══ RESULTATSKÄRM ══ -->
   <div id="result-screen" class="screen hidden">
     <div class="panel">
@@ -235,6 +292,7 @@
       <div class="res-btns">
         <button id="btn-retry"        class="btn-main">Försök igen</button>
         <button id="btn-next-station" class="btn-main hidden">Välj station →</button>
+        <button id="btn-next-journey" class="btn-main hidden">Välj ny resa →</button>
         <button id="btn-levels"       class="btn-sec">Nivåer</button>
       </div>
     </div>

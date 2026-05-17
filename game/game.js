@@ -22,7 +22,7 @@ const LEVELS = [
   },
   {
     id: 3, name: "Materialresan", icon: "🔬",
-    mode: "belt",
+    mode: "journey",
     itemCount: 14, lives: 3,
     timePerItem: 6000,
     slideIn: 400,
@@ -393,6 +393,278 @@ const STATIONS = [
 ];
 
 // =====================================================
+// RESEDATA (Nivå 3) — 5 materialflöden, 3 steg vardera
+// =====================================================
+
+const JOURNEYS = [
+  {
+    id:"glas", name:"Glasets resa", icon:"🫙", color:"#4CAF50", stationId:"glas",
+    desc:"Från sorterad batch till nya glasflaskor på hyllan",
+    intro:[
+      "Du följer glaset från sorteringsstation till ny förpackning.",
+      "Steg 1: Färgsortera batchen — blandat glas ger missfärgning i slutprodukten.",
+      "Steg 2: Kalibrera smältugnen — rätt temperatur avgör om glaset kan formas.",
+      "Steg 3: Se vad din batch kan bli och vilken CO₂-besparing du uppnår.",
+    ],
+    stages:[
+      {
+        type:"belt", title:"Steg 1 av 3 — Färgsortering",
+        subtitle:"Genomskinligt, grönt och brunt glas måste hållas strängt isär.",
+        acceptLabel:"Rätt färg (grön) — acceptera", rejectLabel:"Fel färg — avvisa",
+        timePerItem:8500, slideIn:680, beltSpd:"0.44s",
+        items:[
+          { name:"Grön vinflaska",      emoji:"🍷", accept:true,  contamination:0,  fact:"Grön glasflaska — rätt färgfraktion. Acceptera!" },
+          { name:"Grön ölflaska",       emoji:"🍺", accept:true,  contamination:0,  fact:"Grön glasförpackning hör till denna batch." },
+          { name:"Grön glasburk",       emoji:"🫙", accept:true,  contamination:0,  fact:"Grön glasburk — acceptera till grön fraktion." },
+          { name:"Genomskinlig flaska", emoji:"💧", accept:false, contamination:12, fact:"Genomskinligt glas ger färgstörning i grön batch — separera det!" },
+          { name:"Brun ölflaska",       emoji:"🟤", accept:false, contamination:10, fact:"Brunt glas ger mörk missfärgning i grön fraktion — avvisa!" },
+          { name:"Blå parfymflaska",    emoji:"💜", accept:false, contamination:15, fact:"Blått glas hör inte till standardfraktionerna — avvisa." },
+          { name:"Grön läskflaska",     emoji:"🫙", accept:true,  contamination:0,  fact:"Grön glasflaska — rätt fraktion. Acceptera!" },
+          { name:"Vit glasburk",        emoji:"🧂", accept:false, contamination:8,  fact:"Genomskinlig kryddburk — fel fraktion för grön batch." },
+        ],
+      },
+      {
+        type:"slider", title:"Steg 2 av 3 — Ugnskalibrering",
+        subtitle:"Ställ in smältugnen till rätt temperatur",
+        body:"Glas bearbetas optimalt vid 1380–1420°C. För låg temperatur ger bubblor och svaga punkter. För hög temperatur ökar energiförbrukning och gör glaset svårformat.",
+        unit:"°C", min:1200, max:1500, targetMin:1380, targetMax:1420,
+        tooLowMsg:"Ugnen är för kall — glaset smälter inte fullständigt, bubblor bildas och skapar svaga punkter.",
+        inZoneMsg:"Perfekt! Glaset flödar jämnt och kan formas med hög precision.",
+        tooHighMsg:"Ugnen är för het — onödig energiåtgång och glaset blir svårt att forma exakt.",
+        qualityPenaltyLow:15, qualityPenaltyHigh:8,
+      },
+      {
+        type:"consequence", title:"Steg 3 av 3 — Slutprodukten",
+        subtitle:"Vad kan din batch bli?",
+        outcomes:[
+          { minQuality:90, emoji:"🍷", product:"Livsmedelsflaskor",
+            desc:"Hög renhet — uppfyller EU-krav för livsmedelsförpackningar. Kan bli nya vinflaskor eller glasburkar för mat.",
+            co2:"220 kg CO₂ sparat per ton glas", fact:"Materialåtervinning av glas sparar ~30 % energi jämfört med att smälta ny råvara." },
+          { minQuality:70, emoji:"🏗️", product:"Glasull / isoleringsmaterial",
+            desc:"Godtagbar renhet men inte food-grade. Glaset mals och smälts om till isoleringsmaterial för byggbranschen.",
+            co2:"160 kg CO₂ sparat per ton glas", fact:"Glasull från återvunnet glas isolerar lika bra som ny glasull." },
+          { minQuality:0,  emoji:"⛏️", product:"Fyllnadsmaterial (lägsta klass)",
+            desc:"Batchen var för kontaminerad för materialåtervinning. Glaset krossas och används som fyllnadsmaterial i vägbyggen.",
+            co2:"40 kg CO₂ sparat per ton", fact:"Energiåtervinning är alltid sista utvägen — material är mer värdefullt än energi." },
+        ],
+      },
+    ],
+  },
+  {
+    id:"plast", name:"Plastens resa", icon:"♻️", color:"#F5A623", stationId:"plast",
+    desc:"Från plastflaska till pellets och ny råvara via polymertypning",
+    intro:[
+      "Du följer plastfraktionen från anläggning till nya produkter.",
+      "Steg 1: Polymertypsortera — PET och HDPE smälter vid olika temperaturer, blandning förstör batchen.",
+      "Steg 2: Kalibrera extruderaren — rätt smälttemperatur avgör pelletskvaliteten.",
+      "Steg 3: Se vad dina pellets kan bli — från ny flaska till nedcyclad parkbänk.",
+    ],
+    stages:[
+      {
+        type:"belt", title:"Steg 1 av 3 — Polymertypsortering",
+        subtitle:"IR-sensorer skannar plasten — separera PET från övriga polymerer.",
+        acceptLabel:"PET (kod 1) — hit", rejectLabel:"Annan plast — avvisa",
+        timePerItem:8500, slideIn:680, beltSpd:"0.44s",
+        items:[
+          { name:"PET-vattenflaska",    emoji:"🍶", accept:true,  contamination:0,  fact:"PET (kod 1) — rätt polymer för denna batch. Acceptera!" },
+          { name:"PET-läskflaska",      emoji:"🥤", accept:true,  contamination:0,  fact:"PET-förpackning — acceptera till PET-batchen!" },
+          { name:"PET-förpackning",     emoji:"📦", accept:true,  contamination:0,  fact:"PET-plast hör till denna fraktion. Acceptera." },
+          { name:"HDPE-schampoflaska",  emoji:"🧴", accept:false, contamination:18, fact:"HDPE (kod 2) smälter vid annan temperatur — förstör batchen om den blandas." },
+          { name:"PP-yoghurtburk",      emoji:"🫙", accept:false, contamination:15, fact:"PP (kod 5) är en annan polymersort — avvisa till separat PP-batch." },
+          { name:"Svart plastlåda",     emoji:"⬛", accept:false, contamination:20, fact:"Svart plast: IR-sensorn kan inte läsa polymersort → okänd plast i batchen. Avvisa!" },
+          { name:"PET-klar förpackning",emoji:"🫙", accept:true,  contamination:0,  fact:"PET-plast — acceptera!" },
+          { name:"PVC-flaska (kod 3)",  emoji:"🧪", accept:false, contamination:22, fact:"PVC frigör saltsyra (HCl) vid smältning — farligt för maskiner och personal." },
+        ],
+      },
+      {
+        type:"slider", title:"Steg 2 av 3 — Extrudertemperatur",
+        subtitle:"PET pelletiseras vid rätt smälttemperatur",
+        body:"PET smälter vid 260°C men extruderas bäst vid 275–285°C. För låg temp ger klumpiga ojämna pellets. För hög temp degraderas polymeren och tappar hållfasthet.",
+        unit:"°C", min:240, max:310, targetMin:275, targetMax:285,
+        tooLowMsg:"För kallt — PET smälter inte jämnt, pelletsarna blir klumpiga och håller inte kvalitetskrav.",
+        inZoneMsg:"Perfekt extruderingstemperatur! PET-pellets av hög kvalitet produceras.",
+        tooHighMsg:"För varmt — PET-polymeren degraderas termiskt och tappar mekanisk hållfasthet.",
+        qualityPenaltyLow:12, qualityPenaltyHigh:10,
+      },
+      {
+        type:"consequence", title:"Steg 3 av 3 — Från pellets till produkt",
+        subtitle:"Vart tar dina PET-pellets vägen?",
+        outcomes:[
+          { minQuality:90, emoji:"🍶", product:"Nya PET-flaskor (food-grade)",
+            desc:"Hög renhet — food-grade! Pelletsarna kan bli nya dryckesflaskor. Full materialcirkel.",
+            co2:"1.5 ton CO₂ sparat per ton PET", fact:"Återvinning av PET sparar 30 % energi jämfört med petrokemisk nyproduktion." },
+          { minQuality:65, emoji:"🧥", product:"Polyesterfleece / textilfiber",
+            desc:"Godtagbar kvalitet. PET spänns ut till polyesterfiber — en fleecetröja kräver ca 25 återvunna flaskor.",
+            co2:"1.1 ton CO₂ sparat per ton PET", fact:"Nedcycling: materialet återvinns men till lägre användningsområde." },
+          { minQuality:0,  emoji:"🚦", product:"Trafikkon / parkbänk",
+            desc:"Låg kvalitet. Plasten kan bara formas till produkter där renhet inte är kritisk.",
+            co2:"0.6 ton CO₂ sparat per ton", fact:"Varje nedcykling minskar materialets framtida återvinningsbarhet." },
+        ],
+      },
+    ],
+  },
+  {
+    id:"papper", name:"Papprets resa", icon:"📄", color:"#4A90E2", stationId:"papper",
+    desc:"Från tidning till ny fibermassa — fibrerna förkortas för varje cykel",
+    intro:[
+      "Du följer pappersfibern från anläggning till nytt papper.",
+      "Steg 1: Rensa kontaminanter ur massan — plast och fett förstör fiberbildningen.",
+      "Steg 2: Kalibrera fiberkoncentrationen i hydrapulpern — rätt balans avgör papperskvaliteten.",
+      "Steg 3: Se vad ditt papper kan bli och hur långt fibrerna kan fortsätta cykeln.",
+    ],
+    stages:[
+      {
+        type:"belt", title:"Steg 1 av 3 — Kontaminantrensning",
+        subtitle:"Pappret blöts upp i hydrapulpern — ta bort allt som inte är fiber.",
+        acceptLabel:"Ren fiber — acceptera", rejectLabel:"Kontaminant — avvisa",
+        timePerItem:8500, slideIn:680, beltSpd:"0.44s",
+        items:[
+          { name:"Tidningsfibrer (rena)",  emoji:"📰", accept:true,  contamination:0,  fact:"Rena tidningsfibrer — acceptera! Återvinns till ny tidning eller kartong." },
+          { name:"Kartongfibrer (rena)",   emoji:"📦", accept:true,  contamination:0,  fact:"Ren kartongfiber passar utmärkt i ny förpackningskartong." },
+          { name:"Kuvertfibrer (rena)",    emoji:"✉️", accept:true,  contamination:0,  fact:"Fibrer från vanliga kuvert — acceptera!" },
+          { name:"Plastfolie i massan",    emoji:"🛍️", accept:false, contamination:15, fact:"Plastfolie fastnar i maskinen och bildar klumpar som förstör pappersarken." },
+          { name:"Häftklamrar",            emoji:"📎", accept:false, contamination:8,  fact:"Metallklamrar skadar valsar i pappersmaskinen — avvisa." },
+          { name:"Fettfläckig fiber",      emoji:"🍕", accept:false, contamination:18, fact:"Fett i fibermassa kan inte tvättas bort — ger svaga fläckar i det nya pappret." },
+          { name:"Kontorspapper (rent)",   emoji:"📄", accept:true,  contamination:0,  fact:"Kontorspapper ger långa fibrer och hög kvalitet i det återvunna pappret." },
+          { name:"Vaxpapper",              emoji:"🧈", accept:false, contamination:10, fact:"Vaxbeläggning hindrar fiberseparering och fastnar som klumpar i massan." },
+        ],
+      },
+      {
+        type:"slider", title:"Steg 2 av 3 — Fiberkoncentration",
+        subtitle:"Rätt mängd fibrer i vattnet avgör papprets styrka",
+        body:"Pappersmassans fiberhalt (%) styr papprets styrka och jämnhet. För lite fibrer ger svagt, ojämnt papper. För många fibrer ger ojämn fördelning och hål i arket.",
+        unit:"%", min:0.1, max:4.9, targetMin:0.8, targetMax:1.2,
+        tooLowMsg:"För liten fiberhalt — pappret blir för tunt och svagt, spricker vid minsta tryck.",
+        inZoneMsg:"Perfekt fiberkoncentration! Papperet formas med jämn tjocklek och god styrka.",
+        tooHighMsg:"För hög fiberhalt — massan flödar inte jämnt och ger hål och ojämnheter i arket.",
+        qualityPenaltyLow:12, qualityPenaltyHigh:10,
+      },
+      {
+        type:"consequence", title:"Steg 3 av 3 — Nytt papper",
+        subtitle:"Vad kan ditt papper bli?",
+        outcomes:[
+          { minQuality:88, emoji:"📰", product:"Tidnings- och tryckeripapper",
+            desc:"Hög fiberkvalitet! Kan bli tidnings- och bokpapper. Fibrerna är fortfarande långa nog.",
+            co2:"700 kg CO₂ sparat per ton papper", fact:"Pappersfiber förkortas vid varje återvinningscykel — efter ~7 ggr är de för korta att använda." },
+          { minQuality:65, emoji:"📦", product:"Förpackningskartong",
+            desc:"Fibrer för korta för tryckeripapper men perfekt för brun kartong och wellpapp.",
+            co2:"500 kg CO₂ sparat per ton", fact:"Returkartong utgör ~80 % av allt förpackningsmaterial i Sverige." },
+          { minQuality:0,  emoji:"🧻", product:"Mjukpapper / toalettpapper",
+            desc:"Korta, svaga fibrer. Duger bara till mjukpapper — slutstationen för pappersfibrer.",
+            co2:"300 kg CO₂ sparat per ton", fact:"Toalettpapper är ofta slutstationen för pappersfibrer — de kan inte återvinnas ytterligare." },
+        ],
+      },
+    ],
+  },
+  {
+    id:"metall", name:"Metallens resa", icon:"🔩", color:"#8E9EAB", stationId:"metall",
+    desc:"Från aluminiumburk till ingot i smältugnen — 5 % av energin för ny aluminium",
+    intro:[
+      "Du följer aluminiumet från sortering till ny metallprodukt.",
+      "Steg 1: Separera aluminium från stål och andra metaller — legeringsföroreningar förstör smältan.",
+      "Steg 2: Kalibrera smälttemperaturen — för varm skapar oxidlager, för kall ger klumpar.",
+      "Steg 3: Se vad ditt aluminium kan bli och den enorma energibesparingen.",
+    ],
+    stages:[
+      {
+        type:"belt", title:"Steg 1 av 3 — Magnetsortering",
+        subtitle:"Stål är magnetiskt — aluminium inte. Separera dem.",
+        acceptLabel:"Aluminium — hit", rejectLabel:"Stål / övrigt — avvisa",
+        timePerItem:8500, slideIn:680, beltSpd:"0.44s",
+        items:[
+          { name:"Aluminiumburk (ren)",  emoji:"🥤", accept:true,  contamination:0,  fact:"Aluminium — icke-magnetiskt. Rätt fraktion! Acceptera." },
+          { name:"Aluminiumfolie",       emoji:"✨", accept:true,  contamination:0,  fact:"Aluminiumfolie hör till aluminiumfraktionen — acceptera!" },
+          { name:"Aluminiumkapsyl",      emoji:"🔘", accept:true,  contamination:0,  fact:"Aluminiumkapsyl — rätt fraktion. Acceptera." },
+          { name:"Stålkonservburk",      emoji:"🥫", accept:false, contamination:20, fact:"Stål i aluminiumsats orsakar legeringsföroreningar som försämrar aluminiumet kraftigt." },
+          { name:"Batteripaket",         emoji:"🔋", accept:false, contamination:25, fact:"❗ Litium-batterier kan explodera i smältugnen. Omedelbar säkerhetsrisk — avvisa!" },
+          { name:"Målade plåtdelar",     emoji:"🎨", accept:false, contamination:12, fact:"Färgrester bildar slagg i aluminiumsmältan och sänker metallkvaliteten." },
+          { name:"Aluminiumlock",        emoji:"⚙️", accept:true,  contamination:0,  fact:"Rent aluminiumlock — acceptera till aluminiumfraktionen." },
+          { name:"Koppartråd",           emoji:"🔌", accept:false, contamination:15, fact:"Koppar i aluminiumsmältan ger en legering med andra egenskaper — avvisa." },
+        ],
+      },
+      {
+        type:"slider", title:"Steg 2 av 3 — Smälttemperatur",
+        subtitle:"Aluminium smälter vid 660°C — bearbetas vid 700–750°C",
+        body:"Aluminium smälts och renas vid 700–750°C. För låg temp ger ofullständig smältning och klumpar. För hög temp ökar oxidation av aluminiumet och ger sämre metallkvalitet.",
+        unit:"°C", min:640, max:820, targetMin:700, targetMax:750,
+        tooLowMsg:"För kallt — aluminiumet smälter inte fullständigt, klumpar bildas och förorenar smältan.",
+        inZoneMsg:"Perfekt smälttemperatur! Aluminiumet flödar rent och kan gjutas till ingots.",
+        tooHighMsg:"För varmt — aluminiumet oxiderar och bildar aluminiumoxid (dross) — svårt att ta bort.",
+        qualityPenaltyLow:14, qualityPenaltyHigh:10,
+      },
+      {
+        type:"consequence", title:"Steg 3 av 3 — Aluminiumingot",
+        subtitle:"Vad kan ditt aluminium bli?",
+        outcomes:[
+          { minQuality:90, emoji:"🥤", product:"Nya aluminiumburkar (food-grade)",
+            desc:"Primärlegering av hög renhet. Valsat till 0.1 mm tunnplåt för nya dryckburkar — full cirkel!",
+            co2:"8 ton CO₂ sparat per ton aluminium", fact:"Återvinning av aluminium kräver bara 5 % av energin för primärproduktion via bauxit." },
+          { minQuality:70, emoji:"🚗", product:"Fordonsdelar / konstruktionsaluminium",
+            desc:"Sekundärlegering. Tillräcklig renhet för fordonsindustrin — motorblock, hjulfälgar, karossdelar.",
+            co2:"7 ton CO₂ sparat per ton aluminium", fact:"Fordonsindustrins aluminiumandel ökar varje år för att sänka bilars vikt och CO₂-utsläpp." },
+          { minQuality:0,  emoji:"🏗️", product:"Gjutaluminium / byggkomponenter",
+            desc:"Lägre renhet. Används som gjutmaterial för icke-kritiska konstruktionsdelar.",
+            co2:"5.5 ton CO₂ sparat per ton aluminium", fact:"Även lågkvalitetsaluminium sparar enormt jämfört med primärproduktion." },
+        ],
+      },
+    ],
+  },
+  {
+    id:"organiskt", name:"Matavfallets resa", icon:"🌱", color:"#66BB6A", stationId:"organiskt",
+    desc:"Från köksavfall till biogas och biogödsel — näringscirkeln slutet",
+    intro:[
+      "Du följer matavfallet från insamling till biogas och biogödsel.",
+      "Steg 1: Förbehandla batchen — plast och hårda föremål havererar rötkammarens maskiner.",
+      "Steg 2: Kalibrera rötkammartemperaturen — bakterierna kräver exakt rätt förhållanden.",
+      "Steg 3: Se hur mycket biogas och biogödsel du producerar — och hur näringen återgår till åkrarna.",
+    ],
+    stages:[
+      {
+        type:"belt", title:"Steg 1 av 3 — Förbehandling",
+        subtitle:"Sista rensningen — plast och hårda föremål förstör rötkammaren.",
+        acceptLabel:"Rent matavfall — in", rejectLabel:"Föroreningar — avvisa",
+        timePerItem:8500, slideIn:680, beltSpd:"0.44s",
+        items:[
+          { name:"Bananskal",            emoji:"🍌", accept:true,  contamination:0,  fact:"Bananskal bryts ned effektivt och ger god biogasutbyte." },
+          { name:"Grönsaksskal",         emoji:"🥕", accept:true,  contamination:0,  fact:"Grönsaksrester — rika på organiskt material och lätta att röta." },
+          { name:"Gammalt bröd",         emoji:"🍞", accept:true,  contamination:0,  fact:"Kolhydratrikt matavfall ger hög metanproduktion i rötkammaren." },
+          { name:"Plastpåse med mat",    emoji:"🛍️", accept:false, contamination:22, fact:"❗ Plastpåsar fastnar i omröraren och stoppar hela rötkammaren. Avvisa alltid!" },
+          { name:"Köttben",              emoji:"🦴", accept:false, contamination:10, fact:"Hårda ben sliter sönder rötkammarens knivar och pumpar — avvisa." },
+          { name:"'Kompostbar' påse",    emoji:"🌿", accept:false, contamination:15, fact:"'Komposterbara' påsar bryts ned för långsamt för biogasprocessen — avvisa!" },
+          { name:"Kaffesump",            emoji:"☕", accept:true,  contamination:0,  fact:"Kaffesump och pappersfilter är 100 % biologiska — acceptera!" },
+          { name:"Metallhäftklamrar",    emoji:"📎", accept:false, contamination:8,  fact:"Metalldelar sliter sönder pumpar och hamnar i biogödseln — avvisa till metall." },
+        ],
+      },
+      {
+        type:"slider", title:"Steg 2 av 3 — Rötkammartemperatur",
+        subtitle:"Metanproducerande bakterier kräver exakt rätt temperatur",
+        body:"Metanogena bakterier arbetar optimalt vid 35–40°C (mesofilisk process). Temperaturen måste vara stabil — svängningar stressar och dödar bakterierna och stoppar gasproduktionen.",
+        unit:"°C", min:20, max:65, targetMin:35, targetMax:40,
+        tooLowMsg:"För kallt — bakterierna arbetar för långsamt, biogasproduktionen sjunker kraftigt.",
+        inZoneMsg:"Perfekt temperatur! Metanogenerna är aktiva och biogasproduktionen optimal.",
+        tooHighMsg:"För varmt — bakterierna stressas och dör, biogasproduktionen kollapsar.",
+        qualityPenaltyLow:14, qualityPenaltyHigh:16,
+      },
+      {
+        type:"consequence", title:"Steg 3 av 3 — Biogas och biogödsel",
+        subtitle:"Vad producerar din rötkammare?",
+        outcomes:[
+          { minQuality:88, emoji:"⛽", product:"Fordonsgas + A-klassad biogödsel",
+            desc:"Hög renhet! Biogasen uppgraderas till fordonsgas (biometan). Biogödseln är A-klassad och kan spridas fritt på åkrar.",
+            co2:"1.5 ton CO₂e sparat per ton matavfall", fact:"En biogasbuss på biogas från 1 ton matavfall kan köra ca 80 km." },
+          { minQuality:65, emoji:"🔥", product:"Kraftvärme + B-klassad biogödsel",
+            desc:"Biogasen förbränns för el och fjärrvärme. Biogödseln är B-klassad och kräver mer noggrann spridningskontroll.",
+            co2:"1.1 ton CO₂e sparat per ton matavfall", fact:"Kraftvärme från biogas är koldioxidneutral — den CO₂ som frigörs är biologiskt bunden." },
+          { minQuality:0,  emoji:"🌿", product:"Kompostering (lägst energiutbyte)",
+            desc:"Biogasprocessen fungerade inte optimalt. Materialet komposteras — lägre energiutbyte men näringen återgår till jord.",
+            co2:"0.3 ton CO₂e sparat per ton matavfall", fact:"Kompostering ger inget energiutbyte men fortfarande god återföring av näring till jord." },
+        ],
+      },
+    ],
+  },
+];
+
+// =====================================================
 // SPELSTATUS
 // =====================================================
 
@@ -410,6 +682,11 @@ const state = {
   station:         null,  // aktuellt STATIONS-objekt
   quality:         100,   // batchkvalitet 0–100
   isStationMode:   false,
+  // journey mode (nivå 3)
+  journey:         null,  // aktuellt JOURNEYS-objekt
+  journeyStageIdx: 0,
+  journeyQuality:  100,
+  isJourneyMode:   false,
 };
 
 // stations progress persistent i localStorage
@@ -420,6 +697,15 @@ function saveStationCleared(stationId, quality) {
   const d = loadStationsCleared();
   if (!d[stationId] || quality > d[stationId]) d[stationId] = quality;
   localStorage.setItem("stationsCleared", JSON.stringify(d));
+}
+// journeys progress
+function loadJourneysCleared() {
+  try { return JSON.parse(localStorage.getItem("journeysCleared") || "{}"); } catch { return {}; }
+}
+function saveJourneyCleared(journeyId, quality) {
+  const d = loadJourneysCleared();
+  if (!d[journeyId] || quality > d[journeyId]) d[journeyId] = quality;
+  localStorage.setItem("journeysCleared", JSON.stringify(d));
 }
 
 // =====================================================
@@ -433,6 +719,10 @@ const el = {
   levelScr:     $("level-screen"),
   stationScr:   $("station-screen"),
   stationGrid:  $("station-grid"),
+  journeyScr:   $("journey-screen"),
+  journeyGrid:  $("journey-grid"),
+  sliderScr:    $("slider-screen"),
+  consequenceScr:$("consequence-screen"),
   gameScr:      $("game-screen"),
   resultScr:    $("result-screen"),
   lives:        $("lives"),
@@ -466,6 +756,31 @@ const el = {
   btnAccept:      $("btn-accept"),
   btnReject:      $("btn-reject"),
   btnNextStation: $("btn-next-station"),
+  btnNextJourney: $("btn-next-journey"),
+  // slider
+  sldrIcon:     $("sldr-icon"),
+  sldrTitle:    $("sldr-title"),
+  sldrBody:     $("sldr-body"),
+  sldrTrack:    $("sldr-track"),
+  sldrTargetZone:$("sldr-target-zone"),
+  sldrHandle:   $("sldr-handle"),
+  sldrMinLbl:   $("sldr-min-lbl"),
+  sldrMaxLbl:   $("sldr-max-lbl"),
+  sldrValDisp:  $("sldr-val-display"),
+  sldrFeedback: $("sldr-feedback"),
+  btnSldrConfirm:$("btn-sldr-confirm"),
+  // consequence
+  csqStep:      $("csq-step"),
+  csqTitle:     $("csq-title"),
+  csqSubtitle:  $("csq-subtitle"),
+  csqEmoji:     $("csq-product-emoji"),
+  csqProdName:  $("csq-product-name"),
+  csqDesc:      $("csq-desc"),
+  csqCo2:       $("csq-co2"),
+  csqFact:      $("csq-fact"),
+  csqBarFill:   $("csq-bar-fill"),
+  csqPct:       $("csq-pct"),
+  btnCsqNext:   $("btn-csq-next"),
   dragScr:      $("drag-screen"),
   dragLives:    $("drag-lives"),
   dragScore:    $("drag-score"),
@@ -547,15 +862,19 @@ function resumeGame() {
 // =====================================================
 
 function showScreen(name) {
-  [el.startScr, el.levelScr, el.stationScr, el.instructionScr, el.gameScr, el.dragScr, el.resultScr]
+  [el.startScr, el.levelScr, el.stationScr, el.journeyScr, el.instructionScr,
+   el.gameScr, el.dragScr, el.sliderScr, el.consequenceScr, el.resultScr]
     .forEach(s => s.classList.add("hidden"));
-  if (name === "start")          el.startScr.classList.remove("hidden");
-  if (name === "levels")         el.levelScr.classList.remove("hidden");
-  if (name === "station-select") el.stationScr.classList.remove("hidden");
-  if (name === "instruction")    el.instructionScr.classList.remove("hidden");
-  if (name === "game")           el.gameScr.classList.remove("hidden");
-  if (name === "drag")           el.dragScr.classList.remove("hidden");
-  if (name === "result")         el.resultScr.classList.remove("hidden");
+  if (name === "start")           el.startScr.classList.remove("hidden");
+  if (name === "levels")          el.levelScr.classList.remove("hidden");
+  if (name === "station-select")  el.stationScr.classList.remove("hidden");
+  if (name === "journey-select")  el.journeyScr.classList.remove("hidden");
+  if (name === "instruction")     el.instructionScr.classList.remove("hidden");
+  if (name === "game")            el.gameScr.classList.remove("hidden");
+  if (name === "drag")            el.dragScr.classList.remove("hidden");
+  if (name === "slider")          el.sliderScr.classList.remove("hidden");
+  if (name === "consequence")     el.consequenceScr.classList.remove("hidden");
+  if (name === "result")          el.resultScr.classList.remove("hidden");
 }
 
 // =====================================================
@@ -572,6 +891,8 @@ function showInstructions(levelId) {
 
   // Nivå 2 (stations) skickar direkt till stationsval
   if (lvl.mode === "stations") { showStationSelect(); return; }
+  // Nivå 3 (journey) skickar direkt till reseväljaren
+  if (lvl.mode === "journey") { showJourneySelect(); return; }
 
   el.instIcon.textContent  = lvl.icon;
   el.instTitle.textContent = lvl.name;
@@ -640,6 +961,250 @@ function startLevel(levelId) {
   updateHUD();
   showScreen("game");
   setTimeout(loadNextItem, 300);
+}
+
+// =====================================================
+// RESELÄGE (Nivå 3) — välj, instruera, kör steg i tur och ordning
+// =====================================================
+
+let pendingJourney = null;
+
+function showJourneySelect() {
+  const cleared = loadJourneysCleared();
+  el.journeyGrid.innerHTML = JOURNEYS.map(j => {
+    const best = cleared[j.id];
+    const isDone = best && best >= 80;
+    const badge = isDone ? `<div class="scard-badge">✓ ${best}%</div>` : "";
+    return `
+      <div class="scard${isDone ? " cleared" : ""}" data-journey="${j.id}"
+           style="border-top: 3px solid ${j.color}">
+        ${badge}
+        <div class="scard-icon">${j.icon}</div>
+        <div class="scard-name">${j.name}</div>
+        <div class="scard-desc">${j.desc}</div>
+        <button class="scard-btn">Följ resan →</button>
+      </div>`;
+  }).join("");
+  el.journeyGrid.querySelectorAll(".scard").forEach(card => {
+    card.addEventListener("click", e => {
+      if (e.target.closest(".scard-btn")) {
+        const j = JOURNEYS.find(x => x.id === card.dataset.journey);
+        if (j) showJourneyInstructions(j);
+      }
+    });
+  });
+  showScreen("journey-select");
+}
+
+function showJourneyInstructions(journey) {
+  pendingJourney = journey;
+  el.instIcon.textContent  = journey.icon;
+  el.instTitle.textContent = journey.name;
+  el.instList.innerHTML    = journey.intro.map(r => `<li>${r}</li>`).join("");
+  showScreen("instruction");
+}
+
+function startJourney(journey) {
+  pendingJourney = null;
+  state.journey        = journey;
+  state.journeyStageIdx = 0;
+  state.journeyQuality  = 100;
+  state.isJourneyMode   = true;
+  showJourneyStage(0);
+}
+
+function showJourneyStage(idx) {
+  state.journeyStageIdx = idx;
+  const stage = state.journey.stages[idx];
+  if (!stage) { endJourney(); return; }
+  if (stage.type === "belt")        startJourneyBeltStage(stage);
+  else if (stage.type === "slider") showSliderStage(stage);
+  else if (stage.type === "consequence") showConsequenceStage(stage);
+}
+
+function startJourneyBeltStage(stage) {
+  const fakeLvl = { id:3, name:stage.title, lives:3,
+                    timePerItem: stage.timePerItem || 8500,
+                    slideIn: stage.slideIn || 680,
+                    beltSpd: stage.beltSpd || "0.44s" };
+  state.level        = fakeLvl;
+  state.queue        = shuffle(stage.items);
+  state.idx          = 0;
+  state.lives        = 3;
+  state.score        = 0;
+  state.streak       = 0;
+  state.correct      = 0;
+  state.quality      = state.journeyQuality;
+  state.isStationMode = true; // reuse ACCEPT/REJECT mechanic
+
+  // Byt knapptexter
+  el.btnAccept.querySelector(".sb-lbl").textContent = stage.acceptLabel || "Acceptera";
+  el.btnReject.querySelector(".sb-lbl").textContent = stage.rejectLabel || "Avvisa";
+
+  el.beltTrack.style.setProperty("--belt-spd", fakeLvl.beltSpd);
+  document.getElementById("sort-row").classList.add("hidden");
+  el.restavfallRow.classList.add("hidden");
+  el.stationSortRow.classList.remove("hidden");
+  el.qualityRow.classList.remove("hidden");
+  el.gameScr.classList.remove("paused");
+  el.pauseBadge.classList.add("hidden");
+
+  updateHUD();
+  updateQualityMeter();
+  showScreen("game");
+  setTimeout(loadNextItem, 300);
+}
+
+// ── Slider-skärm ──────────────────────────────────────
+
+let sliderValue = 0;
+let currentSliderStage = null;
+
+function showSliderStage(stage) {
+  currentSliderStage = stage;
+  const range = stage.max - stage.min;
+
+  el.sldrIcon.textContent  = state.journey.icon;
+  el.sldrTitle.textContent = stage.title;
+  el.sldrBody.textContent  = stage.body;
+  el.sldrMinLbl.textContent = `${stage.min}${stage.unit}`;
+  el.sldrMaxLbl.textContent = `${stage.max}${stage.unit}`;
+
+  // Lägg target-zonen visuellt
+  const zoneLeft  = ((stage.targetMin - stage.min) / range) * 100;
+  const zoneWidth = ((stage.targetMax - stage.targetMin) / range) * 100;
+  el.sldrTargetZone.style.left  = `${zoneLeft}%`;
+  el.sldrTargetZone.style.width = `${zoneWidth}%`;
+
+  // Startposition i mitten
+  sliderValue = stage.min + range * 0.5;
+  updateSliderUI(stage);
+  el.sldrFeedback.textContent = "";
+  el.sldrFeedback.className   = "sldr-feedback";
+
+  showScreen("slider");
+}
+
+function updateSliderUI(stage) {
+  const range  = stage.max - stage.min;
+  const pct    = (sliderValue - stage.min) / range;
+  el.sldrHandle.style.left = `${pct * 100}%`;
+
+  const decimals = stage.unit === "%" ? 1 : 0;
+  el.sldrValDisp.textContent = `${sliderValue.toFixed(decimals)}${stage.unit}`;
+
+  const inZone = sliderValue >= stage.targetMin && sliderValue <= stage.targetMax;
+  if (inZone) {
+    el.sldrFeedback.textContent = stage.inZoneMsg;
+    el.sldrFeedback.className   = "sldr-feedback in-zone";
+  } else if (sliderValue < stage.targetMin) {
+    el.sldrFeedback.textContent = stage.tooLowMsg;
+    el.sldrFeedback.className   = "sldr-feedback too-low";
+  } else {
+    el.sldrFeedback.textContent = stage.tooHighMsg;
+    el.sldrFeedback.className   = "sldr-feedback too-high";
+  }
+}
+
+function sliderConfirm() {
+  const stage  = currentSliderStage;
+  const inZone = sliderValue >= stage.targetMin && sliderValue <= stage.targetMax;
+  if (!inZone) {
+    const penalty = sliderValue < stage.targetMin
+      ? stage.qualityPenaltyLow : stage.qualityPenaltyHigh;
+    state.journeyQuality = Math.max(0, state.journeyQuality - penalty);
+  }
+  showJourneyStage(state.journeyStageIdx + 1);
+}
+
+// Drag på slider-handtaget
+(function () {
+  let dragging = false;
+  function setFromPointer(e) {
+    if (!currentSliderStage) return;
+    const r    = el.sldrTrack.getBoundingClientRect();
+    const pct  = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
+    const range = currentSliderStage.max - currentSliderStage.min;
+    sliderValue = currentSliderStage.min + pct * range;
+    updateSliderUI(currentSliderStage);
+  }
+  el.sldrHandle.addEventListener("pointerdown", e => {
+    dragging = true;
+    el.sldrHandle.setPointerCapture(e.pointerId);
+    e.preventDefault();
+  });
+  el.sldrHandle.addEventListener("pointermove", e => {
+    if (dragging) setFromPointer(e);
+  });
+  el.sldrHandle.addEventListener("pointerup",   () => { dragging = false; });
+  el.sldrTrack.addEventListener("click", e => setFromPointer(e));
+})();
+
+document.addEventListener("keydown", e => {
+  if (!currentSliderStage) return;
+  if (!["ArrowLeft","ArrowRight"].includes(e.key)) return;
+  const step  = (currentSliderStage.max - currentSliderStage.min) / 100;
+  sliderValue += e.key === "ArrowRight" ? step : -step;
+  sliderValue  = Math.max(currentSliderStage.min, Math.min(currentSliderStage.max, sliderValue));
+  updateSliderUI(currentSliderStage);
+}, true);
+
+// ── Konsekvens-skärm ──────────────────────────────────
+
+function showConsequenceStage(stage) {
+  const q  = Math.round(state.journeyQuality);
+  const outcomes = [...stage.outcomes].sort((a,b) => b.minQuality - a.minQuality);
+  const outcome  = outcomes.find(o => q >= o.minQuality) || outcomes[outcomes.length - 1];
+  const stageNum = state.journeyStageIdx + 1;
+
+  el.csqStep.textContent     = `${state.journey.name} · ${stageNum} av ${state.journey.stages.length}`;
+  el.csqTitle.textContent    = stage.title;
+  el.csqSubtitle.textContent = stage.subtitle;
+  el.csqEmoji.textContent    = outcome.emoji;
+  el.csqProdName.textContent = outcome.product;
+  el.csqDesc.textContent     = outcome.desc;
+  el.csqCo2.textContent      = outcome.co2;
+  el.csqFact.textContent     = outcome.fact;
+  el.csqBarFill.style.transform = `scaleX(${q / 100})`;
+  el.csqPct.textContent      = `${q}%`;
+  const col = q >= 80 ? "#66bb6a" : q >= 60 ? "#ff9800" : "#ef5350";
+  el.csqPct.style.color = col;
+
+  showScreen("consequence");
+}
+
+// ── Journeyavslut ─────────────────────────────────────
+
+function endJourney() {
+  const q = Math.round(state.journeyQuality);
+  saveJourneyCleared(state.journey.id, q);
+
+  const nCleared = JOURNEYS.filter(j => { const d = loadJourneysCleared(); return d[j.id] && d[j.id] >= 80; }).length;
+  const allDone  = nCleared >= JOURNEYS.length;
+
+  el.resStars.textContent = q >= 90 ? "⭐⭐⭐" : q >= 70 ? "⭐⭐" : "⭐";
+  el.resTitle.textContent = q >= 80 ? `${state.journey.name} klar! 🎉` : "Resan avslutad";
+  el.resScore.innerHTML   = `Slutkvalitet: <strong style="font-size:1.6rem">${q}%</strong>`;
+  el.resMsg.textContent   = q >= 80
+    ? `Materialet nådde en bra slutprodukt! Följ fler materialresor.`
+    : `Kvaliteten sjönk på vägen. Försök igen och lär av misstagen!`;
+  el.resUnlock.textContent = allDone
+    ? "🏆 Alla 5 materialresor avslutade!"
+    : `${nCleared} / 5 resor genomförda`;
+  el.resUnlock.classList.remove("hidden");
+
+  el.btnRetry.classList.toggle("hidden", q >= 80);
+  el.btnNextStation.classList.add("hidden");
+  el.btnNextJourney.classList.toggle("hidden", q < 80 || allDone);
+
+  state.isJourneyMode  = false;
+  state.isStationMode  = false;
+  // Återställ UI
+  document.getElementById("sort-row").classList.remove("hidden");
+  el.stationSortRow.classList.add("hidden");
+  el.qualityRow.classList.add("hidden");
+
+  showScreen("result");
 }
 
 // =====================================================
@@ -761,6 +1326,20 @@ function updateQualityMeter() {
 function endStation() {
   stopTimer();
   state.phase = "done";
+
+  // Journey-läge: för bältsteg i resa — avancera till nästa steg
+  if (state.isJourneyMode) {
+    state.journeyQuality = state.quality;
+    state.isStationMode  = false;
+    document.getElementById("sort-row").classList.remove("hidden");
+    el.stationSortRow.classList.add("hidden");
+    el.qualityRow.classList.add("hidden");
+    el.btnAccept.querySelector(".sb-lbl").textContent = "Acceptera — hör hit";
+    el.btnReject.querySelector(".sb-lbl").textContent = "Avvisa — hör ej hit";
+    showJourneyStage(state.journeyStageIdx + 1);
+    return;
+  }
+
   const q = Math.round(state.quality);
   const cleared = q >= 90;
 
@@ -1216,11 +1795,9 @@ function catLabel(cat) {
 
 el.btnPlay.addEventListener("click", () => { renderLevelCards(); showScreen("levels"); });
 el.btnRetry.addEventListener("click", () => {
-  if (state.station) {
-    showStationInstructions(state.station);
-  } else {
-    showInstructions(state.level.id);
-  }
+  if (state.journey)  showJourneyInstructions(state.journey);
+  else if (state.station) showStationInstructions(state.station);
+  else showInstructions(state.level.id);
 });
 el.btnLevels.addEventListener("click", () => { renderLevelCards(); showScreen("levels"); });
 
@@ -1232,7 +1809,8 @@ document.querySelectorAll(".btn-level").forEach(btn => {
   });
 });
 el.btnStart.addEventListener("click", () => {
-  if (pendingStation) { startStation(pendingStation); return; }
+  if (pendingJourney)  { startJourney(pendingJourney); return; }
+  if (pendingStation)  { startStation(pendingStation); return; }
   if (!pendingLevelId) return;
   const lvl = LEVELS.find(l => l.id === pendingLevelId);
   if (lvl?.mode === "drag") startDragLevel(pendingLevelId);
@@ -1246,6 +1824,11 @@ el.restavfallBtn.addEventListener("click", () => sortItem("restavfall"));
 el.btnAccept.addEventListener("click", () => sortStation(true));
 el.btnReject.addEventListener("click", () => sortStation(false));
 el.btnNextStation.addEventListener("click", () => showStationSelect());
+el.btnNextJourney.addEventListener("click",  () => showJourneySelect());
+el.btnSldrConfirm.addEventListener("click",  () => sliderConfirm());
+el.btnCsqNext.addEventListener("click",      () => showJourneyStage(state.journeyStageIdx + 1));
+document.getElementById("btn-journey-back")
+  .addEventListener("click", () => { renderLevelCards(); showScreen("levels"); });
 el.pauseBadge.addEventListener("click", resumeGame);
 el.beltTrack.addEventListener("click", resumeGame);
 
