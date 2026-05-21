@@ -436,16 +436,24 @@ const JOURNEYS = [
       {
         type:"consequence", title:"Steg 3 av 3 — Slutprodukten",
         subtitle:"Vad kan din batch bli?",
+        circle:[
+          { emoji:"⛏️",  label:"Sand & kvarts" },
+          { emoji:"🏭",  label:"Glasfabrik" },
+          { emoji:"🍷",  label:"Glasflaska" },
+          { emoji:"🏠",  label:"Konsument" },
+          { emoji:"♻️",  label:"Insamling" },
+          { emoji:"🔥",  label:"Omsmältning" },
+        ],
         outcomes:[
           { minQuality:90, emoji:"🍷", product:"Livsmedelsflaskor",
             desc:"Hög renhet — uppfyller EU-krav för livsmedelsförpackningar. Kan bli nya vinflaskor eller glasburkar för mat.",
-            co2:"220 kg CO₂ sparat per ton glas", fact:"Materialåtervinning av glas sparar ~30 % energi jämfört med att smälta ny råvara." },
+            co2:"220 kg CO₂ sparat per ton glas", fact:"Glas kan återvinnas hur många gånger som helst utan kvalitetsförlust — en verklig cirkel." },
           { minQuality:70, emoji:"🏗️", product:"Glasull / isoleringsmaterial",
             desc:"Godtagbar renhet men inte food-grade. Glaset mals och smälts om till isoleringsmaterial för byggbranschen.",
-            co2:"160 kg CO₂ sparat per ton glas", fact:"Glasull från återvunnet glas isolerar lika bra som ny glasull." },
+            co2:"160 kg CO₂ sparat per ton glas", fact:"Glasull från återvunnet glas isolerar lika bra som ny glasull — men fibrerna kan inte återvinnas igen." },
           { minQuality:0,  emoji:"⛏️", product:"Fyllnadsmaterial (lägsta klass)",
             desc:"Batchen var för kontaminerad för materialåtervinning. Glaset krossas och används som fyllnadsmaterial i vägbyggen.",
-            co2:"40 kg CO₂ sparat per ton", fact:"Energiåtervinning är alltid sista utvägen — material är mer värdefullt än energi." },
+            co2:"40 kg CO₂ sparat per ton", fact:"Fyllnadsmaterial är inte cirkulärt — det är en linjär slutstation. Varje kontaminant du missar knuffar ner glaset i hierarkin." },
         ],
       },
     ],
@@ -466,14 +474,30 @@ const JOURNEYS = [
         acceptLabel:"PET (kod 1) — hit", rejectLabel:"Annan plast — avvisa",
         timePerItem:8500, slideIn:680, beltSpd:"0.44s",
         items:[
-          { name:"PET-vattenflaska",    emoji:"🍶", accept:true,  contamination:0,  fact:"PET (kod 1) — rätt polymer för denna batch. Acceptera!" },
-          { name:"PET-läskflaska",      emoji:"🥤", accept:true,  contamination:0,  fact:"PET-förpackning — acceptera till PET-batchen!" },
-          { name:"PET-förpackning",     emoji:"📦", accept:true,  contamination:0,  fact:"PET-plast hör till denna fraktion. Acceptera." },
-          { name:"HDPE-schampoflaska",  emoji:"🧴", accept:false, contamination:18, fact:"HDPE (kod 2) smälter vid annan temperatur — förstör batchen om den blandas." },
-          { name:"PP-yoghurtburk",      emoji:"🫙", accept:false, contamination:15, fact:"PP (kod 5) är en annan polymersort — avvisa till separat PP-batch." },
-          { name:"Svart plastlåda",     emoji:"⬛", accept:false, contamination:20, fact:"Svart plast: IR-sensorn kan inte läsa polymersort → okänd plast i batchen. Avvisa!" },
-          { name:"PET-klar förpackning",emoji:"🫙", accept:true,  contamination:0,  fact:"PET-plast — acceptera!" },
-          { name:"PVC-flaska (kod 3)",  emoji:"🧪", accept:false, contamination:22, fact:"PVC frigör saltsyra (HCl) vid smältning — farligt för maskiner och personal." },
+          { name:"PET-vattenflaska",    emoji:"🍶", accept:true,  contamination:0,
+            plastic:{code:"01",name:"PET",glyph:"♳"},
+            fact:"PET (kod 1) — rätt polymer för denna batch. Acceptera!" },
+          { name:"HDPE-schampoflaska",  emoji:"🧴", accept:false, contamination:18,
+            plastic:{code:"02",name:"HDPE",glyph:"♴"},
+            fact:"HDPE (kod 2) smälter vid 130°C — PET smälter vid 260°C. Blandning förstör hela batchen." },
+          { name:"PVC-vattenrör",       emoji:"🧪", accept:false, contamination:22,
+            plastic:{code:"03",name:"PVC",glyph:"♵"},
+            fact:"PVC (kod 3) frigör saltsyra (HCl) vid smältning — frätande, farligt för maskiner och personal." },
+          { name:"LDPE-plastpåse",      emoji:"🛍️", accept:false, contamination:12,
+            plastic:{code:"04",name:"LDPE",glyph:"♶"},
+            fact:"LDPE (kod 4) är plastfilm — fastnar i sorteringsmaskinen. Hör till separat filmfraktion." },
+          { name:"PP-yoghurtburk",      emoji:"🫙", accept:false, contamination:15,
+            plastic:{code:"05",name:"PP",glyph:"♷"},
+            fact:"PP (kod 5) är en annan polymersort med högre smältpunkt — avvisa till separat PP-fraktion." },
+          { name:"PS-engångsmugg",      emoji:"☕", accept:false, contamination:10,
+            plastic:{code:"06",name:"PS",glyph:"♸"},
+            fact:"PS (kod 6) — polystyren. Sällan återvunnet i Sverige, bildar skadliga styrenmonomerer vid felaktig hantering." },
+          { name:"PET-läskflaska",      emoji:"🥤", accept:true,  contamination:0,
+            plastic:{code:"01",name:"PET",glyph:"♳"},
+            fact:"PET (kod 1) — samma polymer som vattenflaskor. IR-sensorn känner igen den direkt. Acceptera!" },
+          { name:"Svart PP-låda",       emoji:"⬛", accept:false, contamination:20,
+            plastic:{code:"05",name:"PP",glyph:"♷"},
+            fact:"Svart plast: kolfärgämnet blockerar IR-sensorns ljusstråle — polymersorten kan inte läsas. Avvisa alltid!" },
         ],
       },
       {
@@ -489,16 +513,24 @@ const JOURNEYS = [
       {
         type:"consequence", title:"Steg 3 av 3 — Från pellets till produkt",
         subtitle:"Vart tar dina PET-pellets vägen?",
+        circle:[
+          { emoji:"⛽",  label:"Råolja" },
+          { emoji:"🧪",  label:"PET-syntes" },
+          { emoji:"🍶",  label:"PET-flaska" },
+          { emoji:"🏠",  label:"Konsument" },
+          { emoji:"♻️",  label:"IR-sortering" },
+          { emoji:"🔬",  label:"Pelletering" },
+        ],
         outcomes:[
           { minQuality:90, emoji:"🍶", product:"Nya PET-flaskor (food-grade)",
-            desc:"Hög renhet — food-grade! Pelletsarna kan bli nya dryckesflaskor. Full materialcirkel.",
-            co2:"1.5 ton CO₂ sparat per ton PET", fact:"Återvinning av PET sparar 30 % energi jämfört med petrokemisk nyproduktion." },
+            desc:"Hög renhet — food-grade! Pelletsarna kan bli nya dryckesflaskor. Full materialcirkel utan fossil råvara.",
+            co2:"1.5 ton CO₂ sparat per ton PET", fact:"Återvinning av PET kräver bara 70 % av energin jämfört med att tillverka ny PET från råolja." },
           { minQuality:65, emoji:"🧥", product:"Polyesterfleece / textilfiber",
             desc:"Godtagbar kvalitet. PET spänns ut till polyesterfiber — en fleecetröja kräver ca 25 återvunna flaskor.",
-            co2:"1.1 ton CO₂ sparat per ton PET", fact:"Nedcycling: materialet återvinns men till lägre användningsområde." },
+            co2:"1.1 ton CO₂ sparat per ton PET", fact:"Nedcycling: materialet återvinns men till lägre användningsområde — fleecen kan sällan återvinnas igen." },
           { minQuality:0,  emoji:"🚦", product:"Trafikkon / parkbänk",
-            desc:"Låg kvalitet. Plasten kan bara formas till produkter där renhet inte är kritisk.",
-            co2:"0.6 ton CO₂ sparat per ton", fact:"Varje nedcykling minskar materialets framtida återvinningsbarhet." },
+            desc:"Låg kvalitet. Plasten kan bara formas till produkter där renhet inte är kritisk — en linjär slutstation.",
+            co2:"0.6 ton CO₂ sparat per ton", fact:"Varje steg nedåt i hierarkin minskar materialets framtida återvinningsbarhet. Kod-blandning är kostsam." },
         ],
       },
     ],
@@ -542,16 +574,24 @@ const JOURNEYS = [
       {
         type:"consequence", title:"Steg 3 av 3 — Nytt papper",
         subtitle:"Vad kan ditt papper bli?",
+        circle:[
+          { emoji:"🌲",  label:"Skogsråvara" },
+          { emoji:"🏭",  label:"Pappersmassa" },
+          { emoji:"📰",  label:"Papper" },
+          { emoji:"🏠",  label:"Konsument" },
+          { emoji:"♻️",  label:"Insamling" },
+          { emoji:"💧",  label:"Hydrapulper" },
+        ],
         outcomes:[
           { minQuality:88, emoji:"📰", product:"Tidnings- och tryckeripapper",
-            desc:"Hög fiberkvalitet! Kan bli tidnings- och bokpapper. Fibrerna är fortfarande långa nog.",
-            co2:"700 kg CO₂ sparat per ton papper", fact:"Pappersfiber förkortas vid varje återvinningscykel — efter ~7 ggr är de för korta att använda." },
+            desc:"Hög fiberkvalitet! Kan bli tidnings- och bokpapper. Fibrerna är fortfarande långa nog för tryck.",
+            co2:"700 kg CO₂ sparat per ton papper", fact:"Pappersfiber förkortas vid varje cykel — efter ~7 återvinningar är de för korta och måste ersättas med ny skogsmassa." },
           { minQuality:65, emoji:"📦", product:"Förpackningskartong",
-            desc:"Fibrer för korta för tryckeripapper men perfekt för brun kartong och wellpapp.",
-            co2:"500 kg CO₂ sparat per ton", fact:"Returkartong utgör ~80 % av allt förpackningsmaterial i Sverige." },
+            desc:"Fibrer för korta för tryckeripapper men perfekt för brun kartong och wellpapp. En degradering men ändå cirkulär.",
+            co2:"500 kg CO₂ sparat per ton", fact:"Returkartong utgör ~80 % av allt förpackningsmaterial i Sverige — ett av de mest effektiva återvinningssystemen vi har." },
           { minQuality:0,  emoji:"🧻", product:"Mjukpapper / toalettpapper",
-            desc:"Korta, svaga fibrer. Duger bara till mjukpapper — slutstationen för pappersfibrer.",
-            co2:"300 kg CO₂ sparat per ton", fact:"Toalettpapper är ofta slutstationen för pappersfibrer — de kan inte återvinnas ytterligare." },
+            desc:"Korta, svaga fibrer. Duger bara till mjukpapper — slutstationen för pappersfibrer innan de komposteras.",
+            co2:"300 kg CO₂ sparat per ton", fact:"Toalettpapper är en linjär slutstation — men det är ändå bättre än att bränna eller deponera pappret direkt." },
         ],
       },
     ],
@@ -595,16 +635,24 @@ const JOURNEYS = [
       {
         type:"consequence", title:"Steg 3 av 3 — Aluminiumingot",
         subtitle:"Vad kan ditt aluminium bli?",
+        circle:[
+          { emoji:"⛏️",  label:"Bauxitgruva" },
+          { emoji:"⚡",  label:"Elektrolys" },
+          { emoji:"🥤",  label:"Aluminiumprodukt" },
+          { emoji:"🏠",  label:"Konsument" },
+          { emoji:"♻️",  label:"Insamling" },
+          { emoji:"🔥",  label:"Omsmältning" },
+        ],
         outcomes:[
           { minQuality:90, emoji:"🥤", product:"Nya aluminiumburkar (food-grade)",
             desc:"Primärlegering av hög renhet. Valsat till 0.1 mm tunnplåt för nya dryckburkar — full cirkel!",
-            co2:"8 ton CO₂ sparat per ton aluminium", fact:"Återvinning av aluminium kräver bara 5 % av energin för primärproduktion via bauxit." },
+            co2:"8 ton CO₂ sparat per ton aluminium", fact:"Omsmältning kräver bara 5 % av energin för primärproduktion. En burk kan vara en ny burk på 60 dagar." },
           { minQuality:70, emoji:"🚗", product:"Fordonsdelar / konstruktionsaluminium",
             desc:"Sekundärlegering. Tillräcklig renhet för fordonsindustrin — motorblock, hjulfälgar, karossdelar.",
-            co2:"7 ton CO₂ sparat per ton aluminium", fact:"Fordonsindustrins aluminiumandel ökar varje år för att sänka bilars vikt och CO₂-utsläpp." },
+            co2:"7 ton CO₂ sparat per ton aluminium", fact:"Fordonsindustrins aluminiumandel ökar för att sänka bilars vikt — men legering gör det svårare att återvinna tillbaka till burkar." },
           { minQuality:0,  emoji:"🏗️", product:"Gjutaluminium / byggkomponenter",
             desc:"Lägre renhet. Används som gjutmaterial för icke-kritiska konstruktionsdelar.",
-            co2:"5.5 ton CO₂ sparat per ton aluminium", fact:"Även lågkvalitetsaluminium sparar enormt jämfört med primärproduktion." },
+            co2:"5.5 ton CO₂ sparat per ton aluminium", fact:"Även lågkvalitetsaluminium sparar enormt — men kontaminanter (koppar, stål) hindrar full cirkel tillbaka till dryckburkar." },
         ],
       },
     ],
@@ -648,16 +696,24 @@ const JOURNEYS = [
       {
         type:"consequence", title:"Steg 3 av 3 — Biogas och biogödsel",
         subtitle:"Vad producerar din rötkammare?",
+        circle:[
+          { emoji:"🌱",  label:"Jordbruk" },
+          { emoji:"🥘",  label:"Livsmedel" },
+          { emoji:"🏠",  label:"Konsument" },
+          { emoji:"🗑️",  label:"Matavfall" },
+          { emoji:"🏭",  label:"Biogasanläggning" },
+          { emoji:"⛽",  label:"Biogas + Gödsel" },
+        ],
         outcomes:[
           { minQuality:88, emoji:"⛽", product:"Fordonsgas + A-klassad biogödsel",
-            desc:"Hög renhet! Biogasen uppgraderas till fordonsgas (biometan). Biogödseln är A-klassad och kan spridas fritt på åkrar.",
-            co2:"1.5 ton CO₂e sparat per ton matavfall", fact:"En biogasbuss på biogas från 1 ton matavfall kan köra ca 80 km." },
+            desc:"Hög renhet! Biogasen uppgraderas till fordonsgas (biometan). Biogödseln är A-klassad och kan spridas fritt på åkrar — näringen återgår till jordbruket.",
+            co2:"1.5 ton CO₂e sparat per ton matavfall", fact:"En biogasbuss på biogas från 1 ton matavfall kan köra ca 80 km — och gödseln minskar behovet av importerat konstgödsel." },
           { minQuality:65, emoji:"🔥", product:"Kraftvärme + B-klassad biogödsel",
             desc:"Biogasen förbränns för el och fjärrvärme. Biogödseln är B-klassad och kräver mer noggrann spridningskontroll.",
-            co2:"1.1 ton CO₂e sparat per ton matavfall", fact:"Kraftvärme från biogas är koldioxidneutral — den CO₂ som frigörs är biologiskt bunden." },
+            co2:"1.1 ton CO₂e sparat per ton matavfall", fact:"Kraftvärme från biogas är koldioxidneutral — CO₂ som frigörs är biologiskt bunden, inte fossil. Men näringen i gödseln tas inte tillvara fullt ut." },
           { minQuality:0,  emoji:"🌿", product:"Kompostering (lägst energiutbyte)",
-            desc:"Biogasprocessen fungerade inte optimalt. Materialet komposteras — lägre energiutbyte men näringen återgår till jord.",
-            co2:"0.3 ton CO₂e sparat per ton matavfall", fact:"Kompostering ger inget energiutbyte men fortfarande god återföring av näring till jord." },
+            desc:"Biogasprocessen fungerade inte optimalt pga föroreningar. Materialet komposteras — ingen energi utvinns men näringen återgår till jord.",
+            co2:"0.3 ton CO₂e sparat per ton matavfall", fact:"Kompostering är en kol- och näringscirkel men utan energiutbyte. Plastpåsar i matavfallet är vanligaste orsaken till processkollaps." },
         ],
       },
     ],
@@ -741,7 +797,7 @@ const el = {
   restavfallBtn:$("restavfall-btn"),
   timerFill:    $("timer-fill"),
   toast:        $("toast"),
-  sortBtns:     document.querySelectorAll(".sbtn"),
+  sortBtns:     document.querySelectorAll(".sbtn[data-cat]"),
   resStars:     $("res-stars"),
   resTitle:     $("res-title"),
   resScore:     $("res-score"),
@@ -780,6 +836,7 @@ const el = {
   csqFact:      $("csq-fact"),
   csqBarFill:   $("csq-bar-fill"),
   csqPct:       $("csq-pct"),
+  csqCircle:    $("csq-circle"),
   btnCsqNext:   $("btn-csq-next"),
   dragScr:      $("drag-screen"),
   dragLives:    $("drag-lives"),
@@ -1036,6 +1093,7 @@ function startJourneyBeltStage(stage) {
   state.correct      = 0;
   state.quality      = state.journeyQuality;
   state.isStationMode = true; // reuse ACCEPT/REJECT mechanic
+  state.phase         = "idle";
 
   // Byt knapptexter
   el.btnAccept.querySelector(".sb-lbl").textContent = stage.acceptLabel || "Acceptera";
@@ -1163,14 +1221,62 @@ function showConsequenceStage(stage) {
   el.csqEmoji.textContent    = outcome.emoji;
   el.csqProdName.textContent = outcome.product;
   el.csqDesc.textContent     = outcome.desc;
-  el.csqCo2.textContent      = outcome.co2;
+  el.csqCo2.textContent      = outcome.co2 || "";
   el.csqFact.textContent     = outcome.fact;
   el.csqBarFill.style.transform = `scaleX(${q / 100})`;
   el.csqPct.textContent      = `${q}%`;
   const col = q >= 80 ? "#66bb6a" : q >= 60 ? "#ff9800" : "#ef5350";
   el.csqPct.style.color = col;
 
+  if (stage.circle) renderCircleFlow(stage.circle);
+  else el.csqCircle.innerHTML = "";
+
   showScreen("consequence");
+
+  if (stage.circle) animateCircle(stage.circle.length);
+}
+
+let _circleAnimTimer = null;
+
+function renderCircleFlow(steps) {
+  const half = Math.ceil(steps.length / 2);
+  const top  = steps.slice(0, half);
+  const bot  = [...steps.slice(half)].reverse();
+
+  function node(step, idx) {
+    return `<div class="cc-node" data-cidx="${idx}">
+      <span class="cc-emoji">${step.emoji}</span>
+      <span class="cc-lbl">${step.label}</span>
+    </div>`;
+  }
+
+  const topHtml = top.map((s, i) =>
+    node(s, i) + (i < top.length - 1 ? '<span class="cc-arr">›</span>' : '')
+  ).join('');
+
+  const botHtml = bot.map((s, i) => {
+    const realIdx = steps.length - 1 - i;
+    return node(s, realIdx) + (i < bot.length - 1 ? '<span class="cc-arr">‹</span>' : '');
+  }).join('');
+
+  el.csqCircle.innerHTML = `
+    <div class="cc-track">${topHtml}</div>
+    <div class="cc-mid"><span class="cc-side-arr">↑</span><span></span><span class="cc-side-arr">↓</span></div>
+    <div class="cc-track">${botHtml}</div>
+    <div class="cc-loop-lbl">↺ materialet återcirkulerar</div>`;
+}
+
+function animateCircle(count) {
+  if (_circleAnimTimer) clearTimeout(_circleAnimTimer);
+  el.csqCircle.querySelectorAll(".cc-node").forEach(n => n.classList.remove("lit"));
+  let i = 0;
+  (function step() {
+    if (i >= count) return;
+    const node = el.csqCircle.querySelector(`[data-cidx="${i}"]`);
+    if (node) node.classList.add("lit");
+    i++;
+    _circleAnimTimer = setTimeout(step, 440);
+  })();
 }
 
 // ── Journeyavslut ─────────────────────────────────────
