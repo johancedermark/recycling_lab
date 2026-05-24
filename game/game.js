@@ -674,80 +674,15 @@ const JOURNEYS = [
   },
   {
     id:"plast", name:"Plastens resa", icon:"♻️", color:"#F5A623", stationId:"plast",
-    desc:"Från plastflaska till pellets och ny råvara via polymertypning",
+    mode:"process",
+    desc:"Tre polymerfraktioner, fyra processteg — operera recyclinglinjens kontrollpanel",
     intro:[
-      "Du följer plastfraktionen från anläggning till nya produkter.",
-      "Steg 1: Polymertypsortera — PET och HDPE smälter vid olika temperaturer, blandning förstör batchen.",
-      "Steg 2: Kalibrera extruderaren — rätt smälttemperatur avgör pelletskvaliteten.",
-      "Steg 3: Se vad dina pellets kan bli — från ny flaska till nedcyclad parkbänk.",
+      "Du driver recyclinganläggningens plastlinje.",
+      "Konfigurera tvätt, smälttemperaturer, filtrering och jungfruinblandning för PET, PE och PP.",
+      "Kemipanelen ger dig molekylär insikt — använd den för att förstå varför temperaturerna skiljer sig.",
+      "Till slut: matcha pelletsen till rätt slutprodukter beroende på uppnådd kvalitet.",
     ],
-    stages:[
-      {
-        type:"belt", title:"Steg 1 av 3 — Polymertypsortering",
-        subtitle:"IR-sensorer skannar plasten — separera PET från övriga polymerer.",
-        acceptLabel:"PET (kod 1) — hit", rejectLabel:"Annan plast — avvisa",
-        timePerItem:8500, slideIn:680, beltSpd:"0.44s",
-        items:[
-          { name:"PET-vattenflaska",    emoji:"🍶", accept:true,  contamination:0,
-            plastic:{code:"01",name:"PET",glyph:"♳"},
-            fact:"PET (kod 1) — rätt polymer för denna batch. Acceptera!" },
-          { name:"HDPE-schampoflaska",  emoji:"🧴", accept:false, contamination:18,
-            plastic:{code:"02",name:"HDPE",glyph:"♴"},
-            fact:"HDPE (kod 2) smälter vid 130°C — PET smälter vid 260°C. Blandning förstör hela batchen." },
-          { name:"PVC-vattenrör",       emoji:"🧪", accept:false, contamination:22,
-            plastic:{code:"03",name:"PVC",glyph:"♵"},
-            fact:"PVC (kod 3) frigör saltsyra (HCl) vid smältning — frätande, farligt för maskiner och personal." },
-          { name:"LDPE-plastpåse",      emoji:"🛍️", accept:false, contamination:12,
-            plastic:{code:"04",name:"LDPE",glyph:"♶"},
-            fact:"LDPE (kod 4) är plastfilm — fastnar i sorteringsmaskinen. Hör till separat filmfraktion." },
-          { name:"PP-yoghurtburk",      emoji:"🫙", accept:false, contamination:15,
-            plastic:{code:"05",name:"PP",glyph:"♷"},
-            fact:"PP (kod 5) är en annan polymersort med högre smältpunkt — avvisa till separat PP-fraktion." },
-          { name:"PS-engångsmugg",      emoji:"☕", accept:false, contamination:10,
-            plastic:{code:"06",name:"PS",glyph:"♸"},
-            fact:"PS (kod 6) — polystyren. Sällan återvunnet i Sverige, bildar skadliga styrenmonomerer vid felaktig hantering." },
-          { name:"PET-läskflaska",      emoji:"🥤", accept:true,  contamination:0,
-            plastic:{code:"01",name:"PET",glyph:"♳"},
-            fact:"PET (kod 1) — samma polymer som vattenflaskor. IR-sensorn känner igen den direkt. Acceptera!" },
-          { name:"Svart PP-låda",       emoji:"⬛", accept:false, contamination:20,
-            plastic:{code:"05",name:"PP",glyph:"♷"},
-            fact:"Svart plast: kolfärgämnet blockerar IR-sensorns ljusstråle — polymersorten kan inte läsas. Avvisa alltid!" },
-        ],
-      },
-      {
-        type:"slider", title:"Steg 2 av 3 — Extrudertemperatur",
-        subtitle:"PET pelletiseras vid rätt smälttemperatur",
-        body:"PET smälter vid 260°C men extruderas bäst vid 275–285°C. För låg temp ger klumpiga ojämna pellets. För hög temp degraderas polymeren och tappar hållfasthet.",
-        unit:"°C", min:240, max:310, targetMin:275, targetMax:285,
-        tooLowMsg:"För kallt — PET smälter inte jämnt, pelletsarna blir klumpiga och håller inte kvalitetskrav.",
-        inZoneMsg:"Perfekt extruderingstemperatur! PET-pellets av hög kvalitet produceras.",
-        tooHighMsg:"För varmt — PET-polymeren degraderas termiskt och tappar mekanisk hållfasthet.",
-        qualityPenaltyLow:12, qualityPenaltyHigh:10,
-      },
-      {
-        type:"consequence", title:"Steg 3 av 3 — Från pellets till produkt",
-        subtitle:"Vart tar dina PET-pellets vägen?",
-        circle:[
-          { emoji:"⛽",  label:"Råolja" },
-          { emoji:"🧪",  label:"PET-syntes" },
-          { emoji:"🍶",  label:"PET-flaska" },
-          { emoji:"🏠",  label:"Konsument" },
-          { emoji:"♻️",  label:"IR-sortering" },
-          { emoji:"🔬",  label:"Pelletering" },
-        ],
-        outcomes:[
-          { minQuality:90, emoji:"🍶", product:"Nya PET-flaskor (food-grade)",
-            desc:"Hög renhet — food-grade! Pelletsarna kan bli nya dryckesflaskor. Full materialcirkel utan fossil råvara.",
-            co2:"1.5 ton CO₂ sparat per ton PET", fact:"Återvinning av PET kräver bara 70 % av energin jämfört med att tillverka ny PET från råolja." },
-          { minQuality:65, emoji:"🧥", product:"Polyesterfleece / textilfiber",
-            desc:"Godtagbar kvalitet. PET spänns ut till polyesterfiber — en fleecetröja kräver ca 25 återvunna flaskor.",
-            co2:"1.1 ton CO₂ sparat per ton PET", fact:"Nedcycling: materialet återvinns men till lägre användningsområde — fleecen kan sällan återvinnas igen." },
-          { minQuality:0,  emoji:"🚦", product:"Trafikkon / parkbänk",
-            desc:"Låg kvalitet. Plasten kan bara formas till produkter där renhet inte är kritisk — en linjär slutstation.",
-            co2:"0.6 ton CO₂ sparat per ton", fact:"Varje steg nedåt i hierarkin minskar materialets framtida återvinningsbarhet. Kod-blandning är kostsam." },
-        ],
-      },
-    ],
+    stages:[],
   },
   {
     id:"papper", name:"Papprets resa", icon:"📄", color:"#4A90E2", stationId:"papper",
@@ -934,6 +869,93 @@ const JOURNEYS = [
   },
 ];
 
+// ─── PLASTPROCESSEN: DATA ────────────────────────────────────────────────────
+const POLY_IDS = ["pet","pe","pp"];
+
+const POLYMER_CONFIG = {
+  pet:{
+    id:"pet", label:"PET", fullName:"Polyetylentereftalat",
+    emoji:"🔵", color:"#2196F3", darkColor:"#1565C0",
+    Tm:260, Tg:80, density:1.38, crystallinity:"30–40%",
+    meltRange:{min:200,max:320}, meltOptimal:{min:255,max:285},
+    washSensitiveOver:90,
+    facts:[
+      {icon:"🌡️",key:"Smältpunkt Tm",val:"260 °C",
+       text:"Bensenringarnas π–π-staplingsinteraktioner håller kedjorna samman tills 260 °C — högst av de tre."},
+      {icon:"🪟",key:"Glasövergång Tg",val:"80 °C",
+       text:"Under 80 °C är PET glasartat och sprött. Flaskor hålls amorfa (snabb kylning) för genomskinlighet."},
+      {icon:"💧",key:"Esterbindning",val:"Hydrolysrisk",
+       text:"─COO─ angrips av vatten vid >90 °C: H₂O bryter kedjan → kortare kedjor → lägre IV → svagare material."},
+      {icon:"📏",key:"Intrinsic Viscosity IV",val:"~0,65 dl/g recyclat",
+       text:"IV mäter kedjans medellängd. Jungfru-PET ~0,80 dl/g; recyclat ~0,65. Under 0,72 klaras inte livsmedels­flaskor."},
+      {icon:"💎",key:"Kristallinitet",val:"30–40 %",
+       text:"Semi-kristallint: kristallina domäner ger hållfasthet, amorfa regioner ger formbarhet och genomskinlighet."},
+    ],
+    products:[
+      {id:"pet_a",name:"PET-flaska (livsmedel)",emoji:"🍾",minQuality:88,minBlend:15,
+       fact:"IV > 0,78 krävs — jungfruinblandning lyfter IV och uppfyller EU:s mat­kontakts­krav."},
+      {id:"pet_b",name:"Polyesterfibrer (fleece)",emoji:"🧥",minQuality:65,minBlend:0,
+       fact:"Lägre IV godtas för textilier — en 1,5 L-flaska kan bli ca 10 cm² fleece."},
+      {id:"pet_c",name:"Förpackningsband",emoji:"📦",minQuality:45,minBlend:0,
+       fact:"Strapping-band har lägst PET-krav — bra slutstation för downcyclat material."},
+    ],
+  },
+  pe:{
+    id:"pe", label:"PE", fullName:"Polyetylen (HDPE)",
+    emoji:"⬜", color:"#78909C", darkColor:"#37474F",
+    Tm:130, Tg:-120, density:0.95, crystallinity:"60–80%",
+    meltRange:{min:140,max:260}, meltOptimal:{min:180,max:220},
+    washSensitiveOver:999,
+    facts:[
+      {icon:"🌡️",key:"Smältpunkt Tm",val:"130 °C",
+       text:"Linjära CH₂-kedjor packas tätt (~80 % kristallinitet). Lägre Tm trots liknande C–C-bindningsstyrka som PET."},
+      {icon:"🧊",key:"Glasövergång Tg",val:"−120 °C",
+       text:"PE är aldrig sprött vid normala temperaturer — idealiskt för kylförvaring och frysprodukt."},
+      {icon:"🛡️",key:"Kemisk inerthet",val:"Extrem",
+       text:"Inga funktionella grupper att angripa — PE tål syror, baser, de flesta lösningsmedel."},
+      {icon:"💧",key:"Densitet",val:"0,95 g/cm³",
+       text:"Flötar i vatten → separeras enkelt från PET (1,38 g/cm³) i densitetsseparatorn."},
+      {icon:"🔧",key:"Processtemperaturfönster",val:"180–220 °C",
+       text:"Brett fönster jämfört med PET — PE är förlåtande och kräver inte lika precis temperaturstyrning."},
+    ],
+    products:[
+      {id:"pe_a",name:"HDPE-mjölkjug (livsmedel)",emoji:"🥛",minQuality:85,minBlend:15,
+       fact:"Mat­kontakt kräver låg föroreningsnivå — PE:s kemiska tröghet gör det lättare att nå food-grade."},
+      {id:"pe_b",name:"Plastlådor & hinkar",emoji:"🪣",minQuality:60,minBlend:0,
+       fact:"Inga mat­kontakts­krav — utmärkt för recyclad PE med lite lägre renhet."},
+      {id:"pe_c",name:"Dräneringsrör & geomembran",emoji:"🏗️",minQuality:42,minBlend:0,
+       fact:"Under jord utan UV-exponering — PE håller decennier. Perfekt slutstation för downcyclat material."},
+    ],
+  },
+  pp:{
+    id:"pp", label:"PP", fullName:"Polypropen",
+    emoji:"🟡", color:"#FF8F00", darkColor:"#E65100",
+    Tm:165, Tg:-10, density:0.90, crystallinity:"40–60%",
+    meltRange:{min:160,max:300}, meltOptimal:{min:220,max:260},
+    washSensitiveOver:999,
+    facts:[
+      {icon:"🌡️",key:"Smältpunkt Tm",val:"165 °C",
+       text:"Metylgrupperna (─CH₃) hindrar kedjepackning i ataktisk form, men isotaktisk PP kan kristallisera."},
+      {icon:"❄️",key:"Glasövergång Tg",val:"−10 °C",
+       text:"PP kan bli sprött vid vinterkyla — PE (Tg −120 °C) är mer flexibelt. Viktig skillnad för utomhusprodukter."},
+      {icon:"⚗️",key:"Oxidationskänslig",val:"Tertiärt kol",
+       text:"─CH(CH₃)─ har ett tertiärt kol lätt för radikaler att angripa → kedjebrott vid UV och hög temperatur."},
+      {icon:"💧",key:"Densitet",val:"0,90 g/cm³",
+       text:"Lättast av de tre — flötar i vatten liksom PE. Kräver annan separation (optisk sortering, friktion)."},
+      {icon:"🔥",key:"Oxidation i smältan",val:"Över 270 °C",
+       text:"Håll smälttemp under 270 °C för recyclat PP — annars sker kedjesplittring och materialet missfärgas."},
+    ],
+    products:[
+      {id:"pp_a",name:"Matlådor & yoghurtburkar",emoji:"🥗",minQuality:80,minBlend:10,
+       fact:"PP:s höga värmetålighet (Tm 165 °C) gör det perfekt för mikrovågsugns­säkra matlådor."},
+      {id:"pp_b",name:"Blomlådor & krukor",emoji:"🌱",minQuality:55,minBlend:0,
+       fact:"UV-stabilisatorer tillsätts för utomhusbruk — inga mat­kontakts­krav krävs."},
+      {id:"pp_c",name:"Trafikbullerplank",emoji:"🛣️",minQuality:40,minBlend:0,
+       fact:"Strukturella delar accepterar downcyclat PP med lägre IV och viss missfärgning."},
+    ],
+  },
+};
+
 // =====================================================
 // SPELSTATUS
 // =====================================================
@@ -959,6 +981,7 @@ const state = {
   journeyStageIdx: 0,
   journeyQuality:  100,
   isJourneyMode:   false,
+  proc: null,
 };
 
 // stations progress persistent i localStorage
@@ -995,6 +1018,7 @@ const el = {
   journeyGrid:  $("journey-grid"),
   sliderScr:    $("slider-screen"),
   consequenceScr:$("consequence-screen"),
+  processScr:   $("process-screen"),
   gameScr:      $("game-screen"),
   resultScr:    $("result-screen"),
   lives:        $("lives"),
@@ -1143,7 +1167,7 @@ function resumeGame() {
 
 function showScreen(name) {
   [el.startScr, el.levelScr, el.stationScr, el.journeyScr, el.instructionScr,
-   el.gameScr, el.dragScr, el.sliderScr, el.consequenceScr, el.resultScr]
+   el.gameScr, el.dragScr, el.sliderScr, el.consequenceScr, el.processScr, el.resultScr]
     .forEach(s => s.classList.add("hidden"));
   if (name === "start")           el.startScr.classList.remove("hidden");
   if (name === "levels")          el.levelScr.classList.remove("hidden");
@@ -1154,6 +1178,7 @@ function showScreen(name) {
   if (name === "drag")            el.dragScr.classList.remove("hidden");
   if (name === "slider")          el.sliderScr.classList.remove("hidden");
   if (name === "consequence")     el.consequenceScr.classList.remove("hidden");
+  if (name === "process")         el.processScr.classList.remove("hidden");
   if (name === "result")          el.resultScr.classList.remove("hidden");
 }
 
@@ -1286,7 +1311,8 @@ function showJourneyInstructions(journey) {
 
 function startJourney(journey) {
   pendingJourney = null;
-  state.journey        = journey;
+  state.journey = journey; // set so retry button works
+  if (journey.mode === "process") { startPlasticProcess(); return; }
   state.journeyStageIdx = 0;
   state.journeyQuality  = 100;
   state.isJourneyMode   = true;
@@ -2607,3 +2633,587 @@ function showDragToast(html, type = "") {
   img.onerror = () => { el.bg.style.backgroundImage = "none"; };
   img.src = "assets/bg.png";
 })();
+
+// ═══════════════════════════════════════════════════════════════════════
+// PLASTPROCESSEN — Nivå 3
+// ═══════════════════════════════════════════════════════════════════════
+
+function startPlasticProcess() {
+  const cleared   = loadStationsCleared();
+  const plastQ    = cleared["plast"] || 70;
+  const contamPct = Math.max(0, 100 - plastQ);
+
+  state.proc = {
+    contamPct,
+    settings: {
+      wash: 62,
+      melt_pet: 240, melt_pe: 162, melt_pp: 202,
+      filter: 250,
+      blend_pet: 0, blend_pe: 0, blend_pp: 0,
+    },
+    quality:  { pet: 100 - contamPct, pe: 100 - contamPct, pp: 100 - contamPct },
+    score:    0,
+    co2:      0,
+    phase:    "setup",
+    activePoly: "pet",
+    productsPlaced: {},
+  };
+
+  renderProcessMain();
+  renderProcChemPanel("pet");
+  updateProcQuality();
+  showScreen("process");
+}
+
+// ── Quality maths ────────────────────────────────────────────────────────────
+
+function calcWashEffect(tempC, polyId) {
+  const contamPct = state.proc.contamPct;
+  const OPT = { min: 75, max: 90 };
+  if (tempC >= OPT.min && tempC <= OPT.max) return 0;
+  if (tempC < OPT.min) {
+    const deficit = OPT.min - tempC;
+    return -Math.round(deficit * 0.35 + contamPct * 0.35);
+  }
+  if (polyId === "pet") return -Math.min(25, Math.round((tempC - 90) * 2));
+  return 0;
+}
+
+function calcMeltEffect(tempC, polyId) {
+  const opt = POLYMER_CONFIG[polyId].meltOptimal;
+  if (tempC >= opt.min && tempC <= opt.max) return 0;
+  if (tempC < opt.min) return -Math.min(45, (opt.min - tempC) * 2);
+  return -Math.min(55, (tempC - opt.max) * 3);
+}
+
+function calcFilterEffect(mesh) {
+  if (mesh <= 80)  return 0;
+  if (mesh <= 150) return -5;
+  if (mesh <= 300) return -15;
+  return -28;
+}
+
+function calcBlendBoost(pct) { return Math.min(18, pct * 0.4); }
+
+function calcPolymerQuality(polyId) {
+  const ps = state.proc.settings;
+  let q = 100 - state.proc.contamPct;
+  q += calcWashEffect(ps.wash, polyId);
+  q += calcMeltEffect(ps[`melt_${polyId}`], polyId);
+  q += calcFilterEffect(ps.filter);
+  q += calcBlendBoost(ps[`blend_${polyId}`]);
+  return Math.max(0, Math.min(100, Math.round(q)));
+}
+
+function updateProcQuality() {
+  POLY_IDS.forEach(id => { state.proc.quality[id] = calcPolymerQuality(id); });
+  state.proc.co2 = Math.round(POLY_IDS.reduce((s, id) => s + state.proc.settings[`blend_${id}`] * 1.2, 0));
+  const co2El = document.getElementById("proc-co2-val");
+  if (co2El) co2El.textContent = state.proc.co2;
+  const scoreEl = document.getElementById("proc-score");
+  if (scoreEl) scoreEl.textContent = state.proc.score;
+  updateProcPips();
+  renderProcLog();
+  // refresh chem panel product availability
+  const tab = document.querySelector(".proc-tab.active");
+  if (tab) renderProcChemPanel(tab.dataset.poly);
+}
+
+function procPipStatus(stepId, polyId) {
+  const ps  = state.proc.settings;
+  let effect;
+  if (stepId === "wash")   effect = calcWashEffect(ps.wash, polyId);
+  else if (stepId === "melt")   effect = calcMeltEffect(ps[`melt_${polyId}`], polyId);
+  else if (stepId === "filter") effect = calcFilterEffect(ps.filter);
+  else if (stepId === "blend")  effect = calcBlendBoost(ps[`blend_${polyId}`]);
+  else return "pip-neutral";
+  if (stepId === "blend") return effect >= 8 ? "pip-ok" : effect >= 3 ? "pip-warn" : "pip-neutral";
+  if (effect >= -2)  return "pip-ok";
+  if (effect >= -14) return "pip-warn";
+  return "pip-bad";
+}
+
+function updateProcPips() {
+  ["wash","melt","filter","blend"].forEach(stepId => {
+    POLY_IDS.forEach(polyId => {
+      const el2 = document.getElementById(`pip-${stepId}-${polyId}`);
+      if (el2) el2.className = `proc-pip ${procPipStatus(stepId, polyId)}`;
+    });
+  });
+}
+
+// ── Rendering ────────────────────────────────────────────────────────────────
+
+function procOptBandStyle(min, max, optMin, optMax) {
+  const range = max - min;
+  const l = ((optMin - min) / range * 100).toFixed(1);
+  const w = ((optMax - optMin) / range * 100).toFixed(1);
+  return `left:${l}%;width:${w}%`;
+}
+
+function renderProcessMain() {
+  const main = document.getElementById("proc-main");
+  if (!main) return;
+
+  const contamPct = state.proc.contamPct;
+  const plastQ    = 100 - contamPct;
+
+  // Tanks
+  const tanksHTML = (() => {
+    const polyEntries = [
+      {id:"pet",label:"PET ♳",color:"#2196F3"},
+      {id:"pe", label:"PE ♴", color:"#78909C"},
+      {id:"pp", label:"PP ♷", color:"#FF8F00"},
+      {id:"fk", label:"FK ✗", color:"#ef5350"},
+    ];
+    return `<div id="proc-tanks-row">
+      ${polyEntries.map(p => {
+        const isFk   = p.id === "fk";
+        const fillH  = isFk ? Math.round(contamPct * 0.8) : Math.round(plastQ / 3 * 0.9);
+        const contamH = isFk ? 0 : Math.round(contamPct * 0.3);
+        return `
+          <div class="proc-tank-wrap${isFk?" proc-tank-fk":""}">
+            <div class="proc-tank-label" style="color:${p.color}">${p.label}</div>
+            <div class="proc-tank-body">
+              ${!isFk?`<div class="proc-tank-contam" style="height:${contamH}px"></div>`:""}
+              <div class="proc-tank-fill" style="height:${fillH}px;background:${p.color}55"></div>
+            </div>
+            <div class="proc-tank-pct">${isFk?contamPct:Math.round(plastQ/3)}%</div>
+          </div>`;
+      }).join("")}
+    </div>
+    <div class="proc-tank-note">Tankarna visar mängdfördelning från L2-sorteringen · FK (rött) = förorening</div>`;
+  })();
+
+  // Helper: render one step
+  const stepHTML = (cfg) => {
+    if (cfg.type === "shared") {
+      const bnd = procOptBandStyle(cfg.min, cfg.max, cfg.optMin, cfg.optMax);
+      return `
+        <div class="proc-step" id="pstep-${cfg.id}">
+          <div class="proc-step-hdr">
+            <span class="proc-step-icon">${cfg.icon}</span>
+            <span class="proc-step-name">${cfg.name}</span>
+          </div>
+          <div class="proc-step-hint">${cfg.hint}</div>
+          <div class="proc-step-body-shared">
+            <div class="proc-pips-col">
+              ${POLY_IDS.map(id=>`
+                <div class="proc-pip" id="pip-${cfg.id}-${id}">
+                  <div class="proc-pip-dot"></div>
+                  <span>${POLYMER_CONFIG[id].label}</span>
+                </div>`).join("")}
+            </div>
+            <div class="proc-shared-ctrl">
+              <div class="proc-slider-wrap">
+                <div class="proc-opt-band" style="${bnd}"></div>
+                <input type="range" id="sldr-${cfg.id}" min="${cfg.min}" max="${cfg.max}" value="${cfg.dflt}">
+              </div>
+              <div class="proc-slider-val">
+                <span id="val-${cfg.id}">${cfg.dflt}</span> ${cfg.unit}
+                <span class="proc-opt-label">· opt: ${cfg.optMin}–${cfg.optMax} ${cfg.unit}</span>
+              </div>
+            </div>
+          </div>
+        </div>`;
+    }
+    // per-polymer
+    return `
+      <div class="proc-step" id="pstep-${cfg.id}">
+        <div class="proc-step-hdr">
+          <span class="proc-step-icon">${cfg.icon}</span>
+          <span class="proc-step-name">${cfg.name}</span>
+        </div>
+        <div class="proc-step-hint">${cfg.hint}</div>
+        <div class="proc-step-cols">
+          ${POLY_IDS.map(pid => {
+            const p   = POLYMER_CONFIG[pid];
+            const min = cfg.perPoly[pid].min, max = cfg.perPoly[pid].max;
+            const optMin = cfg.perPoly[pid].optMin, optMax = cfg.perPoly[pid].optMax;
+            const dflt   = cfg.perPoly[pid].dflt;
+            const bnd    = procOptBandStyle(min, max, optMin, optMax);
+            return `
+              <div class="proc-step-col">
+                <div class="proc-col-hdr" style="color:${p.color}">${p.label}</div>
+                <div class="proc-slider-wrap">
+                  <div class="proc-opt-band" style="${bnd}"></div>
+                  <input type="range" id="sldr-${cfg.id}-${pid}" min="${min}" max="${max}" value="${dflt}">
+                </div>
+                <div class="proc-slider-val">
+                  <span id="val-${cfg.id}-${pid}">${dflt}</span> ${cfg.unit}
+                </div>
+                <div class="proc-pip" id="pip-${cfg.id}-${pid}">
+                  <div class="proc-pip-dot"></div>
+                  <span id="pip-lbl-${cfg.id}-${pid}">opt: ${optMin}–${optMax} ${cfg.unit}</span>
+                </div>
+              </div>`;
+          }).join("")}
+        </div>
+      </div>`;
+  };
+
+  const STEP_CFGS = [
+    {
+      id:"wash", name:"1. Hetvattentvätt", icon:"🚿", type:"shared",
+      unit:"°C", min:40, max:100, dflt:62, optMin:75, optMax:90,
+      hint:"PET:s esterbindning (─COO─) hydrolyserar vid &gt;90 °C. Hitta temperaturen som tvättar alla tre utan att skada PET.",
+    },
+    {
+      id:"melt", name:"2. Extrudering", icon:"🌡️", type:"per-polymer",
+      unit:"°C",
+      hint:"Varje polymer har sin kristallstruktur — processtemperaturen ska ligga strax ovan Tm. Titta på kemipanelen!",
+      perPoly:{
+        pet:{min:200,max:320,optMin:255,optMax:285,dflt:240},
+        pe: {min:140,max:260,optMin:180,optMax:220,dflt:162},
+        pp: {min:160,max:300,optMin:220,optMax:260,dflt:202},
+      },
+    },
+    {
+      id:"filter", name:"3. Filtrering", icon:"🔬", type:"shared",
+      unit:"µm", min:20, max:500, dflt:250, optMin:20, optMax:150,
+      hint:"Finare mask fångar fler föroreningsfragment. Under 150 µm rekommenderas för food-grade-produkter.",
+    },
+    {
+      id:"blend", name:"4. Jungfruinblandning", icon:"➕", type:"per-polymer",
+      unit:"%",
+      hint:"Tradeoff: jungfru förbättrar kedjolängd och möjliggör food-grade — men varje procent kostar 1,2 kg CO₂.",
+      perPoly:{
+        pet:{min:0,max:50,optMin:15,optMax:50,dflt:0},
+        pe: {min:0,max:50,optMin:0, optMax:50,dflt:0},
+        pp: {min:0,max:50,optMin:0, optMax:50,dflt:0},
+      },
+    },
+  ];
+
+  main.innerHTML = `
+    <div id="proc-hud">
+      <div><span id="proc-score">0</span> <span class="proc-hud-sub">poäng</span></div>
+      <div class="proc-hud-title">Plastens resa · Recyclinganläggning</div>
+      <div id="proc-co2-disp">CO₂: +<span id="proc-co2-val">0</span> kg</div>
+    </div>
+    ${tanksHTML}
+    ${STEP_CFGS.map(stepHTML).join("")}
+    <button id="btn-proc-run" class="btn-main" style="margin:8px auto;display:block">Kör processen! →</button>
+    <div id="proc-product-area" class="hidden">
+      <h3 style="margin:0 0 8px;font-size:.9rem">🏭 Produktmatchning — dra produkterna till rätt polymer</h3>
+      <div id="proc-pool"></div>
+      <div id="proc-drop-row"></div>
+      <button id="btn-proc-finish" class="btn-main hidden" style="margin:10px auto 0;display:block">Se resultat →</button>
+    </div>
+  `;
+
+  bindProcSliders();
+  document.getElementById("btn-proc-run").addEventListener("click", procRunProcess);
+
+  // Build poly tabs in left panel
+  const tabsEl = document.getElementById("proc-poly-tabs");
+  if (tabsEl) {
+    tabsEl.innerHTML = POLY_IDS.map(id =>
+      `<button class="proc-tab${id==="pet"?" active":""}" data-poly="${id}">${POLYMER_CONFIG[id].label}</button>`
+    ).join("");
+    tabsEl.querySelectorAll(".proc-tab").forEach(btn => btn.addEventListener("click", () => {
+      tabsEl.querySelectorAll(".proc-tab").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      renderProcChemPanel(btn.dataset.poly);
+    }));
+  }
+}
+
+function bindProcSliders() {
+  // Shared: wash
+  const bindShared = (id, stateKey) => {
+    const el2 = document.getElementById(`sldr-${id}`);
+    if (!el2) return;
+    el2.addEventListener("input", e => {
+      state.proc.settings[stateKey] = +e.target.value;
+      document.getElementById(`val-${id}`).textContent = e.target.value;
+      updateProcQuality();
+    });
+  };
+  bindShared("wash",   "wash");
+  bindShared("filter", "filter");
+
+  // Per-polymer: melt, blend
+  POLY_IDS.forEach(pid => {
+    ["melt","blend"].forEach(step => {
+      const el2 = document.getElementById(`sldr-${step}-${pid}`);
+      if (!el2) return;
+      el2.addEventListener("input", e => {
+        state.proc.settings[`${step}_${pid}`] = +e.target.value;
+        document.getElementById(`val-${step}-${pid}`).textContent = e.target.value;
+        if (step === "blend") {
+          const lbl = document.getElementById(`pip-lbl-blend-${pid}`);
+          if (lbl) lbl.textContent = `+${(+e.target.value * 1.2).toFixed(0)} kg CO₂`;
+        }
+        updateProcQuality();
+      });
+    });
+  });
+}
+
+function renderProcLog() {
+  const log = document.getElementById("proc-log-body");
+  if (!log) return;
+  const contamPct = state.proc.contamPct;
+  const plastQ    = 100 - contamPct;
+  log.innerHTML = `
+    <div class="plog-sec">
+      <div class="plog-lbl">L2 Batchkvalitet (plast)</div>
+      <div class="plog-bar"><div style="width:${plastQ}%;background:#4CAF50"></div></div>
+      <div class="plog-note">${plastQ}% rent · ${contamPct}% FK/kontaminering</div>
+    </div>
+    <div class="plog-sec">
+      <div class="plog-lbl">Aktuell pelletskvalitet</div>
+      ${POLY_IDS.map(id => {
+        const p = POLYMER_CONFIG[id];
+        const q = state.proc.quality[id];
+        const c = q >= 85 ? "#4CAF50" : q >= 60 ? "#FF9800" : "#ef5350";
+        return `
+          <div class="proc-qual-row">
+            <div class="proc-qual-lbl" style="color:${p.color}">${p.label}</div>
+            <div class="proc-qual-bar"><div style="width:${q}%;background:${c}"></div></div>
+            <div class="proc-qual-pct">${q}%</div>
+          </div>`;
+      }).join("")}
+    </div>
+    ${state.proc.co2 > 0 ? `
+    <div class="plog-sec">
+      <div class="plog-lbl">CO₂-kostnad (jungfru)</div>
+      <div style="font-size:.85rem;font-weight:700;color:#ff8f00">+ ${state.proc.co2} kg CO₂</div>
+      <div class="plog-note">Jungfrupolymer kräver 2–4× mer energi än recycling</div>
+    </div>` : ""}
+    <div class="plog-sec">
+      <div class="plog-lbl">Poäng</div>
+      <div style="font-size:1.1rem;font-weight:700">${state.proc.score}</div>
+    </div>
+  `;
+}
+
+function buildMoleculeHTML(polyId) {
+  const mols = {
+    pet:`<div class="mol-display">
+      <div class="mol-chain">
+        <span class="mol-bond">─</span>
+        <span class="mol-atom">O</span><span class="mol-bond">─</span>
+        <span class="mol-atom">CH₂</span><span class="mol-bond">─</span>
+        <span class="mol-atom">CH₂</span><span class="mol-bond">─</span>
+        <span class="mol-atom">O</span><span class="mol-bond">─</span>
+        <span class="mol-atom ester">C═O</span><span class="mol-bond">─</span>
+        <span class="mol-ring" title="bensenring">⬡</span>
+        <span class="mol-bond">─</span>
+        <span class="mol-atom ester">O─C═O</span><span class="mol-bond">─</span>
+      </div>
+      <div class="mol-note">⬡ = bensenring · ester­bindningarna (C═O) är känsliga för hydrolyse vid &gt;90 °C</div>
+    </div>`,
+    pe:`<div class="mol-display">
+      <div class="mol-chain">
+        <span class="mol-bond">─</span>
+        <span class="mol-bracket">[</span>
+        <span class="mol-atom">CH₂</span><span class="mol-bond">─</span>
+        <span class="mol-atom">CH₂</span>
+        <span class="mol-bracket">]</span><sub class="mol-sub">n</sub>
+        <span class="mol-bond">─</span>
+      </div>
+      <div class="mol-note">Enkel linjär kolkedja utan sidogrupper · hög kristallinitet i HDPE · extremt kemisk inert</div>
+    </div>`,
+    pp:`<div class="mol-display">
+      <div class="mol-chain">
+        <span class="mol-bond">─</span>
+        <span class="mol-bracket">[</span>
+        <span class="mol-atom">CH₂</span><span class="mol-bond">─</span>
+        <span class="mol-atom methyl">CH</span><span class="mol-bond">─</span>
+        <span class="mol-bracket">]</span><sub class="mol-sub">n</sub>
+        <span class="mol-bond">─</span>
+      </div>
+      <div class="mol-branch-note">
+        <span class="mol-atom methyl" style="font-size:.65rem">CH(CH₃)</span>
+        <span style="font-size:.65rem;color:rgba(255,255,255,.5)"> ← metylgrupp på varje tertiärt kol · isotaktisk ordning → kristallint</span>
+      </div>
+      <div class="mol-note">Tertiärt kol oxidationskänsligt — håll temp &lt; 270 °C!</div>
+    </div>`,
+  };
+  return mols[polyId] || "";
+}
+
+function renderProcChemPanel(polyId) {
+  const body = document.getElementById("proc-chem-body");
+  if (!body) return;
+  const p = POLYMER_CONFIG[polyId];
+  const q = state.proc ? state.proc.quality[polyId] : 0;
+  body.innerHTML = `
+    <div class="chem-fullname">${p.fullName}</div>
+    ${buildMoleculeHTML(polyId)}
+    <div class="chem-props">
+      <span class="cpk">Tm</span><span class="cpv">${p.Tm} °C</span>
+      <span class="cpk">Tg</span><span class="cpv">${p.Tg} °C</span>
+      <span class="cpk">Densitet</span><span class="cpv">${p.density} g/cm³</span>
+      <span class="cpk">Kristallinitet</span><span class="cpv">${p.crystallinity}</span>
+    </div>
+    <div class="chem-facts-hdr">Kemiska fakta</div>
+    ${p.facts.map(f=>`
+      <div class="chem-fact">
+        <span class="cf-icon">${f.icon}</span>
+        <div>
+          <strong class="cf-key">${f.key}: ${f.val}</strong>
+          <div class="cf-text">${f.text}</div>
+        </div>
+      </div>`).join("")}
+    <div class="chem-facts-hdr" style="margin-top:10px">Möjliga produkter</div>
+    ${p.products.map(pr=>{
+      const ok = q >= pr.minQuality;
+      return `
+        <div class="chem-product${ok?"":" chem-product-locked"}">
+          <span class="cp-emoji">${pr.emoji}</span>
+          <div class="cp-info">
+            <div class="cp-name">${pr.name}</div>
+            <div class="cp-req">≥${pr.minQuality}% kvalitet${pr.minBlend>0?" · ≥"+pr.minBlend+"% jungfru":""}</div>
+          </div>
+          <span class="cp-status">${ok?"✓":"🔒"}</span>
+        </div>`;
+    }).join("")}
+  `;
+}
+
+// ── Run & product phase ───────────────────────────────────────────────────────
+
+function procRunProcess() {
+  // Award points for optimal slider settings
+  let pts = 0;
+  POLY_IDS.forEach(id => {
+    ["wash","melt","filter"].forEach(step => {
+      const s = procPipStatus(step, id);
+      if (s === "pip-ok")   pts += 15;
+      else if (s === "pip-warn") pts += 5;
+    });
+    const q = state.proc.quality[id];
+    if (q >= 88) pts += 25;
+    else if (q >= 70) pts += 12;
+  });
+  state.proc.score += pts;
+
+  document.getElementById("btn-proc-run").classList.add("hidden");
+  procStartProductPhase();
+}
+
+function procStartProductPhase() {
+  state.proc.phase = "product";
+
+  // Collect all 9 products, shuffle
+  const allProducts = POLY_IDS.flatMap(pid =>
+    POLYMER_CONFIG[pid].products.map(pr => ({...pr, polyId:pid}))
+  ).sort(() => Math.random() - 0.5);
+
+  const area = document.getElementById("proc-product-area");
+  area.classList.remove("hidden");
+
+  document.getElementById("proc-pool").innerHTML = allProducts.map(pr => `
+    <div class="proc-prod-card" id="pcard-${pr.id}" draggable="true"
+         data-product="${pr.id}" data-polymer="${pr.polyId}">
+      <div class="ppc-emoji">${pr.emoji}</div>
+      <div class="ppc-name">${pr.name}</div>
+      <div class="ppc-poly" style="color:${POLYMER_CONFIG[pr.polyId].color}">${POLYMER_CONFIG[pr.polyId].label}</div>
+    </div>`).join("");
+
+  document.getElementById("proc-drop-row").innerHTML = POLY_IDS.map(pid => {
+    const p = POLYMER_CONFIG[pid];
+    const q = state.proc.quality[pid];
+    const qc = q >= 85 ? "#4CAF50" : q >= 60 ? "#FF9800" : "#ef5350";
+    return `
+      <div class="proc-drop-zone" id="drop-${pid}" data-polymer="${pid}">
+        <div class="pdz-label" style="color:${p.color}">${p.label} ${p.emoji}</div>
+        <div class="pdz-quality" style="color:${qc}">Kvalitet: ${q}%</div>
+        <div class="pdz-content" id="drop-content-${pid}"></div>
+      </div>`;
+  }).join("");
+
+  // Drag events on cards
+  document.querySelectorAll(".proc-prod-card").forEach(card => {
+    card.addEventListener("dragstart", e => {
+      e.dataTransfer.setData("text/plain", `${card.dataset.product}|${card.dataset.polymer}`);
+      card.classList.add("ppc-dragging");
+    });
+    card.addEventListener("dragend", () => card.classList.remove("ppc-dragging"));
+  });
+
+  // Drop zones
+  document.querySelectorAll(".proc-drop-zone").forEach(zone => {
+    zone.addEventListener("dragover",  e => { e.preventDefault(); zone.classList.add("pdz-over"); });
+    zone.addEventListener("dragleave", () => zone.classList.remove("pdz-over"));
+    zone.addEventListener("drop", e => {
+      e.preventDefault();
+      zone.classList.remove("pdz-over");
+      const [productId, productPolyId] = e.dataTransfer.getData("text/plain").split("|");
+      procHandleDrop(productId, productPolyId, zone.dataset.polymer);
+    });
+  });
+
+  area.scrollIntoView({behavior:"smooth"});
+}
+
+function procHandleDrop(productId, productPolyId, targetPolyId) {
+  if (state.proc.productsPlaced[productId]) return;
+  const card = document.getElementById(`pcard-${productId}`);
+  if (!card) return;
+
+  if (productPolyId !== targetPolyId) {
+    const zone = document.getElementById(`drop-${targetPolyId}`);
+    zone.classList.add("pdz-bad");
+    setTimeout(() => zone.classList.remove("pdz-bad"), 700);
+    // Shake card
+    card.classList.add("ppc-shake");
+    setTimeout(() => card.classList.remove("ppc-shake"), 400);
+    return;
+  }
+
+  // Correct polymer
+  const product = POLYMER_CONFIG[productPolyId].products.find(p => p.id === productId);
+  if (!product) return;
+  const q = state.proc.quality[targetPolyId];
+  const achievable = q >= product.minQuality && (product.minBlend === 0 || state.proc.settings[`blend_${targetPolyId}`] >= product.minBlend);
+
+  state.proc.productsPlaced[productId] = targetPolyId;
+  card.classList.add("ppc-placed");
+
+  const content = document.getElementById(`drop-content-${targetPolyId}`);
+  content.insertAdjacentHTML("beforeend", `
+    <div class="pdz-item ${achievable?"pdz-item-ok":"pdz-item-down"}" title="${product.fact}">
+      ${product.emoji} ${achievable?"✓":"⚠"}
+    </div>`);
+
+  state.proc.score += achievable ? 50 : 20;
+  const scoreEl = document.getElementById("proc-score");
+  if (scoreEl) scoreEl.textContent = state.proc.score;
+  renderProcLog();
+
+  // Check if all placed
+  const total = POLY_IDS.reduce((n, pid) => n + POLYMER_CONFIG[pid].products.length, 0);
+  if (Object.keys(state.proc.productsPlaced).length >= total) {
+    const finishBtn = document.getElementById("btn-proc-finish");
+    if (finishBtn) {
+      finishBtn.classList.remove("hidden");
+      finishBtn.addEventListener("click", procFinish);
+    }
+  }
+}
+
+function procFinish() {
+  const avgQ = Math.round(POLY_IDS.reduce((s, id) => s + state.proc.quality[id], 0) / POLY_IDS.length);
+  const score = state.proc.score;
+  saveJourneyCleared("plast", avgQ);
+
+  const allDone = POLY_IDS.every(id => state.proc.quality[id] >= 80);
+  el.resStars.textContent   = score >= 380 ? "⭐⭐⭐" : score >= 220 ? "⭐⭐" : "⭐";
+  el.resTitle.textContent   = avgQ >= 80 ? "Plastlinje klar! 🎉" : "Plastlinje avslutad";
+  el.resScore.innerHTML     = `${score} poäng · Snittekvalitet: <strong>${avgQ}%</strong>`;
+  el.resMsg.textContent     = avgQ >= 88
+    ? "Utmärkt! Du uppnådde food-grade-kvalitet på alla fraktioner."
+    : avgQ >= 70
+    ? "Bra jobbat! De flesta produkter är möjliga med din pelletskvalitet."
+    : "Pröva att justera temperaturer, filter och inblandning — kemikortet är din guide.";
+  el.resUnlock.textContent  = allDone ? "🏆 Alla tre polymerfraktioner ≥ 80% — utmärkt recyclingprocess!" : `Genomsnittlig pelletskvalitet: ${avgQ}%`;
+  el.resUnlock.classList.remove("hidden");
+  el.btnRetry.classList.toggle("hidden", avgQ >= 80);
+  el.btnNextStation.classList.add("hidden");
+  el.btnNextJourney.classList.toggle("hidden", avgQ < 80);
+  showScreen("result");
+}
