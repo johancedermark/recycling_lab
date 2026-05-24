@@ -164,6 +164,19 @@
       <span id="quality-pct">100%</span>
     </div>
 
+    <!-- Processflödesindikator (glassortering) -->
+    <div id="process-flow" class="hidden">
+      <div class="pf-step pf-done"  data-pf="0"><span class="pf-icon">🚛</span><span class="pf-lbl">Ankomst</span></div>
+      <div class="pf-arrow">›</div>
+      <div class="pf-step pf-done"  data-pf="1"><span class="pf-icon">🔧</span><span class="pf-lbl">FK-rensning</span></div>
+      <div class="pf-arrow">›</div>
+      <div class="pf-step pf-active" data-pf="2"><span class="pf-icon">🎨</span><span class="pf-lbl">Färgsortering</span></div>
+      <div class="pf-arrow">›</div>
+      <div class="pf-step" data-pf="3"><span class="pf-icon">✅</span><span class="pf-lbl">Kvalitet</span></div>
+      <div class="pf-arrow">›</div>
+      <div class="pf-step" data-pf="4"><span class="pf-icon">🚛</span><span class="pf-lbl">Utlastning</span></div>
+    </div>
+
     <!-- Löpande band -->
     <div id="belt-wrap">
       <div class="roller"></div>
@@ -230,6 +243,30 @@
         <span class="sb-icon">❌</span>
         <span class="sb-lbl">Avvisa — hör ej hit</span>
         <kbd>2</kbd>
+      </button>
+    </div>
+
+    <!-- Glassortering: Klart / Grönt / Brunt / FK -->
+    <div id="glass-sort-row" class="hidden">
+      <button class="gbtn glas-klart" data-gcat="klart">
+        <span class="gb-icon">⬜</span>
+        <span class="gb-lbl">Klart glas</span>
+        <kbd>1</kbd>
+      </button>
+      <button class="gbtn glas-gront" data-gcat="grönt">
+        <span class="gb-icon">🟢</span>
+        <span class="gb-lbl">Grönt glas</span>
+        <kbd>2</kbd>
+      </button>
+      <button class="gbtn glas-brunt" data-gcat="brunt">
+        <span class="gb-icon">🟤</span>
+        <span class="gb-lbl">Brunt glas</span>
+        <kbd>3</kbd>
+      </button>
+      <button class="gbtn glas-fk" data-gcat="fk">
+        <span class="gb-icon">🚫</span>
+        <span class="gb-lbl">FK — avvisa</span>
+        <kbd>4</kbd>
       </button>
     </div>
   </div>

@@ -247,31 +247,50 @@ const LEVEL_INSTRUCTIONS = {
 const STATIONS = [
   {
     id: "glas", name: "Glassortering", icon: "🫙", color: "#4CAF50",
-    desc: "Håll glasbatchen ren — rätt glas kan smältas om oändligt.",
+    mode: "glasSort",
+    desc: "Du jobbar vid sorteringsbandet hos IL Recycling. Separera klart, grönt och brunt glas — och plocka ut FK-kontaminanter.",
     instructions: [
-      "Din uppgift: <strong>acceptera</strong> rätt glasförpackningar, <strong>avvisa</strong> allt annat.",
-      "⚠️ Oljerester vid 1400°C ger missfärgning — <em>en enda flaska kan förstöra hela lasten</em>.",
-      "Keramik och porslin smälter vid fel temperatur och ger sprickor i det återvunna glaset.",
-      "Fönsterglas har annan kemisk sammansättning och hör inte till glasförpackningsflödet.",
-      "Tryck <kbd>1</kbd> för Acceptera &nbsp;·&nbsp; <kbd>2</kbd> för Avvisa &nbsp;·&nbsp; <kbd>Space</kbd> pausar.",
+      "Du befinner dig på <strong>färgsorteringsbandet</strong> hos IL Recycling.",
+      "Varje glasskärva måste till rätt fraktion: <strong>Klart · Grönt · Brunt</strong> — eller <strong>FK-avvisa</strong> (keramik, porslin, stenar).",
+      "⚠️ FK i en fraktion ger stor kvalitetsförlust — en keramikskärva kan förstöra tusentals kg glas.",
+      "Fel färg i fel fraktion är också dyrt — klart glas i grön batch sänker värdet rejält.",
+      "Tryck <kbd>1</kbd> Klart &nbsp;·&nbsp; <kbd>2</kbd> Grönt &nbsp;·&nbsp; <kbd>3</kbd> Brunt &nbsp;·&nbsp; <kbd>4</kbd> FK &nbsp;·&nbsp; <kbd>Space</kbd> pausar.",
     ],
     items: [
-      { id:"sg_wine",    name:"Vinflaska (ren)",          emoji:"🍷", accept:true,  contamination:0,
-        fact:"Ren glasflaska — acceptera! Kan smältas om till ny flaska inom en månad." },
-      { id:"sg_beer",    name:"Ölflaska (utan pant)",     emoji:"🍺", accept:true,  contamination:0,
-        fact:"Glasflaskor utan pant går direkt till glasåtervinning." },
-      { id:"sg_jam",     name:"Syltburk (utan lock)",     emoji:"🫙", accept:true,  contamination:0,
-        fact:"Glasburkar sorteras som glasförpackning. Metallocket tas av och sorteras separat." },
-      { id:"sg_sauce",   name:"Kryddglasburk",            emoji:"🧂", accept:true,  contamination:0,
-        fact:"Alla rena glasförpackningar för mat accepteras i glassorteringen." },
-      { id:"sg_perfume", name:"Parfymflaska (tom)",       emoji:"💜", accept:true,  contamination:0,
-        fact:"Tomma glasflaskor av alla slag hör till glassorteringen." },
-      { id:"sg_oil",     name:"Glasflaska m. oljerester", emoji:"🫒", accept:false, contamination:25,
-        fact:"❗ Oljerester brinner vid 1400°C → missfärgning som förstör HELA lasten. Avvisa alltid!" },
-      { id:"sg_ceramic", name:"Keramikmugg",              emoji:"☕", accept:false, contamination:15,
-        fact:"Keramik smälter vid annan temperatur än glas — ger sprickor i den återvunna produkten." },
-      { id:"sg_window",  name:"Fönsterglas (skärva)",     emoji:"🪟", accept:false, contamination:20,
-        fact:"Fönsterglas innehåller andra mineral som ändrar glasbatchens egenskaper vid smältning." },
+      // KLART GLAS
+      { id:"sg_klar_vin",   name:"Klar vinflaska",         emoji:"🫙", cat:"klart", contamination:0,
+        fact:"Klart glas — mest värdefullt. Smälts om till food-grade livsmedelsförpackningar." },
+      { id:"sg_klar_parfym",name:"Klar parfymflaska",      emoji:"🧴", cat:"klart", contamination:0,
+        fact:"Klart glasflaska — klart fraktion. Kan bli läkemedelsbehållare eller nya parfymflaskor." },
+      { id:"sg_klar_lak",   name:"Apoteksglas (klart)",    emoji:"💊", cat:"klart", contamination:0,
+        fact:"Klart apoteksglas hör till klar fraktion — hög renhet, hög prioritet hos glasproducenten." },
+      { id:"sg_klar_konserv",name:"Glasburk livsmedel",    emoji:"🫙", cat:"klart", contamination:0,
+        fact:"Klar glasburk för mat — klart fraktion. Skölj ur och ta av locket." },
+      { id:"sg_klar_sauce", name:"Klar sauceflaska",       emoji:"🫙", cat:"klart", contamination:0,
+        fact:"Klar glasflaska — klart fraktion. Godkänd för omsmältning till livsmedelsförpackningar." },
+      // GRÖNT GLAS
+      { id:"sg_gron_vin",   name:"Grön vinflaska",         emoji:"🍷", cat:"grönt", contamination:0,
+        fact:"Grön fraktion. Smälts om till nya gröna vinflaskor — glasets kretsloppet på 30 dagar." },
+      { id:"sg_gron_ol",    name:"Grön ölflaska",          emoji:"🍺", cat:"grönt", contamination:0,
+        fact:"Grön ölflaska — grönt fraktion. 100 % återvinningsbar utan kvalitetsförlust." },
+      { id:"sg_gron_mineral",name:"Grön mineralvattenflaska",emoji:"💧", cat:"grönt", contamination:0,
+        fact:"Grön glasflaska — grönt fraktion. Smälts om och återföds som ny glasflaska." },
+      { id:"sg_gron_burk",  name:"Grön glasburk",          emoji:"🫙", cat:"grönt", contamination:0,
+        fact:"Grön glasburk — grönt fraktion. Hör till den gröna smältbatchen." },
+      // BRUNT GLAS
+      { id:"sg_brun_ol",    name:"Brun ölflaska",          emoji:"🍺", cat:"brunt", contamination:0,
+        fact:"Brunt glas (amber) skyddar innehållet mot UV-ljus. Smälts om till nya bruna ölflaskor." },
+      { id:"sg_brun_med",   name:"Medicinflaska (brun)",   emoji:"💊", cat:"brunt", contamination:0,
+        fact:"Brun medicinflaska — brunt fraktion. Glasets UV-skydd bevaras vid korrekt omsmältning." },
+      { id:"sg_brun_sauce", name:"Brun sauceflaska",       emoji:"🫙", cat:"brunt", contamination:0,
+        fact:"Brun glasförpackning — brunt fraktion. Rätt färgsortering är avgörande för slutkvaliteten." },
+      // FK — FOREIGN CULLET (avvisa)
+      { id:"sg_fk_keramik", name:"Keramikskärva",          emoji:"🏺", cat:"fk", contamination:28,
+        fact:"❗ FK! Keramik smälter vid 1600°C — glas vid 1400°C. Blandning ger olösta klumpar som spränger formarna." },
+      { id:"sg_fk_porslin", name:"Porslinsbit",            emoji:"🍽️", cat:"fk", contamination:24,
+        fact:"❗ FK! Porslin innehåller kaolin och fältspat — förorenar glassmältan och ger sprickor i produkten." },
+      { id:"sg_fk_fonster", name:"Fönsterglasbit",         emoji:"🪟", cat:"fk", contamination:22,
+        fact:"❗ FK! Fönsterglas har annan kemisk sammansättning (floatglas) — ger missfärgning och försvagade punkter." },
     ],
   },
   {
@@ -738,6 +757,7 @@ const state = {
   station:         null,  // aktuellt STATIONS-objekt
   quality:         100,   // batchkvalitet 0–100
   isStationMode:   false,
+  isGlassSortMode: false,
   // journey mode (nivå 3)
   journey:         null,  // aktuellt JOURNEYS-objekt
   journeyStageIdx: 0,
@@ -838,6 +858,9 @@ const el = {
   csqPct:       $("csq-pct"),
   csqCircle:    $("csq-circle"),
   btnCsqNext:   $("btn-csq-next"),
+  glassSortRow: $("glass-sort-row"),
+  glassBtns:    document.querySelectorAll(".gbtn"),
+  processFlow:  $("process-flow"),
   dragScr:      $("drag-screen"),
   dragLives:    $("drag-lives"),
   dragScore:    $("drag-score"),
@@ -1324,6 +1347,7 @@ function startStation(station) {
   state.level          = lvl || { id:2, name:station.name, icon:station.icon, lives:3, timePerItem:9000, slideIn:680, beltSpd:"0.44s" };
   state.station        = station;
   state.isStationMode  = true;
+  state.isGlassSortMode = station.mode === "glasSort";
   state.queue          = shuffle(station.items);
   state.idx            = 0;
   state.score          = 0;
@@ -1334,18 +1358,112 @@ function startStation(station) {
   state.phase          = "idle";
 
   el.beltTrack.style.setProperty("--belt-spd", state.level.beltSpd || "0.44s");
-  el.sortRow        = document.getElementById("sort-row");
-  el.sortRow.classList.add("hidden");
+  document.getElementById("sort-row").classList.add("hidden");
   el.restavfallRow.classList.add("hidden");
-  el.stationSortRow.classList.remove("hidden");
   el.qualityRow.classList.remove("hidden");
   el.gameScr.classList.remove("paused");
   el.pauseBadge.classList.add("hidden");
+
+  if (state.isGlassSortMode) {
+    el.stationSortRow.classList.add("hidden");
+    el.glassSortRow.classList.remove("hidden");
+    el.processFlow.classList.remove("hidden");
+  } else {
+    el.stationSortRow.classList.remove("hidden");
+    el.glassSortRow.classList.add("hidden");
+    el.processFlow.classList.add("hidden");
+  }
 
   updateHUD();
   updateQualityMeter();
   showScreen("game");
   setTimeout(loadNextItem, 300);
+}
+
+function sortGlass(fraction) {
+  if (state.phase !== "waiting") return;
+  state.phase = "busy";
+  stopTimer();
+
+  const item   = state.queue[state.idx];
+  const correct = fraction === item.cat;
+  const binBtn  = el.glassSortRow.querySelector(`[data-gcat="${fraction}"]`);
+
+  if (correct) {
+    handleGlassCorrect(item, binBtn, fraction);
+  } else {
+    handleGlassWrong(item, binBtn, fraction);
+  }
+}
+
+function handleGlassCorrect(item, binBtn, fraction) {
+  state.correct++;
+  flashGlassBtn(binBtn, "ok");
+
+  const r  = el.itemCard.getBoundingClientRect();
+  const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+  const col = { klart:"#c8d8e8", grönt:"#66bb6a", brunt:"#a0785a", fk:"#ef5350" };
+  spawnParticles(cx, cy, col[fraction] || "#66bb6a");
+  showToast(`✅ ${fraction === "fk" ? "FK avvisad!" : fraction.charAt(0).toUpperCase() + fraction.slice(1) + " — rätt fraktion!"} ${item.fact}`, "ok");
+
+  flyToBin(binBtn, () => {
+    state.idx++;
+    state.phase = "idle";
+    hideToast();
+    updateHUD();
+    if (state.idx >= state.queue.length) endStation();
+    else setTimeout(loadNextItem, 120);
+  });
+}
+
+function handleGlassWrong(item, binBtn, fraction) {
+  // Bestäm kvalitetspåföljd: FK i fraktion = störst, fel färg = mellanstor, rätt material till FK-korg = liten
+  let penalty, toastText;
+  if (item.cat === "fk") {
+    penalty = item.contamination; // FK accepterad i en fraktion — stor skada
+    toastText = `❌ FK i fraktionen! ${item.fact}`;
+  } else if (fraction === "fk") {
+    penalty = 5; // rätt glas avvisat — förlorat material
+    toastText = `❌ Rätt glasskärva avvisades! Hörde till <strong>${item.cat}</strong>-fraktionen. ${item.fact}`;
+  } else {
+    penalty = 12; // fel färgfraktion — korsförorenar
+    toastText = `❌ Fel färg! Hörde till <strong>${item.cat}</strong>-fraktionen, inte ${fraction}. ${item.fact}`;
+  }
+
+  state.quality = Math.max(0, state.quality - penalty);
+  state.lives--;
+  updateHUD();
+  updateQualityMeter();
+
+  flashGlassBtn(binBtn, "err");
+  el.itemCard.animate([
+    { transform: "translate(-50%,-50%)" },
+    { transform: "translate(calc(-50% - 13px),-50%) rotate(-3deg)" },
+    { transform: "translate(calc(-50% + 13px),-50%) rotate(3deg)" },
+    { transform: "translate(-50%,-50%)" },
+  ], { duration: 370, easing: "ease" });
+
+  showToast(toastText);
+  if (state.lives <= 0) { setTimeout(() => endStation(), 700); return; }
+
+  setTimeout(() => {
+    slideItemOut(() => {
+      state.idx++;
+      state.phase = "idle";
+      hideToast();
+      updateHUD();
+      if (state.idx >= state.queue.length) endStation();
+      else loadNextItem();
+    });
+  }, 2400);
+}
+
+function flashGlassBtn(btn, type) {
+  if (!btn) return;
+  btn.classList.remove("anim-ok", "anim-err");
+  void btn.offsetWidth;
+  btn.classList.add(type === "ok" ? "anim-ok" : "anim-err");
+  setTimeout(() => btn.classList.remove("anim-ok", "anim-err"), 400);
 }
 
 function sortStation(accept) {
@@ -1476,11 +1594,14 @@ function endStation() {
   el.btnNextStation.classList.toggle("hidden", !cleared || allCleared);
   el.btnRetry.classList.toggle("hidden", cleared);
 
-  // Återställ sorteringsraden (isStationMode = false, men behåll state.station för retry)
+  // Återställ sorteringsraden
   document.getElementById("sort-row").classList.remove("hidden");
   el.stationSortRow.classList.add("hidden");
+  el.glassSortRow.classList.add("hidden");
+  el.processFlow.classList.add("hidden");
   el.qualityRow.classList.add("hidden");
-  state.isStationMode = false;
+  state.isStationMode   = false;
+  state.isGlassSortMode = false;
 
   showScreen("result");
 }
@@ -1941,6 +2062,10 @@ el.beltTrack.addEventListener("click", resumeGame);
 document.getElementById("btn-station-back")
   .addEventListener("click", () => { renderLevelCards(); showScreen("levels"); });
 
+el.glassBtns.forEach(btn => {
+  btn.addEventListener("click", () => sortGlass(btn.dataset.gcat));
+});
+
 document.addEventListener("keydown", e => {
   if (e.key === " ") {
     e.preventDefault();
@@ -1949,6 +2074,11 @@ document.addEventListener("keydown", e => {
     return;
   }
   if (e.key === "Enter") return;
+  if (state.isGlassSortMode && state.phase === "waiting") {
+    const gmap = { "1":"klart", "2":"grönt", "3":"brunt", "4":"fk" };
+    if (gmap[e.key]) sortGlass(gmap[e.key]);
+    return;
+  }
   if (state.isStationMode && state.phase === "waiting") {
     if (e.key === "1") sortStation(true);
     if (e.key === "2") sortStation(false);

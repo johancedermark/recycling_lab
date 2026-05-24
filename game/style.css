@@ -604,6 +604,73 @@ kbd {
   opacity: 0.25; pointer-events: none; transition: opacity 0.2s;
 }
 
+/* ══ PROCESSFLÖDESINDIKATOR (glassortering) ══ */
+#process-flow {
+  display: flex; align-items: center; justify-content: center;
+  gap: 4px; width: 100%; max-width: 640px;
+  background: rgba(0,0,0,0.30); border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 12px; padding: 7px 12px;
+}
+.pf-step {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 2px; opacity: 0.32; transition: opacity 0.3s;
+}
+.pf-step.pf-done   { opacity: 0.55; }
+.pf-step.pf-active { opacity: 1; }
+.pf-icon { font-size: 1rem; line-height: 1; }
+.pf-lbl  { font-size: 0.52rem; color: var(--muted); white-space: nowrap; }
+.pf-step.pf-active .pf-lbl { color: #84e060; font-weight: 700; }
+.pf-arrow { font-size: 0.85rem; color: rgba(255,255,255,0.22); flex-shrink: 0; }
+#game-screen.paused #process-flow { opacity: 0.25; transition: opacity 0.2s; }
+
+/* ══ GLASSORTERINGSKNAPPAR (4 fraktioner) ══ */
+#glass-sort-row {
+  display: flex; gap: 10px; width: 100%; max-width: 640px;
+}
+.gbtn {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 4px;
+  min-height: 88px; border: none; border-radius: 16px;
+  cursor: pointer; font-family: inherit;
+  transition: filter 0.15s, transform 0.1s, box-shadow 0.1s;
+}
+.gbtn:hover  { filter: brightness(1.12); }
+.gbtn:active { transform: translateY(5px) !important; }
+.gb-icon { font-size: 1.6rem; line-height: 1; }
+.gb-lbl  { font-size: 0.72rem; font-weight: 700; line-height: 1.2; text-align: center; }
+.gbtn kbd {
+  font-size: 0.6rem; background: rgba(0,0,0,0.25);
+  border: 1px solid rgba(255,255,255,0.2); border-radius: 4px;
+  padding: 1px 6px; color: rgba(255,255,255,0.7);
+}
+.gbtn.anim-ok  { animation: flash-ok  0.35s ease; }
+.gbtn.anim-err { animation: flash-err 0.35s ease; }
+
+.glas-klart {
+  background: linear-gradient(152deg, #e8e8e8, #a8b8c8);
+  color: #1a2030; box-shadow: 0 6px 0 #607080, 0 10px 18px rgba(0,0,0,.35);
+}
+.glas-klart:active  { box-shadow: 0 1px 0 #607080; }
+.glas-gront {
+  background: linear-gradient(152deg, #66bb6a, #2e7d32);
+  color: #fff; box-shadow: 0 6px 0 #1a4a1e, 0 10px 18px rgba(0,0,0,.35);
+}
+.glas-gront:active  { box-shadow: 0 1px 0 #1a4a1e; }
+.glas-brunt {
+  background: linear-gradient(152deg, #a0785a, #6d4c41);
+  color: #fff; box-shadow: 0 6px 0 #3e2723, 0 10px 18px rgba(0,0,0,.35);
+}
+.glas-brunt:active  { box-shadow: 0 1px 0 #3e2723; }
+.glas-fk {
+  background: linear-gradient(152deg, #ef5350, #b71c1c);
+  color: #fff; box-shadow: 0 6px 0 #7f0000, 0 10px 18px rgba(0,0,0,.35);
+}
+.glas-fk:active     { box-shadow: 0 1px 0 #7f0000; }
+
+#game-screen.paused #glass-sort-row {
+  opacity: 0.25; pointer-events: none; transition: opacity 0.2s;
+}
+
 /* ══ SLIDER-SKÄRM (Nivå 3 kalibrering) ══ */
 .slider-panel { max-width: 520px; }
 .sldr-body {
