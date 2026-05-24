@@ -226,6 +226,12 @@ kbd {
   /* position managed via JS transform */
   transform: translate(-50%, -50%);
 }
+.ic-img {
+  width: 80px; height: 80px;
+  object-fit: contain;
+  border-radius: 8px;
+  display: block; margin: 0 auto;
+}
 #ic-emoji { font-size: 3rem; line-height: 1; }
 #ic-name  { font-size: 0.95rem; font-weight: 700; margin-top: 4px; }
 

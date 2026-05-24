@@ -807,6 +807,7 @@ const el = {
   progVal:      $("prog-val"),
   beltTrack:    $("belt-track"),
   itemCard:     $("item-card"),
+  icImg:        $("ic-img"),
   icEmoji:      $("ic-emoji"),
   icName:       $("ic-name"),
   icSymbol:     $("ic-symbol"),
@@ -1634,7 +1635,6 @@ function loadNextItem() {
   if (state.idx >= state.queue.length) { endLevel(); return; }
 
   const item = state.queue[state.idx];
-  el.icEmoji.textContent = item.emoji;
   el.icName.textContent  = item.name;
 
   if (item.condition) {
@@ -1659,7 +1659,24 @@ function loadNextItem() {
     el.icSymbol.innerHTML = "";
   }
 
-  slideItemIn();
+  // Try to show a real image; fall back to emoji. Slide in after image resolves.
+  const imgSrc = `assets/items/${item.id}.jpg`;
+  const probe  = new Image();
+  const doSlide = (hasImg) => {
+    if (hasImg) {
+      el.icImg.src = imgSrc;
+      el.icImg.classList.remove("hidden");
+      el.icEmoji.classList.add("hidden");
+    } else {
+      el.icImg.classList.add("hidden");
+      el.icEmoji.textContent = item.emoji;
+      el.icEmoji.classList.remove("hidden");
+    }
+    slideItemIn();
+  };
+  probe.onload  = () => doSlide(true);
+  probe.onerror = () => doSlide(false);
+  probe.src = imgSrc;
 }
 
 function slideItemIn() {
