@@ -31,6 +31,10 @@ body {
   position: fixed; inset: 0; z-index: 0;
   background: url('assets/bg.png') center / cover no-repeat;
   filter: brightness(0.52) saturate(1.25);
+  transition: background-image .4s;
+}
+#bg.proc-mode {
+  background-image: url('assets/plast_process_bg.jpg');
 }
 
 /* ── Skärmar ── */
@@ -938,16 +942,18 @@ kbd {
 /* ═══ PROCESS SCREEN (Nivå 3 — plastflöde) ═══════════════════════════════ */
 #process-screen {
   display: grid;
-  grid-template-columns: 222px 1fr 222px;
+  grid-template-columns: 290px 1fr 222px;
+  grid-template-rows: 100%;
   height: 100%;
   overflow: hidden;
   background: transparent;
 }
 .proc-side-panel {
-  background: rgba(8,16,26,.58);
-  backdrop-filter: blur(8px);
+  background: rgba(8,16,26,.62);
+  backdrop-filter: blur(10px);
   overflow-y: auto;
-  padding: 12px 10px;
+  min-height: 0;
+  padding: 14px 12px;
   border-right: 1px solid rgba(255,255,255,.07);
 }
 #proc-right { border-right: none; border-left: 1px solid rgba(255,255,255,.07); }
@@ -956,7 +962,7 @@ kbd {
   color: rgba(255,255,255,.4); padding-bottom: 8px;
   border-bottom: 1px solid rgba(255,255,255,.09); margin-bottom: 8px;
 }
-#proc-main { overflow-y: auto; padding: 8px 12px; display: flex; flex-direction: column; gap: 8px; }
+#proc-main { overflow-y: auto; min-height: 0; padding: 8px 12px; display: flex; flex-direction: column; gap: 8px; }
 
 /* Tabs */
 .proc-tabs { display: flex; gap: 4px; margin-bottom: 8px; }
@@ -1131,6 +1137,6 @@ kbd {
 .pdz-item-down { background: rgba(255,152,0,.2); color: #FFB74D; }
 
 @media (max-width: 900px) {
-  #process-screen { grid-template-columns: 180px 1fr 0; }
+  #process-screen { grid-template-columns: 220px 1fr 0; }
   #proc-right { display: none; }
 }

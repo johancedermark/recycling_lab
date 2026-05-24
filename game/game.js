@@ -1166,6 +1166,7 @@ function resumeGame() {
 // =====================================================
 
 function showScreen(name) {
+  el.bg.classList.toggle("proc-mode", name === "process");
   [el.startScr, el.levelScr, el.stationScr, el.journeyScr, el.instructionScr,
    el.gameScr, el.dragScr, el.sliderScr, el.consequenceScr, el.processScr, el.resultScr]
     .forEach(s => s.classList.add("hidden"));
