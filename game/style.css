@@ -756,6 +756,14 @@ kbd {
 .ms-brunt { background:linear-gradient(152deg,#a0785a,#6d4c41); color:#fff;    box-shadow:0 6px 0 #3e2723,0 10px 18px rgba(0,0,0,.35); }
 .ms-brunt:active { box-shadow:0 1px 0 #3e2723; }
 
+/* ── Papper-fraktioner ── */
+.ms-tidn  { background:linear-gradient(152deg,#f5f0dc,#bcad7a); color:#2a2000; box-shadow:0 6px 0 #7a6a3a,0 10px 18px rgba(0,0,0,.35); }
+.ms-tidn:active  { box-shadow:0 1px 0 #7a6a3a; }
+.ms-kart  { background:linear-gradient(152deg,#d7a76a,#8d6e3a); color:#fff;    box-shadow:0 6px 0 #4e342e,0 10px 18px rgba(0,0,0,.35); }
+.ms-kart:active  { box-shadow:0 1px 0 #4e342e; }
+.ms-dryck { background:linear-gradient(152deg,#80cbc4,#00796b); color:#fff;    box-shadow:0 6px 0 #004d40,0 10px 18px rgba(0,0,0,.35); }
+.ms-dryck:active { box-shadow:0 1px 0 #004d40; }
+
 /* ── Plast-fraktioner ── */
 .ms-pet   { background:linear-gradient(152deg,#80d8ff,#0288d1); color:#fff;    box-shadow:0 6px 0 #01579b,0 10px 18px rgba(0,0,0,.35); }
 .ms-pet:active   { box-shadow:0 1px 0 #01579b; }
@@ -787,6 +795,9 @@ kbd {
 .ms-dot-stal  { background:rgba(84,110,122,0.08);  border-color:rgba(84,110,122,0.22) !important; }
 .ms-dot-bland { background:rgba(245,127,23,0.10);  border-color:rgba(245,127,23,0.22) !important; }
 .ms-dot-fk    { background:rgba(239,83,80,0.08);   border-color:rgba(239,83,80,0.20) !important; }
+.ms-dot-tidn  { background:rgba(188,173,122,0.10); border-color:rgba(188,173,122,0.25) !important; }
+.ms-dot-kart  { background:rgba(141,110,58,0.10);  border-color:rgba(141,110,58,0.25) !important; }
+.ms-dot-dryck { background:rgba(0,121,107,0.08);   border-color:rgba(0,121,107,0.22) !important; }
 
 #game-screen.paused #multi-sort-row {
   opacity: 0.25; pointer-events: none; transition: opacity 0.2s;
