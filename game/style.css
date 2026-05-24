@@ -948,6 +948,10 @@ kbd {
   height: 100%;
   overflow: hidden;
   background: transparent;
+  transition: grid-template-columns 0.45s ease;
+}
+#process-screen.proc-expanded {
+  grid-template-columns: 430px 1fr 200px;
 }
 .proc-side-panel {
   background: rgba(8,16,26,.62);

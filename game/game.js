@@ -2664,6 +2664,7 @@ function startPlasticProcess() {
   renderProcChemPanel("pet");
   updateProcQuality();
   showScreen("process");
+  el.processScr.classList.add("proc-expanded");
 }
 
 // ── Quality maths ────────────────────────────────────────────────────────────
@@ -3106,6 +3107,7 @@ function procRunProcess() {
   });
   state.proc.score += pts;
 
+  el.processScr.classList.remove("proc-expanded");
   document.getElementById("btn-proc-run").classList.add("hidden");
   procStartProductPhase();
 }
