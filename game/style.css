@@ -610,8 +610,8 @@ kbd {
   opacity: 0.25; pointer-events: none; transition: opacity 0.2s;
 }
 
-/* ══ GLASSORTERING SIDOPANELER ══ */
-.glass-side-panel {
+/* ══ MULTISORTERING SIDOPANELER ══ */
+.multi-side-panel {
   position: absolute; top: 10px; bottom: 10px;
   width: 258px;
   background: rgba(6,16,28,0.82);
@@ -623,8 +623,8 @@ kbd {
   overflow-y: auto;
   z-index: 6;
 }
-#glass-panel-left  { left: 10px; }
-#glass-panel-right { right: 10px; }
+#multi-panel-left  { left: 10px; }
+#multi-panel-right { right: 10px; }
 
 .gsp-header {
   font-size: 0.74rem; font-weight: 800; letter-spacing: 0.1em;
@@ -683,11 +683,11 @@ kbd {
 
 /* Dölj sidopaneler på smala skärmar */
 @media (max-width: 1200px) {
-  .glass-side-panel { display: none !important; }
+  .multi-side-panel { display: none !important; }
 }
 
-/* ══ GLASSORTERING STARTÖVERLAPP ══ */
-#glass-start-overlay {
+/* ══ MULTISORTERING STARTÖVERLAPP ══ */
+#multi-start-overlay {
   display: flex; flex-direction: column; align-items: center; gap: 14px;
   width: 100%; max-width: 640px;
   padding: 22px 28px;
@@ -725,51 +725,70 @@ kbd {
 .pf-arrow { font-size: 0.85rem; color: rgba(255,255,255,0.22); flex-shrink: 0; }
 #game-screen.paused #process-flow { opacity: 0.25; transition: opacity 0.2s; }
 
-/* ══ GLASSORTERINGSKNAPPAR (4 fraktioner) ══ */
-#glass-sort-row {
+/* ══ MULTISORTERINGSKNAPPAR (generiska, renderade av JS) ══ */
+#multi-sort-row {
   display: flex; gap: 10px; width: 100%; max-width: 640px;
 }
-.gbtn {
+.mstn-btn {
   flex: 1; display: flex; flex-direction: column;
   align-items: center; justify-content: center; gap: 4px;
   min-height: 88px; border: none; border-radius: 16px;
   cursor: pointer; font-family: inherit;
   transition: filter 0.15s, transform 0.1s, box-shadow 0.1s;
 }
-.gbtn:hover  { filter: brightness(1.12); }
-.gbtn:active { transform: translateY(5px) !important; }
-.gb-icon { font-size: 1.6rem; line-height: 1; }
-.gb-lbl  { font-size: 0.72rem; font-weight: 700; line-height: 1.2; text-align: center; }
-.gbtn kbd {
+.mstn-btn:hover  { filter: brightness(1.12); }
+.mstn-btn:active { transform: translateY(5px) !important; }
+.mstn-icon { font-size: 1.6rem; line-height: 1; }
+.mstn-lbl  { font-size: 0.72rem; font-weight: 700; line-height: 1.2; text-align: center; }
+.mstn-btn kbd {
   font-size: 0.6rem; background: rgba(0,0,0,0.25);
   border: 1px solid rgba(255,255,255,0.2); border-radius: 4px;
   padding: 1px 6px; color: rgba(255,255,255,0.7);
 }
-.gbtn.anim-ok  { animation: flash-ok  0.35s ease; }
-.gbtn.anim-err { animation: flash-err 0.35s ease; }
+.mstn-btn.anim-ok  { animation: flash-ok  0.35s ease; }
+.mstn-btn.anim-err { animation: flash-err 0.35s ease; }
 
-.glas-klart {
-  background: linear-gradient(152deg, #e8e8e8, #a8b8c8);
-  color: #1a2030; box-shadow: 0 6px 0 #607080, 0 10px 18px rgba(0,0,0,.35);
-}
-.glas-klart:active  { box-shadow: 0 1px 0 #607080; }
-.glas-gront {
-  background: linear-gradient(152deg, #66bb6a, #2e7d32);
-  color: #fff; box-shadow: 0 6px 0 #1a4a1e, 0 10px 18px rgba(0,0,0,.35);
-}
-.glas-gront:active  { box-shadow: 0 1px 0 #1a4a1e; }
-.glas-brunt {
-  background: linear-gradient(152deg, #a0785a, #6d4c41);
-  color: #fff; box-shadow: 0 6px 0 #3e2723, 0 10px 18px rgba(0,0,0,.35);
-}
-.glas-brunt:active  { box-shadow: 0 1px 0 #3e2723; }
-.glas-fk {
-  background: linear-gradient(152deg, #ef5350, #b71c1c);
-  color: #fff; box-shadow: 0 6px 0 #7f0000, 0 10px 18px rgba(0,0,0,.35);
-}
-.glas-fk:active     { box-shadow: 0 1px 0 #7f0000; }
+/* ── Glas-fraktioner ── */
+.ms-klart { background:linear-gradient(152deg,#e8e8e8,#a8b8c8); color:#1a2030; box-shadow:0 6px 0 #607080,0 10px 18px rgba(0,0,0,.35); }
+.ms-klart:active { box-shadow:0 1px 0 #607080; }
+.ms-gront { background:linear-gradient(152deg,#66bb6a,#2e7d32); color:#fff;    box-shadow:0 6px 0 #1a4a1e,0 10px 18px rgba(0,0,0,.35); }
+.ms-gront:active { box-shadow:0 1px 0 #1a4a1e; }
+.ms-brunt { background:linear-gradient(152deg,#a0785a,#6d4c41); color:#fff;    box-shadow:0 6px 0 #3e2723,0 10px 18px rgba(0,0,0,.35); }
+.ms-brunt:active { box-shadow:0 1px 0 #3e2723; }
 
-#game-screen.paused #glass-sort-row {
+/* ── Plast-fraktioner ── */
+.ms-pet   { background:linear-gradient(152deg,#80d8ff,#0288d1); color:#fff;    box-shadow:0 6px 0 #01579b,0 10px 18px rgba(0,0,0,.35); }
+.ms-pet:active   { box-shadow:0 1px 0 #01579b; }
+.ms-pe    { background:linear-gradient(152deg,#b0bec5,#607d8b); color:#fff;    box-shadow:0 6px 0 #37474f,0 10px 18px rgba(0,0,0,.35); }
+.ms-pe:active    { box-shadow:0 1px 0 #37474f; }
+.ms-pp    { background:linear-gradient(152deg,#ffcc02,#ff8f00); color:#3a1f00; box-shadow:0 6px 0 #e65100,0 10px 18px rgba(0,0,0,.35); }
+.ms-pp:active    { box-shadow:0 1px 0 #e65100; }
+
+/* ── Metall-fraktioner ── */
+.ms-alu   { background:linear-gradient(152deg,#eeeeee,#bdbdbd); color:#1a1a1a; box-shadow:0 6px 0 #757575,0 10px 18px rgba(0,0,0,.35); }
+.ms-alu:active   { box-shadow:0 1px 0 #757575; }
+.ms-stal  { background:linear-gradient(152deg,#90a4ae,#546e7a); color:#fff;    box-shadow:0 6px 0 #263238,0 10px 18px rgba(0,0,0,.35); }
+.ms-stal:active  { box-shadow:0 1px 0 #263238; }
+.ms-bland { background:linear-gradient(152deg,#ffca28,#f57f17); color:#2a1500; box-shadow:0 6px 0 #e65100,0 10px 18px rgba(0,0,0,.35); }
+.ms-bland:active { box-shadow:0 1px 0 #e65100; }
+
+/* ── FK (delad av alla stationer) ── */
+.ms-fk    { background:linear-gradient(152deg,#ef5350,#b71c1c); color:#fff;    box-shadow:0 6px 0 #7f0000,0 10px 18px rgba(0,0,0,.35); }
+.ms-fk:active    { box-shadow:0 1px 0 #7f0000; }
+
+/* ── Paneldots (utgående fraktioner) ── */
+.ms-dot-klart { background:rgba(200,216,232,0.08); border-color:rgba(200,216,232,0.18) !important; }
+.ms-dot-gront { background:rgba(86,192,64,0.08);   border-color:rgba(86,192,64,0.22) !important; }
+.ms-dot-brunt { background:rgba(160,120,90,0.10);  border-color:rgba(160,120,90,0.22) !important; }
+.ms-dot-pet   { background:rgba(2,136,209,0.08);   border-color:rgba(2,136,209,0.22) !important; }
+.ms-dot-pe    { background:rgba(96,125,139,0.08);  border-color:rgba(96,125,139,0.22) !important; }
+.ms-dot-pp    { background:rgba(255,143,0,0.08);   border-color:rgba(255,143,0,0.22) !important; }
+.ms-dot-alu   { background:rgba(189,189,189,0.10); border-color:rgba(189,189,189,0.25) !important; }
+.ms-dot-stal  { background:rgba(84,110,122,0.08);  border-color:rgba(84,110,122,0.22) !important; }
+.ms-dot-bland { background:rgba(245,127,23,0.10);  border-color:rgba(245,127,23,0.22) !important; }
+.ms-dot-fk    { background:rgba(239,83,80,0.08);   border-color:rgba(239,83,80,0.20) !important; }
+
+#game-screen.paused #multi-sort-row {
   opacity: 0.25; pointer-events: none; transition: opacity 0.2s;
 }
 

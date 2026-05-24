@@ -247,7 +247,7 @@ const LEVEL_INSTRUCTIONS = {
 const STATIONS = [
   {
     id: "glas", name: "Glassortering", icon: "🫙", color: "#4CAF50",
-    mode: "glasSort",
+    mode: "multiSort",
     desc: "Du jobbar vid sorteringsbandet hos IL Recycling. Separera klart, grönt och brunt glas — och plocka ut FK-kontaminanter.",
     instructions: [
       "Du befinner dig på <strong>färgsorteringsbandet</strong> hos IL Recycling.",
@@ -256,128 +256,239 @@ const STATIONS = [
       "Fel färg i fel fraktion är också dyrt — klart glas i grön batch sänker värdet rejält.",
       "Tryck <kbd>1</kbd> Klart &nbsp;·&nbsp; <kbd>2</kbd> Grönt &nbsp;·&nbsp; <kbd>3</kbd> Brunt &nbsp;·&nbsp; <kbd>4</kbd> FK &nbsp;·&nbsp; <kbd>Space</kbd> pausar.",
     ],
+    fractions: [
+      { key:"klart", label:"Klart glas",  icon:"⬜", kbd:"1", cls:"ms-klart", particleColor:"#c8d8e8" },
+      { key:"grönt", label:"Grönt glas",  icon:"🟢", kbd:"2", cls:"ms-gront", particleColor:"#66bb6a" },
+      { key:"brunt", label:"Brunt glas",  icon:"🟤", kbd:"3", cls:"ms-brunt", particleColor:"#a0785a" },
+      { key:"fk",    label:"FK — avvisa", icon:"🚫", kbd:"4", cls:"ms-fk",    particleColor:"#ef5350" },
+    ],
+    processSteps: [
+      { icon:"🚛", label:"Ankomst",      done:true  },
+      { icon:"🔧", label:"FK-rensning",  done:true  },
+      { icon:"🎨", label:"Färgsortering",active:true },
+      { icon:"✅", label:"Kvalitet"                  },
+      { icon:"🚛", label:"Utlastning"                },
+    ],
+    panelLeft: {
+      header: "Inkommande",
+      img: "assets/glass_incoming.jpg",
+      steps: [
+        { done:true,   text:"🚛 Lastbil anländer med blandat glas från hushållen" },
+        { done:true,   text:"⚖️ Vägning och stickprovskontroll av FK-halt" },
+        { done:true,   text:"🔧 Grovsortering — metalldelar och kartong rensas bort" },
+        { active:true, text:"🎨 Färgsorteringsbandet — <strong>du är här</strong>" },
+      ],
+      note: "Glaset krossas till skärv (cullet) och sorteras i tre rena fraktioner + FK-avfall.",
+    },
+    panelRight: {
+      header: "Utgående fraktioner",
+      img: "assets/glass_outgoing.jpg",
+      fractions: [
+        { cls:"ms-dot-klart", dot:"⬜", name:"Klart glas",          dest:"→ Ardagh, Verallia",    note:"Livsmedelsflaskor, apoteksglas" },
+        { cls:"ms-dot-gront", dot:"🟢", name:"Grönt glas",          dest:"→ Glasproducenter",      note:"Vinflaskor, läskflaskor" },
+        { cls:"ms-dot-brunt", dot:"🟤", name:"Brunt glas",          dest:"→ Bryggeriindustrin",    note:"Ölflaskor, medicinflaskor" },
+        { cls:"ms-dot-fk",    dot:"🚫", name:"FK — Foreign Cullet", dest:"→ Deponi / vägfyllnad",  note:"Inget återvinningsvärde" },
+      ],
+    },
     items: [
       // KLART GLAS
-      { id:"sg_klar_vin",   name:"Klar vinflaska",         emoji:"🫙", cat:"klart", contamination:0,
+      { id:"sg_klar_vin",    name:"Klar vinflaska",          emoji:"🫙", cat:"klart", contamination:0,
         fact:"Klart glas — mest värdefullt. Smälts om till food-grade livsmedelsförpackningar." },
-      { id:"sg_klar_parfym",name:"Klar parfymflaska",      emoji:"🧴", cat:"klart", contamination:0,
-        fact:"Klart glasflaska — klart fraktion. Kan bli läkemedelsbehållare eller nya parfymflaskor." },
-      { id:"sg_klar_lak",   name:"Apoteksglas (klart)",    emoji:"💊", cat:"klart", contamination:0,
+      { id:"sg_klar_parfym", name:"Klar parfymflaska",       emoji:"🧴", cat:"klart", contamination:0,
+        fact:"Klar glasflaska — klart fraktion. Kan bli läkemedelsbehållare eller nya parfymflaskor." },
+      { id:"sg_klar_lak",    name:"Apoteksglas (klart)",     emoji:"💊", cat:"klart", contamination:0,
         fact:"Klart apoteksglas hör till klar fraktion — hög renhet, hög prioritet hos glasproducenten." },
-      { id:"sg_klar_konserv",name:"Glasburk livsmedel",    emoji:"🫙", cat:"klart", contamination:0,
+      { id:"sg_klar_konserv",name:"Glasburk livsmedel",      emoji:"🫙", cat:"klart", contamination:0,
         fact:"Klar glasburk för mat — klart fraktion. Skölj ur och ta av locket." },
-      { id:"sg_klar_sauce", name:"Klar sauceflaska",       emoji:"🫙", cat:"klart", contamination:0,
+      { id:"sg_klar_sauce",  name:"Klar sauceflaska",        emoji:"🫙", cat:"klart", contamination:0,
         fact:"Klar glasflaska — klart fraktion. Godkänd för omsmältning till livsmedelsförpackningar." },
       // GRÖNT GLAS
-      { id:"sg_gron_vin",   name:"Grön vinflaska",         emoji:"🍷", cat:"grönt", contamination:0,
-        fact:"Grön fraktion. Smälts om till nya gröna vinflaskor — glasets kretsloppet på 30 dagar." },
-      { id:"sg_gron_ol",    name:"Grön ölflaska",          emoji:"🍺", cat:"grönt", contamination:0,
+      { id:"sg_gron_vin",    name:"Grön vinflaska",          emoji:"🍷", cat:"grönt", contamination:0,
+        fact:"Grön fraktion. Smälts om till nya gröna vinflaskor — glasets kretslopp på 30 dagar." },
+      { id:"sg_gron_ol",     name:"Grön ölflaska",           emoji:"🍺", cat:"grönt", contamination:0,
         fact:"Grön ölflaska — grönt fraktion. 100 % återvinningsbar utan kvalitetsförlust." },
       { id:"sg_gron_mineral",name:"Grön mineralvattenflaska",emoji:"💧", cat:"grönt", contamination:0,
         fact:"Grön glasflaska — grönt fraktion. Smälts om och återföds som ny glasflaska." },
-      { id:"sg_gron_burk",  name:"Grön glasburk",          emoji:"🫙", cat:"grönt", contamination:0,
+      { id:"sg_gron_burk",   name:"Grön glasburk",           emoji:"🫙", cat:"grönt", contamination:0,
         fact:"Grön glasburk — grönt fraktion. Hör till den gröna smältbatchen." },
       // BRUNT GLAS
-      { id:"sg_brun_ol",    name:"Brun ölflaska",          emoji:"🍺", cat:"brunt", contamination:0,
-        fact:"Brunt glas (amber) skyddar innehållet mot UV-ljus. Smälts om till nya bruna ölflaskor." },
-      { id:"sg_brun_med",   name:"Medicinflaska (brun)",   emoji:"💊", cat:"brunt", contamination:0,
+      { id:"sg_brun_ol",     name:"Brun ölflaska",           emoji:"🍺", cat:"brunt", contamination:0,
+        fact:"Brunt glas (amber) skyddar mot UV-ljus. Smälts om till nya bruna ölflaskor." },
+      { id:"sg_brun_med",    name:"Medicinflaska (brun)",    emoji:"💊", cat:"brunt", contamination:0,
         fact:"Brun medicinflaska — brunt fraktion. Glasets UV-skydd bevaras vid korrekt omsmältning." },
-      { id:"sg_brun_sauce", name:"Brun sauceflaska",       emoji:"🫙", cat:"brunt", contamination:0,
-        fact:"Brun glasförpackning — brunt fraktion. Rätt färgsortering är avgörande för slutkvaliteten." },
+      { id:"sg_brun_sauce",  name:"Brun sauceflaska",        emoji:"🫙", cat:"brunt", contamination:0,
+        fact:"Brun glasförpackning — brunt fraktion. Rätt färgsortering avgör slutkvaliteten." },
       // FK — FOREIGN CULLET (avvisa)
-      { id:"sg_fk_keramik", name:"Keramikskärva",          emoji:"🏺", cat:"fk", contamination:28,
-        fact:"❗ FK! Keramik smälter vid 1600°C — glas vid 1400°C. Blandning ger olösta klumpar som spränger formarna." },
-      { id:"sg_fk_porslin", name:"Porslinsbit",            emoji:"🍽️", cat:"fk", contamination:24,
-        fact:"❗ FK! Porslin innehåller kaolin och fältspat — förorenar glassmältan och ger sprickor i produkten." },
-      { id:"sg_fk_fonster", name:"Fönsterglasbit",         emoji:"🪟", cat:"fk", contamination:22,
-        fact:"❗ FK! Fönsterglas har annan kemisk sammansättning (floatglas) — ger missfärgning och försvagade punkter." },
+      { id:"sg_fk_keramik",  name:"Keramikskärva",           emoji:"🏺", cat:"fk", contamination:28,
+        fact:"❗ FK! Keramik smälter vid 1600°C — glas vid 1400°C. Ger olösta klumpar som spränger formarna." },
+      { id:"sg_fk_porslin",  name:"Porslinsbit",             emoji:"🍽️", cat:"fk", contamination:24,
+        fact:"❗ FK! Porslin innehåller kaolin och fältspat — förorenar glassmältan och ger sprickor." },
+      { id:"sg_fk_fonster",  name:"Fönsterglasbit",          emoji:"🪟", cat:"fk", contamination:22,
+        fact:"❗ FK! Fönsterglas (floatglas) har annan sammansättning — ger missfärgning och svagheter." },
     ],
   },
   {
     id: "plast", name: "Plastsortering", icon: "♻️", color: "#F5A623",
-    desc: "Plast har många sorter — blandning förstör materialet.",
+    mode: "multiSort",
+    desc: "IR-kameror läser av varje plastföremåls polymerkod. Din uppgift: sortera till rätt polymerfraktion.",
     instructions: [
-      "Din uppgift: <strong>acceptera</strong> rätt plastförpackningar, <strong>avvisa</strong> allt annat.",
-      "⚠️ Svart plast: IR-sensorer kan inte läsa av polymersorten — okänd plast stoppar processen.",
-      "PVC (plastkod 3) frigör saltsyra vid smältning — farligt för maskiner och personal.",
-      "Matfett och matrester i plast stör fiberseparationen — kraftigt smutsig plast avvisas.",
-      "Tryck <kbd>1</kbd> för Acceptera &nbsp;·&nbsp; <kbd>2</kbd> för Avvisa &nbsp;·&nbsp; <kbd>Space</kbd> pausar.",
+      "Du jobbar vid <strong>IR-sorteringsbandet</strong> hos Stena Recycling.",
+      "Varje plastföremål tillhör en polymerfraktion: <strong>PET · PE · PP</strong> — eller <strong>FK</strong> (kan ej återvinnas här).",
+      "⚠️ PVC (kod 3) frigör HCl vid smältning — förstör maskiner. FK med hög kontamination sänker batchvärdet.",
+      "Svart plast är IR-blind — kan inte identifieras av kameror → FK.",
+      "Tryck <kbd>1</kbd> PET &nbsp;·&nbsp; <kbd>2</kbd> PE &nbsp;·&nbsp; <kbd>3</kbd> PP &nbsp;·&nbsp; <kbd>4</kbd> FK &nbsp;·&nbsp; <kbd>Space</kbd> pausar.",
     ],
+    fractions: [
+      { key:"pet", label:"PET ♳",       icon:"♳", kbd:"1", cls:"ms-pet",  particleColor:"#64b5f6" },
+      { key:"pe",  label:"PE ♴♶",       icon:"♴", kbd:"2", cls:"ms-pe",   particleColor:"#90a4ae" },
+      { key:"pp",  label:"PP ♷",        icon:"♷", kbd:"3", cls:"ms-pp",   particleColor:"#ffa726" },
+      { key:"fk",  label:"FK — avvisa", icon:"🚫", kbd:"4", cls:"ms-fk",   particleColor:"#ef5350" },
+    ],
+    processSteps: [
+      { icon:"🚛", label:"Ankomst",     done:true  },
+      { icon:"🔍", label:"IR-scanning", done:true  },
+      { icon:"🤖", label:"Polymersort", active:true },
+      { icon:"✅", label:"Kvalitet"                 },
+      { icon:"📦", label:"Balning"                  },
+    ],
+    panelLeft: {
+      header: "Inkommande",
+      img: "assets/plast_incoming.jpg",
+      steps: [
+        { done:true,   text:"🚛 Blandad plastinsamling anländer i lastbil" },
+        { done:true,   text:"🔍 NIR-kameror skannar varje föremål (Near-Infrared)" },
+        { done:true,   text:"💨 Luftdysor sorterar till rätt fack automatiskt" },
+        { active:true, text:"🤖 Manuell kontroll — <strong>du är här</strong>" },
+      ],
+      note: "NIR-kameror identifierar polymersorten på 0,1 sekund. Svart plast absorberar IR — syns ej.",
+    },
+    panelRight: {
+      header: "Utgående fraktioner",
+      img: "assets/plast_outgoing.jpg",
+      fractions: [
+        { cls:"ms-dot-pet", dot:"♳", name:"PET ♳",          dest:"→ Wellman, Radici",       note:"Fibrer, nya flaskor, fleece" },
+        { cls:"ms-dot-pe",  dot:"♴", name:"PE ♴♶",          dest:"→ Borealis, Trioplast",   note:"Rör, påsar, flaskor" },
+        { cls:"ms-dot-pp",  dot:"♷", name:"PP ♷",           dest:"→ Borealis, Lyondell",    note:"Burkar, bilar, leksaker" },
+        { cls:"ms-dot-fk",  dot:"🚫", name:"FK — avvisa",    dest:"→ Energiåtervinning",     note:"Bränsle, ingen materialloop" },
+      ],
+    },
     items: [
-      { id:"sp_pet",    name:"PET-flaska (ren)",       emoji:"🍶", accept:true,  contamination:0,
-        fact:"Ren PET-flaska (kod 1) — acceptera! En av de lättaste plasterna att återvinna." },
-      { id:"sp_hdpe",   name:"HDPE-schampoflaska",     emoji:"🧴", accept:true,  contamination:0,
-        fact:"HDPE (kod 2) är robust — återvinns till rör, lekplatsutrustning och nya flaskor." },
-      { id:"sp_pp",     name:"PP-yoghurtburk (skölj)", emoji:"🫙", accept:true,  contamination:0,
-        fact:"PP (kod 5) behöver bara skölja lätt — inte diska. Acceptera!" },
-      { id:"sp_ldpe",   name:"Plastpåsar (knytte)",    emoji:"🛍️", accept:true,  contamination:0,
-        fact:"LDPE-påsar (kod 4) som knytte — acceptera!" },
-      { id:"sp_lid",    name:"Plastlock (PP)",          emoji:"🔵", accept:true,  contamination:0,
-        fact:"Plastlock av PP sorteras som plastförpackning — acceptera!" },
-      { id:"sp_black",  name:"Svart plastbehållare",   emoji:"⬛", accept:false, contamination:15,
-        fact:"Svart plast: IR-sensorer kan inte identifiera polymersorten → okänd plast i batchen. Avvisa!" },
-      { id:"sp_pvc",    name:"PVC-flaska (kod 3)",     emoji:"🧪", accept:false, contamination:20,
-        fact:"PVC (kod 3) frigör saltsyra (HCl) vid smältning — förstör maskiner och skadar miljön." },
-      { id:"sp_greasy", name:"Fettigt plastlock",      emoji:"🍕", accept:false, contamination:10,
-        fact:"Kraftiga matrester stör plastsmältningen. Lätt-smutsig plast ok — men detta avvisas." },
-    ],
-  },
-  {
-    id: "papper", name: "Papperssortering", icon: "📄", color: "#4A90E2",
-    desc: "Pappersfibrer förkortas varje cykel — föroreningar förstör hela omgången.",
-    instructions: [
-      "Din uppgift: <strong>acceptera</strong> rent papper/kartong, <strong>avvisa</strong> allt annat.",
-      "⚠️ Fettfläckar från pizza tränger in i fibrerna — kan <em>inte</em> tvättas bort i pappersmassaprocessen.",
-      "Pappersförpackningar med plastlaminat (muggar, smörpapper) är inte pappersåtervinning.",
-      "Blött papper ruttnar och sprider mögel till hela lasten — avvisa alltid.",
-      "Tryck <kbd>1</kbd> för Acceptera &nbsp;·&nbsp; <kbd>2</kbd> för Avvisa &nbsp;·&nbsp; <kbd>Space</kbd> pausar.",
-    ],
-    items: [
-      { id:"sk_news",     name:"Dagstidning (torr)",       emoji:"📰", accept:true,  contamination:0,
-        fact:"Torra tidningar och reklam — acceptera! Återvinns till nytt papper." },
-      { id:"sk_cardboard",name:"Wellpappkartong (ren)",    emoji:"📦", accept:true,  contamination:0,
-        fact:"Ren kartong — acceptera! Vik platt. Tejp behöver inte tas bort." },
-      { id:"sk_envelope", name:"Kuvert (utan plastfönster)",emoji:"✉️", accept:true,  contamination:0,
-        fact:"Vanliga kuvert utan plastfönster — acceptera!" },
-      { id:"sk_cereal",   name:"Flingpaket (tomt, rent)",  emoji:"🥣", accept:true,  contamination:0,
-        fact:"Tomma, rena matkartonger — acceptera!" },
-      { id:"sk_paperbag", name:"Papperspåse (ren)",        emoji:"🛍️", accept:true,  contamination:0,
-        fact:"Rena papperspåsar accepteras i papperssorteringen." },
-      { id:"sk_pizza",    name:"Pizzakartong (fettfläck)", emoji:"🍕", accept:false, contamination:15,
-        fact:"Fett tränger djupt in i pappersfibrer och kan inte tvättas bort — förstör pappersmassa." },
-      { id:"sk_wax",      name:"Smörpapper (vaxat)",       emoji:"🧈", accept:false, contamination:10,
-        fact:"Vaxlager hindrar fiberseparering och fastnar i maskinen." },
-      { id:"sk_cup",      name:"Pappersmugg (plastlaminat)",emoji:"☕", accept:false, contamination:12,
-        fact:"Pappersmuggar har ett plastskikt inuti — separeras inte bra och stör pappersmassan." },
+      // PET ♳
+      { id:"sp2_pet_vatten",  name:"Klar PET-vattenflaska",     emoji:"🍶", cat:"pet", contamination:0,
+        fact:"PET ♳ — transparent och lätt. Smälts om till fibrer, nya PET-flaskor och fleecejackor." },
+      { id:"sp2_pet_lask",    name:"PET-läskflaska",            emoji:"🥤", cat:"pet", contamination:0,
+        fact:"PET ♳ — en av de mest återvunna plasterna i världen. Håll locket på!" },
+      { id:"sp2_pet_juice",   name:"PET-juiceflaska (klar)",    emoji:"🧃", cat:"pet", contamination:0,
+        fact:"Transparent PET-förpackning. Skölj ur och behåll locket — höjer materialvärdet." },
+      { id:"sp2_pet_olja",    name:"PET-matoljefflaska",        emoji:"🫒", cat:"pet", contamination:0,
+        fact:"PET ♳ — trots den oljiga resten återvinns den korrekt. Töm men skölj inte." },
+      // PE ♴♶
+      { id:"sp2_pe_shampo",   name:"HDPE-schampoflaska",        emoji:"🧴", cat:"pe", contamination:0,
+        fact:"HDPE ♴ — robust polyeten. Återvinns till dräneringsrör, bänkar och nya flaskor." },
+      { id:"sp2_pe_rengoring",name:"HDPE-rengöringsflaska",     emoji:"🫧", cat:"pe", contamination:0,
+        fact:"HDPE ♴ — tung polyeten. Separeras på densitet från lättare LDPE i vattenbadet." },
+      { id:"sp2_pe_pase",     name:"Plastpåsar (knytte LDPE)",  emoji:"🛍️", cat:"pe", contamination:0,
+        fact:"LDPE ♶ — mjuk film-plast. Samla i knytte så fastnar de inte i maskinerna." },
+      { id:"sp2_pe_mjolkflaska",name:"HDPE-mjölkflaska",        emoji:"🥛", cat:"pe", contamination:0,
+        fact:"HDPE ♴ — tål mejeriprodukter. Skölj ur och återvinn som PE-fraktion." },
+      // PP ♷
+      { id:"sp2_pp_yoghurt",  name:"PP-yoghurtburk",            emoji:"🫙", cat:"pp", contamination:0,
+        fact:"PP ♷ — tål höga temperaturer. Skölj lätt (behöver inte vara ren) och sortera som PP." },
+      { id:"sp2_pp_margarin",  name:"PP-margarinskål",           emoji:"🧈", cat:"pp", contamination:0,
+        fact:"PP ♷ — rund matbehållare. Skölj ur fettet och sortera till PP-fraktionen." },
+      { id:"sp2_pp_lock",     name:"PP-plastlock",              emoji:"🔵", cat:"pp", contamination:0,
+        fact:"PP ♷ — håll locket på flaskan! PP och PET separeras automatiskt i processen." },
+      { id:"sp2_pp_mat",      name:"PP-matbehållare",           emoji:"📦", cat:"pp", contamination:0,
+        fact:"PP ♷ — stabil och kemikaliebeständig. En av de vanligaste matplasterna." },
+      // FK — kan ej sorteras i dessa fraktioner
+      { id:"sp2_fk_pvc",      name:"PVC-flaska (kod 3)",        emoji:"🧪", cat:"fk", contamination:22,
+        fact:"❗ FK! PVC ♸ frigör saltsyra (HCl) vid smältning — förstör maskiner och skadar personalen." },
+      { id:"sp2_fk_svart",    name:"Svart plastbehållare",      emoji:"⬛", cat:"fk", contamination:15,
+        fact:"❗ FK! Svart plast absorberar NIR-ljus helt — kameran ser ingenting. Okänd polymer → FK." },
+      { id:"sp2_fk_ps",       name:"EPS-skumkorg (polystyren)", emoji:"🧊", cat:"fk", contamination:10,
+        fact:"FK! EPS (expanderad polystyren) är luftfyllt och lågt densitet — förstör kompaktering." },
+      { id:"sp2_fk_laminat",  name:"Laminatpåse (komposit)",   emoji:"🫙", cat:"fk", contamination:18,
+        fact:"❗ FK! Laminat = plast + aluminiumfolie limmade ihop — kan inte separeras kemiskt. Bränsle." },
     ],
   },
   {
     id: "metall", name: "Metallsortering", icon: "🔩", color: "#8E9EAB",
-    desc: "Metall återvinns oändligt — men farliga föremål stoppar processen.",
+    mode: "multiSort",
+    desc: "Metall sorteras på magnetism och densitet. Din uppgift: rätt metallfraktion — och håll farligt avfall borta.",
     instructions: [
-      "Din uppgift: <strong>acceptera</strong> rena metallförpackningar, <strong>avvisa</strong> farliga föremål.",
-      "⚠️ Batterier innehåller litium — ett enda batteri kan orsaka brand i hela sorteringsanläggningen.",
-      "Halvfulla sprayburkar kan explodera i hydraulpressen — acceptera bara tomma.",
-      "Belagd metall (färg, gummipackning) kontaminerar metallsmältan och ger sämre kvalitet.",
-      "Tryck <kbd>1</kbd> för Acceptera &nbsp;·&nbsp; <kbd>2</kbd> för Avvisa &nbsp;·&nbsp; <kbd>Space</kbd> pausar.",
+      "Du jobbar vid <strong>metallsorteringen</strong> hos SYSAV.",
+      "Tre metallfraktioner: <strong>Aluminium · Stål · Blandmetall</strong> — plus <strong>FK</strong> (farligt/ej metall).",
+      "⚠️ Batterier är brandrisk — ett litiumpaket kan starta brand i hela lagret. FK direkt!",
+      "Stål är magnetiskt — aluminium och koppar är det inte. Densiteten skiljer dem åt vidare.",
+      "Tryck <kbd>1</kbd> Alu &nbsp;·&nbsp; <kbd>2</kbd> Stål &nbsp;·&nbsp; <kbd>3</kbd> Blandmetall &nbsp;·&nbsp; <kbd>4</kbd> FK &nbsp;·&nbsp; <kbd>Space</kbd> pausar.",
     ],
+    fractions: [
+      { key:"aluminium",   label:"Aluminium",    icon:"⬜", kbd:"1", cls:"ms-alu",   particleColor:"#b0bec5" },
+      { key:"stål",        label:"Stål / Järn",  icon:"🔩", kbd:"2", cls:"ms-stal",  particleColor:"#78909c" },
+      { key:"blandmetall", label:"Blandmetall",  icon:"🟡", kbd:"3", cls:"ms-bland", particleColor:"#ffa726" },
+      { key:"fk",          label:"FK / Farligt", icon:"🚫", kbd:"4", cls:"ms-fk",    particleColor:"#ef5350" },
+    ],
+    processSteps: [
+      { icon:"🚛", label:"Ankomst",     done:true  },
+      { icon:"🧲", label:"Magnetsort",  done:true  },
+      { icon:"🔩", label:"Fraktsort",   active:true },
+      { icon:"✅", label:"Kvalitet"                 },
+      { icon:"🔥", label:"Smältning"                },
+    ],
+    panelLeft: {
+      header: "Inkommande",
+      img: "assets/metall_incoming.jpg",
+      steps: [
+        { done:true,   text:"🚛 Blandad metallinsamling anländer" },
+        { done:true,   text:"🧲 Överbandmagnet plockar ut järn och stål" },
+        { done:true,   text:"⚡ Virvelströmsseparator skjuter ut aluminium" },
+        { active:true, text:"🔩 Manuell fraktionssortering — <strong>du är här</strong>" },
+      ],
+      note: "Magneten fångar järnhaltigt stål (ferromagnetiskt). Aluminium är icke-magnetiskt men ledande — virvelströmmen kastas ut.",
+    },
+    panelRight: {
+      header: "Utgående fraktioner",
+      img: "assets/metall_outgoing.jpg",
+      fractions: [
+        { cls:"ms-dot-alu",   dot:"⬜", name:"Aluminium",     dest:"→ Hydro, Novelis",         note:"Nya burkar, bildelar, folie" },
+        { cls:"ms-dot-stal",  dot:"🔩", name:"Stål / Järn",   dest:"→ SSAB, stålverk",          note:"Armeringsstål, nya plåtar" },
+        { cls:"ms-dot-bland", dot:"🟡", name:"Blandmetall",   dest:"→ Boliden, Aurubis",        note:"Koppar, mässing, guld ur kretskort" },
+        { cls:"ms-dot-fk",    dot:"🚫", name:"FK / Farligt",  dest:"→ Farligt avfall/deponi",   note:"Batterier, elektronik, blandat" },
+      ],
+    },
     items: [
-      { id:"sm_alu",     name:"Aluminiumburk (ren)",  emoji:"🥤", accept:true,  contamination:0,
-        fact:"Aluminium återvinns med bara 5 % av energin jämfört med primärproduktion. Acceptera!" },
-      { id:"sm_steel",   name:"Stålkonservburk",      emoji:"🥫", accept:true,  contamination:0,
-        fact:"Stålburkar kan vara tillbaka på hyllan inom 60 dagar. Acceptera!" },
-      { id:"sm_foil",    name:"Aluminiumfolie (boll)", emoji:"✨", accept:true,  contamination:0,
-        fact:"Hopbakad ren aluminiumfolie — acceptera!" },
-      { id:"sm_cap",     name:"Metallkapsyl",          emoji:"🔘", accept:true,  contamination:0,
-        fact:"Metallkapsylar sorteras som metallförpackning — acceptera!" },
-      { id:"sm_lid",     name:"Metalllock (rent)",     emoji:"⚙️", accept:true,  contamination:0,
-        fact:"Rena metalllock sorteras som metallförpackning — acceptera!" },
-      { id:"sm_battery", name:"Batteri (AAA)",         emoji:"🔋", accept:false, contamination:25,
-        fact:"❗ Litium-batterier kan orsaka brand i sorteringsanläggningen. Tillhör farligt avfall!" },
-      { id:"sm_aerosol", name:"Halvfull sprayburk",    emoji:"💨", accept:false, contamination:20,
-        fact:"Trycksatta sprayburkar kan explodera i hydraulpressen — bara tomma accepteras." },
-      { id:"sm_painted", name:"Målad metalldel",       emoji:"🎨", accept:false, contamination:10,
-        fact:"Färgrester kontaminerar metallsmältan och ger en svagare slutprodukt." },
+      // ALUMINIUM
+      { id:"sm2_alu_burk",    name:"Aluminiumburk (läskburk)", emoji:"🥤", cat:"aluminium", contamination:0,
+        fact:"Aluminium återvinns med 5 % av primärenergin och kan cykla oändligt utan kvalitetsförlust." },
+      { id:"sm2_alu_folie",   name:"Aluminiumfolie (boll)",    emoji:"✨", cat:"aluminium", contamination:0,
+        fact:"Hopbakad aluminiumfolie är lättidentifierad alu. Balla ihop den — annars fastnar den i maskinen." },
+      { id:"sm2_alu_tub",     name:"Aluminiumtub (tandkräm)",  emoji:"🪥", cat:"aluminium", contamination:0,
+        fact:"Aluminiumtuber är mjuk alu-legering — högt metallvärde, återvinns i aluminiumsmältan." },
+      { id:"sm2_alu_lock",    name:"Aluminiumlock",            emoji:"🔵", cat:"aluminium", contamination:0,
+        fact:"Runda aluminiummlock från glasburkar — aluminium, inte stål. Icke-magnetiska." },
+      // STÅL
+      { id:"sm2_stal_konserv",name:"Konservburk (stål)",       emoji:"🥫", cat:"stål", contamination:0,
+        fact:"Stål (tinplåt) — magnetisk. Stålburkar kan vara tillbaka på hyllan inom 60 dagar." },
+      { id:"sm2_stal_spray",  name:"Tom stålsprayburk",        emoji:"💨", cat:"stål", contamination:0,
+        fact:"Tom sprayburk av stål — stål-fraktion. Viktigt: bara tomma! Trycksatt → brandrisk." },
+      { id:"sm2_stal_lock",   name:"Stållock (från glasburk)", emoji:"⚙️", cat:"stål", contamination:0,
+        fact:"Stållock är magnetiska — särskiljs enkelt från aluminium. Sorteras som stål." },
+      { id:"sm2_stal_plat",   name:"Plåtburk (kakao/pulver)", emoji:"🫙", cat:"stål", contamination:0,
+        fact:"Cylindrisk plåtburk av stål — stål-fraktion. Magnetisk och tät tinplåt." },
+      // BLANDMETALL
+      { id:"sm2_bland_koppar",name:"Kopparrörsfragment",       emoji:"🟠", cat:"blandmetall", contamination:0,
+        fact:"Koppar — rödgult, icke-magnetiskt. Värdefullt: ~60 kr/kg. Elektrisk kretskrets och VVS." },
+      { id:"sm2_bland_massing",name:"Mässingsskruv/-bult",     emoji:"🟡", cat:"blandmetall", contamination:0,
+        fact:"Mässing (koppar+zink) — guldfärgad och tyngre än alu. Icke-magnetisk, hög densitet." },
+      { id:"sm2_bland_kabel", name:"Elektrisk kabel (blank)",  emoji:"🔌", cat:"blandmetall", contamination:0,
+        fact:"Kabelkoppar — högt värde men kräver strippning av plastisoleringen i nästa steg." },
+      // FK — farligt eller ej metall
+      { id:"sm2_fk_batteri",  name:"AA-batteri (alkaliskt)",   emoji:"🔋", cat:"fk", contamination:30,
+        fact:"❗ FK! Alkalibatterier innehåller mangan och zink — litium-variantens risk för brand. Farligt avfall!" },
+      { id:"sm2_fk_litium",   name:"Litiumbatteri (knappcell)", emoji:"⚡", cat:"fk", contamination:35,
+        fact:"❗ FK! Litiumbatterier kan termiskt gå i runaway och starta brand. ALDRIG i metallfraktionen." },
+      { id:"sm2_fk_elektronik",name:"PCB-kortfragment",        emoji:"🖥️", cat:"fk", contamination:20,
+        fact:"❗ FK! Elektronikkort (PCB) innehåller bly, kadmium och flamskyddsmedel. Tillhör WEEE-flödet." },
     ],
   },
   {
@@ -757,7 +868,8 @@ const state = {
   station:         null,  // aktuellt STATIONS-objekt
   quality:         100,   // batchkvalitet 0–100
   isStationMode:   false,
-  isGlassSortMode: false,
+  isMultiSortMode: false,
+  multiSortKbdMap: {},
   // journey mode (nivå 3)
   journey:         null,  // aktuellt JOURNEYS-objekt
   journeyStageIdx: 0,
@@ -859,13 +971,12 @@ const el = {
   csqPct:       $("csq-pct"),
   csqCircle:    $("csq-circle"),
   btnCsqNext:   $("btn-csq-next"),
-  glassSortRow:     $("glass-sort-row"),
-  glassBtns:        document.querySelectorAll(".gbtn"),
-  processFlow:      $("process-flow"),
-  glassPanelLeft:   $("glass-panel-left"),
-  glassPanelRight:  $("glass-panel-right"),
-  glassStartOverlay:$("glass-start-overlay"),
-  btnGlassStart:    $("btn-glass-start"),
+  multiSortRow:      $("multi-sort-row"),
+  processFlow:       $("process-flow"),
+  multiPanelLeft:    $("multi-panel-left"),
+  multiPanelRight:   $("multi-panel-right"),
+  multiStartOverlay: $("multi-start-overlay"),
+  btnMultiStart:     $("btn-multi-start"),
   dragScr:      $("drag-screen"),
   dragLives:    $("drag-lives"),
   dragScore:    $("drag-score"),
@@ -1352,7 +1463,7 @@ function startStation(station) {
   state.level          = lvl || { id:2, name:station.name, icon:station.icon, lives:3, timePerItem:9000, slideIn:680, beltSpd:"0.44s" };
   state.station        = station;
   state.isStationMode  = true;
-  state.isGlassSortMode = station.mode === "glasSort";
+  state.isMultiSortMode = station.mode === "multiSort";
   state.queue          = shuffle(station.items);
   state.idx            = 0;
   state.score          = 0;
@@ -1369,59 +1480,108 @@ function startStation(station) {
   el.gameScr.classList.remove("paused");
   el.pauseBadge.classList.add("hidden");
 
-  if (state.isGlassSortMode) {
+  if (state.isMultiSortMode) {
     el.stationSortRow.classList.add("hidden");
-    el.glassSortRow.classList.add("hidden");        // shown after start click
+    el.multiSortRow.classList.add("hidden");        // shown after start click
     el.processFlow.classList.remove("hidden");
-    el.glassPanelLeft.classList.remove("hidden");
-    el.glassPanelRight.classList.remove("hidden");
-    el.glassStartOverlay.classList.remove("hidden");
+    el.multiPanelLeft.classList.remove("hidden");
+    el.multiPanelRight.classList.remove("hidden");
+    el.multiStartOverlay.classList.remove("hidden");
     el.gameScr.classList.add("belt-ltr");
-    el.btnGlassStart.onclick = () => {
-      el.glassStartOverlay.classList.add("hidden");
-      el.glassSortRow.classList.remove("hidden");
+    renderMultiSortUI(station);
+    el.btnMultiStart.onclick = () => {
+      el.multiStartOverlay.classList.add("hidden");
+      el.multiSortRow.classList.remove("hidden");
       loadNextItem();
     };
   } else {
     el.stationSortRow.classList.remove("hidden");
-    el.glassSortRow.classList.add("hidden");
+    el.multiSortRow.classList.add("hidden");
     el.processFlow.classList.add("hidden");
-    el.glassPanelLeft.classList.add("hidden");
-    el.glassPanelRight.classList.add("hidden");
-    el.glassStartOverlay.classList.add("hidden");
+    el.multiPanelLeft.classList.add("hidden");
+    el.multiPanelRight.classList.add("hidden");
+    el.multiStartOverlay.classList.add("hidden");
   }
 
   updateHUD();
   updateQualityMeter();
   showScreen("game");
-  if (!state.isGlassSortMode) setTimeout(loadNextItem, 300);
+  if (!state.isMultiSortMode) setTimeout(loadNextItem, 300);
 }
 
-function sortGlass(fraction) {
+// ── Generisk multiSort (glass, plast, metall) ──────────────────────────────
+
+function renderMultiSortUI(station) {
+  // Sort buttons
+  el.multiSortRow.innerHTML = "";
+  state.multiSortKbdMap = {};
+  station.fractions.forEach(f => {
+    state.multiSortKbdMap[f.kbd] = f.key;
+    const btn = document.createElement("button");
+    btn.className = `mstn-btn ${f.cls}`;
+    btn.dataset.mcat = f.key;
+    btn.innerHTML = `<span class="mstn-icon">${f.icon}</span><span class="mstn-lbl">${f.label}</span><kbd>${f.kbd}</kbd>`;
+    btn.addEventListener("click", () => sortMulti(f.key));
+    el.multiSortRow.appendChild(btn);
+  });
+
+  // Process flow
+  if (station.processSteps) {
+    el.processFlow.innerHTML = station.processSteps.map((s, i) =>
+      (i > 0 ? '<div class="pf-arrow">›</div>' : "") +
+      `<div class="pf-step ${s.done ? "pf-done" : s.active ? "pf-active" : ""}" data-pf="${i}">` +
+      `<span class="pf-icon">${s.icon}</span><span class="pf-lbl">${s.label}</span></div>`
+    ).join("");
+  }
+
+  // Left panel
+  const L = station.panelLeft;
+  el.multiPanelLeft.innerHTML = `
+    <div class="gsp-header">${L.header}</div>
+    <img src="${L.img}" class="gsp-img" alt="" onerror="this.style.display='none'">
+    <ol class="gsp-steps">
+      ${L.steps.map(s => `<li class="${s.active ? "gsp-active" : s.done ? "gsp-done" : ""}">${s.text}</li>`).join("")}
+    </ol>
+    ${L.note ? `<div class="gsp-note">${L.note}</div>` : ""}`;
+
+  // Right panel
+  const R = station.panelRight;
+  el.multiPanelRight.innerHTML = `
+    <div class="gsp-header">${R.header}</div>
+    <img src="${R.img}" class="gsp-img" alt="" onerror="this.style.display='none'">
+    <ul class="gsp-fractions">
+      ${R.fractions.map(f => `
+        <li class="${f.cls}">
+          <span class="gsf-dot">${f.dot}</span>
+          <div><strong>${f.name}</strong><br>${f.dest}<br><em>${f.note}</em></div>
+        </li>`).join("")}
+    </ul>`;
+}
+
+function sortMulti(fraction) {
   if (state.phase !== "waiting") return;
   state.phase = "busy";
   stopTimer();
 
-  const item   = state.queue[state.idx];
+  const item    = state.queue[state.idx];
   const correct = fraction === item.cat;
-  const binBtn  = el.glassSortRow.querySelector(`[data-gcat="${fraction}"]`);
+  const binBtn  = el.multiSortRow.querySelector(`[data-mcat="${fraction}"]`);
 
-  if (correct) {
-    handleGlassCorrect(item, binBtn, fraction);
-  } else {
-    handleGlassWrong(item, binBtn, fraction);
-  }
+  if (correct) handleMultiCorrect(item, binBtn, fraction);
+  else         handleMultiWrong(item, binBtn, fraction);
 }
 
-function handleGlassCorrect(item, binBtn, fraction) {
+function handleMultiCorrect(item, binBtn, fraction) {
   state.correct++;
-  flashGlassBtn(binBtn, "ok");
+  flashSortBtn(binBtn, "ok");
 
   const r  = el.itemCard.getBoundingClientRect();
   const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
-  const col = { klart:"#c8d8e8", grönt:"#66bb6a", brunt:"#a0785a", fk:"#ef5350" };
-  spawnParticles(cx, cy, col[fraction] || "#66bb6a");
-  showToast(`✅ ${fraction === "fk" ? "FK avvisad!" : fraction.charAt(0).toUpperCase() + fraction.slice(1) + " — rätt fraktion!"} ${item.fact}`, "ok");
+  const fracData = state.station.fractions.find(f => f.key === fraction);
+  spawnParticles(cx, cy, fracData?.particleColor || "#66bb6a");
+
+  const label = fracData ? fracData.label : fraction;
+  showToast(`✅ ${fraction === "fk" ? "FK avvisad!" : label + " — rätt fraktion!"} ${item.fact}`, "ok");
 
   flyToBin(binBtn, () => {
     state.idx++;
@@ -1433,18 +1593,19 @@ function handleGlassCorrect(item, binBtn, fraction) {
   });
 }
 
-function handleGlassWrong(item, binBtn, fraction) {
-  // Bestäm kvalitetspåföljd: FK i fraktion = störst, fel färg = mellanstor, rätt material till FK-korg = liten
+function handleMultiWrong(item, binBtn, fraction) {
   let penalty, toastText;
+  const correctLabel = state.station.fractions.find(f => f.key === item.cat)?.label || item.cat;
+
   if (item.cat === "fk") {
-    penalty = item.contamination; // FK accepterad i en fraktion — stor skada
+    penalty   = item.contamination;
     toastText = `❌ FK i fraktionen! ${item.fact}`;
   } else if (fraction === "fk") {
-    penalty = 5; // rätt glas avvisat — förlorat material
-    toastText = `❌ Rätt glasskärva avvisades! Hörde till <strong>${item.cat}</strong>-fraktionen. ${item.fact}`;
+    penalty   = 5;
+    toastText = `❌ Rätt material avvisades! Hörde till <strong>${correctLabel}</strong>. ${item.fact}`;
   } else {
-    penalty = 12; // fel färgfraktion — korsförorenar
-    toastText = `❌ Fel färg! Hörde till <strong>${item.cat}</strong>-fraktionen, inte ${fraction}. ${item.fact}`;
+    penalty   = 12;
+    toastText = `❌ Fel fraktion! Hörde till <strong>${correctLabel}</strong>. ${item.fact}`;
   }
 
   state.quality = Math.max(0, state.quality - penalty);
@@ -1452,13 +1613,13 @@ function handleGlassWrong(item, binBtn, fraction) {
   updateHUD();
   updateQualityMeter();
 
-  flashGlassBtn(binBtn, "err");
+  flashSortBtn(binBtn, "err");
   el.itemCard.animate([
-    { transform: "translate(-50%,-50%)" },
-    { transform: "translate(calc(-50% - 13px),-50%) rotate(-3deg)" },
-    { transform: "translate(calc(-50% + 13px),-50%) rotate(3deg)" },
-    { transform: "translate(-50%,-50%)" },
-  ], { duration: 370, easing: "ease" });
+    { transform:"translate(-50%,-50%)" },
+    { transform:"translate(calc(-50% - 13px),-50%) rotate(-3deg)" },
+    { transform:"translate(calc(-50% + 13px),-50%) rotate(3deg)" },
+    { transform:"translate(-50%,-50%)" },
+  ], { duration:370, easing:"ease" });
 
   showToast(toastText);
   if (state.lives <= 0) { setTimeout(() => endStation(), 700); return; }
@@ -1475,7 +1636,7 @@ function handleGlassWrong(item, binBtn, fraction) {
   }, 2400);
 }
 
-function flashGlassBtn(btn, type) {
+function flashSortBtn(btn, type) {
   if (!btn) return;
   btn.classList.remove("anim-ok", "anim-err");
   void btn.offsetWidth;
@@ -1614,15 +1775,15 @@ function endStation() {
   // Återställ sorteringsraden
   document.getElementById("sort-row").classList.remove("hidden");
   el.stationSortRow.classList.add("hidden");
-  el.glassSortRow.classList.add("hidden");
+  el.multiSortRow.classList.add("hidden");
   el.processFlow.classList.add("hidden");
-  el.glassPanelLeft.classList.add("hidden");
-  el.glassPanelRight.classList.add("hidden");
-  el.glassStartOverlay.classList.add("hidden");
+  el.multiPanelLeft.classList.add("hidden");
+  el.multiPanelRight.classList.add("hidden");
+  el.multiStartOverlay.classList.add("hidden");
   el.qualityRow.classList.add("hidden");
   el.gameScr.classList.remove("belt-ltr");
   state.isStationMode   = false;
-  state.isGlassSortMode = false;
+  state.isMultiSortMode = false;
 
   showScreen("result");
 }
@@ -1682,7 +1843,7 @@ function loadNextItem() {
 function slideItemIn() {
   const card = el.itemCard;
   const dur  = state.level.slideIn;
-  const ltr  = state.isGlassSortMode; // glass: items travel left → right
+  const ltr  = state.isMultiSortMode; // glass: items travel left → right
 
   // Off-screen (left or right) — no transition
   card.style.transition = "none";
@@ -1708,7 +1869,7 @@ function slideItemIn() {
 
 function slideItemOut(onDone) {
   const card = el.itemCard;
-  const ltr  = state.isGlassSortMode;
+  const ltr  = state.isMultiSortMode;
   card.style.transition = "transform 0.38s ease-in, opacity 0.3s ease";
   card.style.transform  = ltr
     ? "translate(calc(-50% + 380px), -50%) rotate(6deg)"
@@ -2105,10 +2266,6 @@ el.beltTrack.addEventListener("click", resumeGame);
 document.getElementById("btn-station-back")
   .addEventListener("click", () => { renderLevelCards(); showScreen("levels"); });
 
-el.glassBtns.forEach(btn => {
-  btn.addEventListener("click", () => sortGlass(btn.dataset.gcat));
-});
-
 document.addEventListener("keydown", e => {
   if (e.key === " ") {
     e.preventDefault();
@@ -2117,9 +2274,9 @@ document.addEventListener("keydown", e => {
     return;
   }
   if (e.key === "Enter") return;
-  if (state.isGlassSortMode && state.phase === "waiting") {
-    const gmap = { "1":"klart", "2":"grönt", "3":"brunt", "4":"fk" };
-    if (gmap[e.key]) sortGlass(gmap[e.key]);
+  if (state.isMultiSortMode && state.phase === "waiting") {
+    const frac = state.multiSortKbdMap[e.key];
+    if (frac) sortMulti(frac);
     return;
   }
   if (state.isStationMode && state.phase === "waiting") {

@@ -144,42 +144,11 @@
   <!-- ══ SPELSKÄRM ══ -->
   <div id="game-screen" class="screen hidden">
 
-    <!-- Glassortering: vänster sidopanel (inkommande) -->
-    <div id="glass-panel-left" class="glass-side-panel hidden">
-      <div class="gsp-header">Inkommande</div>
-      <img src="assets/glass_incoming.jpg" class="gsp-img" alt="Inkommande blandat glas">
-      <ol class="gsp-steps">
-        <li class="gsp-done">🚛 Lastbil anländer med blandat glas från hushållen</li>
-        <li class="gsp-done">⚖️ Vägning och stickprovskontroll av FK-halt</li>
-        <li class="gsp-done">🔧 Grovsortering — metalldelar och kartong rensas bort</li>
-        <li class="gsp-active">🎨 Färgsorteringsbandet — <strong>du är här</strong></li>
-      </ol>
-      <div class="gsp-note">Glaset krossas till skärv (cullet) och sorteras i tre rena fraktioner + FK-avfall.</div>
-    </div>
+    <!-- Multisortering: vänster sidopanel (inkommande) — innehåll renderas av JS -->
+    <div id="multi-panel-left" class="multi-side-panel hidden"></div>
 
-    <!-- Glassortering: höger sidopanel (utgående) -->
-    <div id="glass-panel-right" class="glass-side-panel hidden">
-      <div class="gsp-header">Utgående fraktioner</div>
-      <img src="assets/glass_outgoing.jpg" class="gsp-img" alt="Sorterat krossglas i fraktioner">
-      <ul class="gsp-fractions">
-        <li class="gsp-klart">
-          <span class="gsf-dot">⬜</span>
-          <div><strong>Klart glas</strong><br>→ Ardagh, Verallia<br><em>Livsmedelsflaskor, apoteksglas</em></div>
-        </li>
-        <li class="gsp-gront">
-          <span class="gsf-dot">🟢</span>
-          <div><strong>Grönt glas</strong><br>→ Glasproducenter<br><em>Vinflaskor, läskflaskor</em></div>
-        </li>
-        <li class="gsp-brunt">
-          <span class="gsf-dot">🟤</span>
-          <div><strong>Brunt glas</strong><br>→ Bryggeriindustrin<br><em>Ölflaskor, medicinflaskor</em></div>
-        </li>
-        <li class="gsp-fk">
-          <span class="gsf-dot">🚫</span>
-          <div><strong>FK — Foreign Cullet</strong><br>→ Deponi / vägfyllnad<br><em>Inget återvinningsvärde</em></div>
-        </li>
-      </ul>
-    </div>
+    <!-- Multisortering: höger sidopanel (utgående) — innehåll renderas av JS -->
+    <div id="multi-panel-right" class="multi-side-panel hidden"></div>
 
     <!-- HUD -->
     <div id="hud">
@@ -284,35 +253,14 @@
       </button>
     </div>
 
-    <!-- Glassortering: startknapp (visas innan bandet startar) -->
-    <div id="glass-start-overlay" class="hidden">
+    <!-- Multisortering: startknapp (visas innan bandet startar) -->
+    <div id="multi-start-overlay" class="hidden">
       <p class="gso-hint">Studera panelerna till vänster och höger — klicka sedan för att starta!</p>
-      <button id="btn-glass-start" class="btn-main">Starta sorteringen →</button>
+      <button id="btn-multi-start" class="btn-main">Starta sorteringen →</button>
     </div>
 
-    <!-- Glassortering: Klart / Grönt / Brunt / FK -->
-    <div id="glass-sort-row" class="hidden">
-      <button class="gbtn glas-klart" data-gcat="klart">
-        <span class="gb-icon">⬜</span>
-        <span class="gb-lbl">Klart glas</span>
-        <kbd>1</kbd>
-      </button>
-      <button class="gbtn glas-gront" data-gcat="grönt">
-        <span class="gb-icon">🟢</span>
-        <span class="gb-lbl">Grönt glas</span>
-        <kbd>2</kbd>
-      </button>
-      <button class="gbtn glas-brunt" data-gcat="brunt">
-        <span class="gb-icon">🟤</span>
-        <span class="gb-lbl">Brunt glas</span>
-        <kbd>3</kbd>
-      </button>
-      <button class="gbtn glas-fk" data-gcat="fk">
-        <span class="gb-icon">🚫</span>
-        <span class="gb-lbl">FK — avvisa</span>
-        <kbd>4</kbd>
-      </button>
-    </div>
+    <!-- Multisortering: sorteringsknappar — renderas dynamiskt av JS -->
+    <div id="multi-sort-row" class="hidden"></div>
   </div>
 
   <!-- ══ SLIDERSKÄRM (Nivå 3 kalibrering) ══ -->
