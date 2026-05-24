@@ -858,11 +858,13 @@ const el = {
   csqPct:       $("csq-pct"),
   csqCircle:    $("csq-circle"),
   btnCsqNext:   $("btn-csq-next"),
-  glassSortRow:   $("glass-sort-row"),
-  glassBtns:      document.querySelectorAll(".gbtn"),
-  processFlow:    $("process-flow"),
-  glassPanelLeft: $("glass-panel-left"),
-  glassPanelRight:$("glass-panel-right"),
+  glassSortRow:     $("glass-sort-row"),
+  glassBtns:        document.querySelectorAll(".gbtn"),
+  processFlow:      $("process-flow"),
+  glassPanelLeft:   $("glass-panel-left"),
+  glassPanelRight:  $("glass-panel-right"),
+  glassStartOverlay:$("glass-start-overlay"),
+  btnGlassStart:    $("btn-glass-start"),
   dragScr:      $("drag-screen"),
   dragLives:    $("drag-lives"),
   dragScore:    $("drag-score"),
@@ -1368,22 +1370,30 @@ function startStation(station) {
 
   if (state.isGlassSortMode) {
     el.stationSortRow.classList.add("hidden");
-    el.glassSortRow.classList.remove("hidden");
+    el.glassSortRow.classList.add("hidden");        // shown after start click
     el.processFlow.classList.remove("hidden");
     el.glassPanelLeft.classList.remove("hidden");
     el.glassPanelRight.classList.remove("hidden");
+    el.glassStartOverlay.classList.remove("hidden");
+    el.gameScr.classList.add("belt-ltr");
+    el.btnGlassStart.onclick = () => {
+      el.glassStartOverlay.classList.add("hidden");
+      el.glassSortRow.classList.remove("hidden");
+      loadNextItem();
+    };
   } else {
     el.stationSortRow.classList.remove("hidden");
     el.glassSortRow.classList.add("hidden");
     el.processFlow.classList.add("hidden");
     el.glassPanelLeft.classList.add("hidden");
     el.glassPanelRight.classList.add("hidden");
+    el.glassStartOverlay.classList.add("hidden");
   }
 
   updateHUD();
   updateQualityMeter();
   showScreen("game");
-  setTimeout(loadNextItem, 300);
+  if (!state.isGlassSortMode) setTimeout(loadNextItem, 300);
 }
 
 function sortGlass(fraction) {
@@ -1607,7 +1617,9 @@ function endStation() {
   el.processFlow.classList.add("hidden");
   el.glassPanelLeft.classList.add("hidden");
   el.glassPanelRight.classList.add("hidden");
+  el.glassStartOverlay.classList.add("hidden");
   el.qualityRow.classList.add("hidden");
+  el.gameScr.classList.remove("belt-ltr");
   state.isStationMode   = false;
   state.isGlassSortMode = false;
 
@@ -1653,11 +1665,14 @@ function loadNextItem() {
 function slideItemIn() {
   const card = el.itemCard;
   const dur  = state.level.slideIn;
+  const ltr  = state.isGlassSortMode; // glass: items travel left → right
 
-  // Off-screen right — no transition
+  // Off-screen (left or right) — no transition
   card.style.transition = "none";
   card.style.opacity    = "0";
-  card.style.transform  = "translate(calc(-50% + 380px), -50%) rotate(6deg)";
+  card.style.transform  = ltr
+    ? "translate(calc(-50% - 380px), -50%) rotate(-6deg)"
+    : "translate(calc(-50% + 380px), -50%) rotate(6deg)";
   void card.offsetWidth;
 
   // Slide to center
@@ -1676,8 +1691,11 @@ function slideItemIn() {
 
 function slideItemOut(onDone) {
   const card = el.itemCard;
+  const ltr  = state.isGlassSortMode;
   card.style.transition = "transform 0.38s ease-in, opacity 0.3s ease";
-  card.style.transform  = "translate(calc(-50% - 380px), -50%) rotate(-6deg)";
+  card.style.transform  = ltr
+    ? "translate(calc(-50% + 380px), -50%) rotate(6deg)"
+    : "translate(calc(-50% - 380px), -50%) rotate(-6deg)";
   card.style.opacity    = "0";
   setTimeout(onDone, 420);
 }
