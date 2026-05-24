@@ -33,10 +33,10 @@ body {
   filter: brightness(0.52) saturate(1.25);
   transition: background-image .4s;
 }
-#bg.proc-mode {
-  background-image: url('assets/plast_process_bg.jpg');
-  filter: brightness(0.15) saturate(0.6);
-}
+#bg.proc-mode-plast  { background-image: url('assets/plast_process_bg.jpg'); filter: brightness(0.15) saturate(0.6); }
+#bg.proc-mode-glas   { background-image: url('assets/glass_incoming.jpg');   filter: brightness(0.12) saturate(0.5); }
+#bg.proc-mode-metall { background-image: url('assets/metall_incoming.jpg');  filter: brightness(0.12) saturate(0.5); }
+#bg.proc-mode-papper { background-image: url('assets/papper_incoming.jpg');  filter: brightness(0.12) saturate(0.5); }
 
 /* ── Skärmar ── */
 .screen {
