@@ -144,6 +144,43 @@
   <!-- ══ SPELSKÄRM ══ -->
   <div id="game-screen" class="screen hidden">
 
+    <!-- Glassortering: vänster sidopanel (inkommande) -->
+    <div id="glass-panel-left" class="glass-side-panel hidden">
+      <div class="gsp-header">Inkommande</div>
+      <img src="assets/glass_incoming.jpg" class="gsp-img" alt="Inkommande blandat glas">
+      <ol class="gsp-steps">
+        <li class="gsp-done">🚛 Lastbil anländer med blandat glas från hushållen</li>
+        <li class="gsp-done">⚖️ Vägning och stickprovskontroll av FK-halt</li>
+        <li class="gsp-done">🔧 Grovsortering — metalldelar och kartong rensas bort</li>
+        <li class="gsp-active">🎨 Färgsorteringsbandet — <strong>du är här</strong></li>
+      </ol>
+      <div class="gsp-note">Glaset krossas till skärv (cullet) och sorteras i tre rena fraktioner + FK-avfall.</div>
+    </div>
+
+    <!-- Glassortering: höger sidopanel (utgående) -->
+    <div id="glass-panel-right" class="glass-side-panel hidden">
+      <div class="gsp-header">Utgående fraktioner</div>
+      <img src="assets/glass_outgoing.jpg" class="gsp-img" alt="Sorterat krossglas i fraktioner">
+      <ul class="gsp-fractions">
+        <li class="gsp-klart">
+          <span class="gsf-dot">⬜</span>
+          <div><strong>Klart glas</strong><br>→ Ardagh, Verallia<br><em>Livsmedelsflaskor, apoteksglas</em></div>
+        </li>
+        <li class="gsp-gront">
+          <span class="gsf-dot">🟢</span>
+          <div><strong>Grönt glas</strong><br>→ Glasproducenter<br><em>Vinflaskor, läskflaskor</em></div>
+        </li>
+        <li class="gsp-brunt">
+          <span class="gsf-dot">🟤</span>
+          <div><strong>Brunt glas</strong><br>→ Bryggeriindustrin<br><em>Ölflaskor, medicinflaskor</em></div>
+        </li>
+        <li class="gsp-fk">
+          <span class="gsf-dot">🚫</span>
+          <div><strong>FK — Foreign Cullet</strong><br>→ Deponi / vägfyllnad<br><em>Inget återvinningsvärde</em></div>
+        </li>
+      </ul>
+    </div>
+
     <!-- HUD -->
     <div id="hud">
       <div id="lives"></div>

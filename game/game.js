@@ -858,9 +858,11 @@ const el = {
   csqPct:       $("csq-pct"),
   csqCircle:    $("csq-circle"),
   btnCsqNext:   $("btn-csq-next"),
-  glassSortRow: $("glass-sort-row"),
-  glassBtns:    document.querySelectorAll(".gbtn"),
-  processFlow:  $("process-flow"),
+  glassSortRow:   $("glass-sort-row"),
+  glassBtns:      document.querySelectorAll(".gbtn"),
+  processFlow:    $("process-flow"),
+  glassPanelLeft: $("glass-panel-left"),
+  glassPanelRight:$("glass-panel-right"),
   dragScr:      $("drag-screen"),
   dragLives:    $("drag-lives"),
   dragScore:    $("drag-score"),
@@ -1368,10 +1370,14 @@ function startStation(station) {
     el.stationSortRow.classList.add("hidden");
     el.glassSortRow.classList.remove("hidden");
     el.processFlow.classList.remove("hidden");
+    el.glassPanelLeft.classList.remove("hidden");
+    el.glassPanelRight.classList.remove("hidden");
   } else {
     el.stationSortRow.classList.remove("hidden");
     el.glassSortRow.classList.add("hidden");
     el.processFlow.classList.add("hidden");
+    el.glassPanelLeft.classList.add("hidden");
+    el.glassPanelRight.classList.add("hidden");
   }
 
   updateHUD();
@@ -1599,6 +1605,8 @@ function endStation() {
   el.stationSortRow.classList.add("hidden");
   el.glassSortRow.classList.add("hidden");
   el.processFlow.classList.add("hidden");
+  el.glassPanelLeft.classList.add("hidden");
+  el.glassPanelRight.classList.add("hidden");
   el.qualityRow.classList.add("hidden");
   state.isStationMode   = false;
   state.isGlassSortMode = false;
