@@ -3041,16 +3041,43 @@ function renderProcChemPanel(polyId) {
   if (!body) return;
   const p = POLYMER_CONFIG[polyId];
   const q = state.proc ? state.proc.quality[polyId] : 0;
+  const blend = state.proc ? state.proc.settings[`blend_${polyId}`] : 0;
+
   body.innerHTML = `
-    <div class="chem-fullname">${p.fullName}</div>
-    ${buildMoleculeHTML(polyId)}
-    <div class="chem-props">
-      <span class="cpk">Tm</span><span class="cpv">${p.Tm} °C</span>
-      <span class="cpk">Tg</span><span class="cpv">${p.Tg} °C</span>
-      <span class="cpk">Densitet</span><span class="cpv">${p.density} g/cm³</span>
-      <span class="cpk">Kristallinitet</span><span class="cpv">${p.crystallinity}</span>
+    <div class="chem-poly-hdr" style="border-color:${p.color}40">
+      <div class="cph-badge" style="background:${p.darkColor}">${p.label}</div>
+      <div class="cph-name">${p.fullName}</div>
     </div>
-    <div class="chem-facts-hdr">Kemiska fakta</div>
+
+    <div class="chem-quickstats">
+      <div class="cqs-item"><div class="cqs-k">Tm</div><div class="cqs-v">${p.Tm} °C</div></div>
+      <div class="cqs-item"><div class="cqs-k">Tg</div><div class="cqs-v">${p.Tg} °C</div></div>
+      <div class="cqs-item"><div class="cqs-k">ρ</div><div class="cqs-v">${p.density}</div></div>
+      <div class="cqs-item"><div class="cqs-k">Krist.</div><div class="cqs-v">${p.crystallinity.split("–")[0]}%+</div></div>
+    </div>
+
+    <div class="chem-sec-lbl">Möjliga produkter — din kvalitet: <strong style="color:${q>=80?"#81C784":q>=60?"#FFB74D":"#EF9A9A"}">${q}%</strong></div>
+    <div class="chem-prod-grid">
+      ${p.products.map(pr => {
+        const ok = q >= pr.minQuality && (pr.minBlend === 0 || blend >= pr.minBlend);
+        return `
+          <div class="cprod-card ${ok?"cprod-ok":"cprod-locked"}">
+            <div class="cprod-img-wrap">
+              <span class="cprod-fallback">${pr.emoji}</span>
+              <img class="cprod-img" src="assets/proc_${pr.id}.jpg" alt=""
+                   onerror="this.style.display='none'">
+              <div class="cprod-badge ${ok?"cprod-badge-ok":"cprod-badge-lock"}">${ok?"✓":"🔒"}</div>
+            </div>
+            <div class="cprod-name">${pr.name}</div>
+            <div class="cprod-req">≥${pr.minQuality}%${pr.minBlend>0?" · "+pr.minBlend+"% J":""}</div>
+          </div>`;
+      }).join("")}
+    </div>
+
+    <div class="chem-sec-lbl" style="margin-top:10px">Molekylstruktur</div>
+    ${buildMoleculeHTML(polyId)}
+
+    <div class="chem-sec-lbl" style="margin-top:8px">Kemiska egenskaper</div>
     ${p.facts.map(f=>`
       <div class="chem-fact">
         <span class="cf-icon">${f.icon}</span>
@@ -3059,19 +3086,6 @@ function renderProcChemPanel(polyId) {
           <div class="cf-text">${f.text}</div>
         </div>
       </div>`).join("")}
-    <div class="chem-facts-hdr" style="margin-top:10px">Möjliga produkter</div>
-    ${p.products.map(pr=>{
-      const ok = q >= pr.minQuality;
-      return `
-        <div class="chem-product${ok?"":" chem-product-locked"}">
-          <span class="cp-emoji">${pr.emoji}</span>
-          <div class="cp-info">
-            <div class="cp-name">${pr.name}</div>
-            <div class="cp-req">≥${pr.minQuality}% kvalitet${pr.minBlend>0?" · ≥"+pr.minBlend+"% jungfru":""}</div>
-          </div>
-          <span class="cp-status">${ok?"✓":"🔒"}</span>
-        </div>`;
-    }).join("")}
   `;
 }
 
@@ -3110,7 +3124,10 @@ function procStartProductPhase() {
   document.getElementById("proc-pool").innerHTML = allProducts.map(pr => `
     <div class="proc-prod-card" id="pcard-${pr.id}" draggable="true"
          data-product="${pr.id}" data-polymer="${pr.polyId}">
-      <div class="ppc-emoji">${pr.emoji}</div>
+      <div class="ppc-media">
+        <span class="ppc-emoji-over">${pr.emoji}</span>
+        <img class="ppc-img" src="assets/proc_${pr.id}.jpg" alt="" onerror="this.style.display='none'">
+      </div>
       <div class="ppc-name">${pr.name}</div>
       <div class="ppc-poly" style="color:${POLYMER_CONFIG[pr.polyId].color}">${POLYMER_CONFIG[pr.polyId].label}</div>
     </div>`).join("");

@@ -35,6 +35,7 @@ body {
 }
 #bg.proc-mode {
   background-image: url('assets/plast_process_bg.jpg');
+  filter: brightness(0.15) saturate(0.6);
 }
 
 /* ── Skärmar ── */
@@ -1135,6 +1136,85 @@ kbd {
 .pdz-item    { font-size: .7rem; padding: 3px 6px; border-radius: 4px; text-align: center; }
 .pdz-item-ok   { background: rgba(76,175,80,.2); color: #81C784; }
 .pdz-item-down { background: rgba(255,152,0,.2); color: #FFB74D; }
+
+/* Chemistry panel — poly header + quickstats */
+.chem-poly-hdr {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 10px; border-radius: 8px;
+  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(255,255,255,.04); margin-bottom: 8px;
+}
+.cph-badge {
+  font-size: .78rem; font-weight: 800; letter-spacing: .06em;
+  padding: 4px 9px; border-radius: 5px; color: #fff; flex-shrink: 0;
+}
+.cph-name { font-size: .72rem; color: rgba(255,255,255,.6); line-height: 1.3; }
+
+.chem-quickstats {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 4px; margin-bottom: 8px;
+}
+.cqs-item {
+  background: rgba(0,0,0,.28); border-radius: 6px;
+  padding: 5px 7px; display: flex; flex-direction: column;
+}
+.cqs-k { font-size: .6rem; color: rgba(255,255,255,.4); text-transform: uppercase; letter-spacing: .05em; }
+.cqs-v { font-size: .78rem; font-weight: 700; margin-top: 1px; }
+
+.chem-sec-lbl {
+  font-size: .63rem; text-transform: uppercase; letter-spacing: .06em;
+  color: rgba(255,255,255,.38); margin: 6px 0 5px;
+}
+
+/* Product grid in chemistry panel */
+.chem-prod-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; margin-bottom: 6px;
+}
+.cprod-card {
+  border-radius: 7px; overflow: hidden;
+  border: 1px solid rgba(255,255,255,.1);
+  background: rgba(0,0,0,.28);
+  display: flex; flex-direction: column;
+  transition: border-color .2s;
+}
+.cprod-ok { border-color: rgba(76,175,80,.5); }
+.cprod-locked { opacity: .5; }
+.cprod-img-wrap {
+  position: relative; aspect-ratio: 1;
+  background: rgba(255,255,255,.05); overflow: hidden;
+}
+.cprod-fallback {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.4rem; z-index: 1;
+}
+.cprod-img {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; z-index: 2;
+}
+.cprod-badge {
+  position: absolute; top: 3px; right: 3px; z-index: 3;
+  font-size: .58rem; padding: 2px 4px; border-radius: 3px; font-weight: 700;
+}
+.cprod-badge-ok   { background: rgba(76,175,80,.88); color: #fff; }
+.cprod-badge-lock { background: rgba(0,0,0,.6); color: rgba(255,255,255,.55); }
+.cprod-name { font-size: .57rem; font-weight: 600; padding: 3px 4px 1px; line-height: 1.2; }
+.cprod-req  { font-size: .52rem; color: rgba(255,255,255,.35); padding: 0 4px 4px; }
+
+/* Product pool cards with images */
+.ppc-media {
+  width: 68px; height: 68px; position: relative;
+  border-radius: 6px; overflow: hidden;
+  background: rgba(255,255,255,.06); flex-shrink: 0;
+}
+.ppc-img {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+}
+.ppc-emoji-over {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.8rem;
+}
 
 @media (max-width: 900px) {
   #process-screen { grid-template-columns: 220px 1fr 0; }
