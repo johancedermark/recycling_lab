@@ -3414,6 +3414,18 @@ function molImgHTML(src, fallbackEmoji, caption) {
   </div>`;
 }
 
+function molImgDuoHTML(src1, emoji1, cap1, src2, emoji2, cap2) {
+  const card = (src, em, cap) => `
+    <div class="mol-img-card">
+      <div class="mol-img-wrap">
+        <div class="mol-img-fallback">${em}</div>
+        <img class="mol-img" src="assets/${src}" alt="" onerror="this.style.display='none'">
+      </div>
+      <div class="mol-note">${cap}</div>
+    </div>`;
+  return `<div class="mol-display mol-img-duo">${card(src1,emoji1,cap1)}${card(src2,emoji2,cap2)}</div>`;
+}
+
 function buildPlasticMolHTML(polyId) {
   const data = {
     pet: ["mol_pet.jpg",  "⛓️", "Esterbindningarna (C═O─O) hydrolyseras vid &gt;90°C — håll tvätten under det!"],
@@ -3445,10 +3457,17 @@ function buildMetalMolHTML(metalId) {
 }
 
 function buildPaperMolHTML(paperId) {
+  if (paperId === "dryck") {
+    return molImgDuoHTML(
+      "mol_tetrapak.jpg", "🧃",
+      "Laminatstruktur: 75% cellulosafibrer · 20% PE-film · 5% Al-folie — tre skikt som hydrapulpern separerar vid 45–55°C",
+      "mol_cellulosa.jpg", "🌿",
+      "Fibern i Tetra Pak är ren och oskadad (skyddad av laminat) — ofta bättre kvalitet än återvunnen tidningsfibrer"
+    );
+  }
   const caps = {
     tidning:"Cellulosa β-1,4-bindningar · H-bindningar ger styrka · Kortfibrig (0.3–0.8mm) — max ~6 återvinningscykler",
     kartong:"Cellulosa β-1,4-bindningar · Långfibrig kraftliner (2–4mm) ger hög kompressionsstryrka (SCT)",
-    dryck:  "Cellulosa separeras från PE-film och Al-folie i hydrapulpern vid 45–55°C · förvånansvärt ren fiber",
   };
   return molImgHTML("mol_cellulosa.jpg", "🌿", caps[paperId] || "Cellulosa · β-1,4-glykosidiska bindningar");
 }
