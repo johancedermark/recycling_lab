@@ -953,6 +953,25 @@ kbd {
 #process-screen.proc-expanded {
   grid-template-columns: 430px 1fr 200px;
 }
+#process-screen.proc-chem-full {
+  grid-template-columns: 1fr 0px 0px;
+}
+#process-screen.proc-chem-full #proc-main,
+#process-screen.proc-chem-full #proc-right { overflow: hidden; padding: 0; }
+#process-screen.proc-chem-full #proc-left {
+  border-right: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+#process-screen.proc-chem-full #proc-left .psp-hdr,
+#process-screen.proc-chem-full #proc-poly-tabs,
+#process-screen.proc-chem-full #proc-chem-body { width: 100%; max-width: 840px; }
+#process-screen.proc-chem-full .chem-prod-grid {
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+}
+#process-screen.proc-chem-full .mol-img-wrap { max-width: 400px; margin: 0 auto; }
+#btn-proc-to-process { display: block; margin: 20px auto 4px; }
 .proc-side-panel {
   background: rgba(8,16,26,.62);
   backdrop-filter: blur(10px);

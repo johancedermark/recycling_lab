@@ -2916,7 +2916,7 @@ function startMaterialProcess(matId) {
   state.proc = {
     matId, subIds, cfg,
     contamPct, settings, quality,
-    score: 0, co2: 0, phase: "setup",
+    score: 0, co2: 0, phase: "chem",
     activePoly: subIds[0],
     productsPlaced: {},
   };
@@ -2925,10 +2925,19 @@ function startMaterialProcess(matId) {
   renderProcChemPanel(subIds[0]);
   updateProcQuality();
   showScreen("process");
-  // Remove any old mat class, add new
   Object.values(MAT_BG_CLASS).forEach(c => el.bg.classList.remove(c));
   el.bg.classList.add(MAT_BG_CLASS[matId]);
-  el.processScr.classList.add("proc-expanded");
+  // Update chem panel header label per material
+  const PSP_TITLES = { plast:"🔬 Polymerkemi", glas:"🔬 Glaskemi", metall:"🔬 Metallstruktur", papper:"🔬 Fiberkemi" };
+  const pspHdr = document.querySelector("#proc-left .psp-hdr");
+  if (pspHdr) pspHdr.textContent = PSP_TITLES[matId] || "🔬 Materialkemi";
+  el.processScr.classList.add("proc-chem-full");
+}
+
+function enterProcessView() {
+  state.proc.phase = "setup";
+  el.processScr.classList.remove("proc-chem-full");
+  renderProcChemPanel(state.proc.activePoly);
 }
 
 function startPlasticProcess() { startMaterialProcess("plast"); }
@@ -3276,7 +3285,7 @@ function renderProcessMain() {
     </div>
     ${tanksHTML}
     ${steps.map(stepHTML).join("")}
-    <button id="btn-proc-run" class="btn-main" style="margin:8px auto;display:block">Kör processen! →</button>
+    <button id="btn-proc-run" class="btn-main" style="margin:8px auto;display:block">Beräkna! →</button>
     <div id="proc-product-area" class="hidden">
       <h3 style="margin:0 0 8px;font-size:.9rem">🏭 Produktmatchning — dra produkterna till rätt fraktion</h3>
       <div id="proc-pool"></div>
@@ -3297,6 +3306,7 @@ function renderProcessMain() {
     tabsEl.querySelectorAll(".proc-tab").forEach(btn => btn.addEventListener("click", () => {
       tabsEl.querySelectorAll(".proc-tab").forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
+      state.proc.activePoly = btn.dataset.poly;
       renderProcChemPanel(btn.dataset.poly);
     }));
   }
@@ -3512,6 +3522,13 @@ function renderProcChemPanel(polyId) {
         </div>
       </div>`).join("")}
   `;
+
+  if (state.proc && state.proc.phase === "chem") {
+    const btnWrap = document.createElement("div");
+    btnWrap.innerHTML = `<button id="btn-proc-to-process" class="btn-main">Kör processen! →</button>`;
+    body.appendChild(btnWrap);
+    document.getElementById("btn-proc-to-process").addEventListener("click", enterProcessView);
+  }
 }
 
 // ── Run & product phase ───────────────────────────────────────────────────────
@@ -3533,7 +3550,6 @@ function procRunProcess() {
   });
   state.proc.score += pts;
 
-  el.processScr.classList.remove("proc-expanded");
   document.getElementById("btn-proc-run").classList.add("hidden");
   procStartProductPhase();
 }
