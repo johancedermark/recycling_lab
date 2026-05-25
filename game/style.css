@@ -945,6 +945,7 @@ kbd {
   display: grid;
   grid-template-columns: 290px 1fr 222px;
   grid-template-rows: 100%;
+  align-items: stretch;
   height: 100%;
   overflow: hidden;
   background: transparent;
