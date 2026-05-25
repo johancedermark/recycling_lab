@@ -966,7 +966,7 @@ kbd {
 }
 #process-screen.proc-chem-full #proc-left .psp-hdr,
 #process-screen.proc-chem-full #proc-poly-tabs,
-#process-screen.proc-chem-full #proc-chem-body { width: 100%; max-width: 840px; }
+#process-screen.proc-chem-full #proc-chem-body { width: 100%; max-width: 840px; flex-shrink: 0; }
 #process-screen.proc-chem-full .chem-prod-grid {
   grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
 }
