@@ -3394,108 +3394,53 @@ function renderProcLog() {
   `;
 }
 
+function molImgHTML(src, fallbackEmoji, caption) {
+  return `<div class="mol-display mol-img-card">
+    <div class="mol-img-wrap">
+      <div class="mol-img-fallback">${fallbackEmoji}</div>
+      <img class="mol-img" src="assets/${src}" alt="" onerror="this.style.display='none'">
+    </div>
+    <div class="mol-note">${caption}</div>
+  </div>`;
+}
+
 function buildPlasticMolHTML(polyId) {
-  const mols = {
-    pet:`<div class="mol-display">
-      <div class="mol-chain">
-        <span class="mol-bond">─</span>
-        <span class="mol-atom">O</span><span class="mol-bond">─</span>
-        <span class="mol-atom">CH₂</span><span class="mol-bond">─</span>
-        <span class="mol-atom">CH₂</span><span class="mol-bond">─</span>
-        <span class="mol-atom">O</span><span class="mol-bond">─</span>
-        <span class="mol-atom ester">C═O</span><span class="mol-bond">─</span>
-        <span class="mol-ring" title="bensenring">⬡</span>
-        <span class="mol-bond">─</span>
-        <span class="mol-atom ester">O─C═O</span><span class="mol-bond">─</span>
-      </div>
-      <div class="mol-note">⬡ = bensenring · ester­bindningarna (C═O) är känsliga för hydrolyse vid &gt;90 °C</div>
-    </div>`,
-    pe:`<div class="mol-display">
-      <div class="mol-chain">
-        <span class="mol-bond">─</span>
-        <span class="mol-bracket">[</span>
-        <span class="mol-atom">CH₂</span><span class="mol-bond">─</span>
-        <span class="mol-atom">CH₂</span>
-        <span class="mol-bracket">]</span><sub class="mol-sub">n</sub>
-        <span class="mol-bond">─</span>
-      </div>
-      <div class="mol-note">Enkel linjär kolkedja utan sidogrupper · hög kristallinitet i HDPE · extremt kemisk inert</div>
-    </div>`,
-    pp:`<div class="mol-display">
-      <div class="mol-chain">
-        <span class="mol-bond">─</span>
-        <span class="mol-bracket">[</span>
-        <span class="mol-atom">CH₂</span><span class="mol-bond">─</span>
-        <span class="mol-atom methyl">CH</span><span class="mol-bond">─</span>
-        <span class="mol-bracket">]</span><sub class="mol-sub">n</sub>
-        <span class="mol-bond">─</span>
-      </div>
-      <div class="mol-branch-note">
-        <span class="mol-atom methyl" style="font-size:.65rem">CH(CH₃)</span>
-        <span style="font-size:.65rem;color:rgba(255,255,255,.5)"> ← metylgrupp på varje tertiärt kol · isotaktisk ordning → kristallint</span>
-      </div>
-      <div class="mol-note">Tertiärt kol oxidationskänsligt — håll temp &lt; 270 °C!</div>
-    </div>`,
+  const data = {
+    pet: ["mol_pet.jpg",  "⛓️", "Esterbindningarna (C═O─O) hydrolyseras vid &gt;90°C — håll tvätten under det!"],
+    pe:  ["mol_pe.jpg",   "🧵", "Linjär kolkedja utan sidogrupper — kristallinitet 70–90% gör HDPE styvt och kemiskt inert"],
+    pp:  ["mol_pp.jpg",   "🔀", "Metylgrupper på tertiärt kol → isotaktisk ordning → kristallinitet · Oxidationskänsligt &gt;270°C"],
   };
-  return mols[polyId] || "";
+  const [src, emoji, cap] = data[polyId] || ["","🔬",""];
+  return molImgHTML(src, emoji, cap);
 }
 
 function buildGlassMolHTML(colorId) {
-  return `<div class="mol-display">
-    <div class="mol-chain" style="flex-wrap:wrap;gap:3px">
-      <span class="mol-atom" style="background:rgba(33,150,243,.22);color:#90CAF9">Si</span>
-      <span class="mol-bond">⟨</span>
-      <span class="mol-atom ester">O</span><span class="mol-bond">─</span>
-      <span class="mol-atom ester">O</span><span class="mol-bond">─</span>
-      <span class="mol-atom ester">O</span><span class="mol-bond">─</span>
-      <span class="mol-atom ester">O</span>
-      <span class="mol-bond">⟩</span>
-    </div>
-    <div class="mol-note">SiO₄-tetraeder · amorft nätverk (ingen kristallstruktur) · ${
-      colorId==="ofargat"?"Kräver <0.02% Fe för full transparens":
-      colorId==="gront"  ?"Fe²⁺ + Cr³⁺ ger grön absorption i det synliga spektrumet":
-                          "Fe²⁺–S²⁻ komplex → amber-kromofor · blockerar UV <450 nm"
-    }</div>
-  </div>`;
+  const data = {
+    ofargat: ["mol_glas_of.jpg", "💎", "Amorft SiO₄-nätverk — oregelbunden struktur ger transparens · kräver &lt;0.02% Fe"],
+    gront:   ["mol_glas_gr.jpg", "🟢", "Cr³⁺-joner absorberar rött/orange ljus selektivt → grönt ljus passerar"],
+    brunt:   ["mol_glas_br.jpg", "🟤", "Fe²⁺–S²⁻ komplex blockerar UV &lt;450nm — skyddar ljuskänsligt innehåll"],
+  };
+  const [src, emoji, cap] = data[colorId] || ["","🔬",""];
+  return molImgHTML(src, emoji, cap);
 }
 
 function buildMetalMolHTML(metalId) {
   const data = {
-    al:     {lat:"FCC",  sym:"◈", color:"#B0BEC5", desc:"Kubisk tätpackad · hög formbarhet · korrosionsbeständig p.g.a. Al₂O₃-skikt"},
-    stal:   {lat:"BCC→FCC", sym:"◼", color:"#78909C", desc:"BCC (ferrit) vid RT → FCC (austenit) vid 912°C · fasomvandling möjliggör härdning"},
-    koppar: {lat:"FCC",  sym:"◈", color:"#FFAB91", desc:"Kubisk tätpackad · 59.6 MS/m elektrisk konduktivitet · extremt duktil"},
+    al:     ["mol_al.jpg",     "⬡", "FCC-kristall med glidplan {111} — hög formbarhet · Al₂O₃-skikt ger korrosionsskydd"],
+    stal:   ["mol_stal.jpg",   "◼", "BCC (ferrit) → FCC (austenit) vid 912°C · kolhalten avgör stålkvalitet"],
+    koppar: ["mol_koppar.jpg", "🔶", "FCC-kristall med fria elektroner — 59.6 MS/m konduktivitet · extremt duktil"],
   };
-  const d = data[metalId];
-  return `<div class="mol-display">
-    <div class="mol-chain" style="justify-content:center;font-size:1.1rem;gap:3px">
-      ${Array(7).fill(0).map((_,i)=>`<span style="opacity:${0.3+i*0.1};color:${d.color}">${d.sym}</span>`).join("")}
-    </div>
-    <div class="mol-note">${d.lat} kristallstruktur · ${d.desc}</div>
-  </div>`;
+  const [src, emoji, cap] = data[metalId] || ["","🔬",""];
+  return molImgHTML(src, emoji, cap);
 }
 
 function buildPaperMolHTML(paperId) {
-  const fibDesc = {
-    tidning:"Kortfibrig (0.3–0.8 mm) — lövträ/återvunnen fiber",
-    kartong:"Långfibrig (2–4 mm) — barrträ / kraftliner",
-    dryck:  "Laminatfiber separeras från PE-film och Al-folie i hydrapulpern",
+  const caps = {
+    tidning:"Cellulosa β-1,4-bindningar · H-bindningar ger styrka · Kortfibrig (0.3–0.8mm) — max ~6 återvinningscykler",
+    kartong:"Cellulosa β-1,4-bindningar · Långfibrig kraftliner (2–4mm) ger hög kompressionsstryrka (SCT)",
+    dryck:  "Cellulosa separeras från PE-film och Al-folie i hydrapulpern vid 45–55°C · förvånansvärt ren fiber",
   };
-  return `<div class="mol-display">
-    <div class="mol-chain">
-      <span class="mol-bond">─</span>
-      <span class="mol-bracket">[</span>
-      <span class="mol-atom">C₆H₇</span>
-      <span class="mol-atom ester">O</span>
-      <span class="mol-atom">(OH)₂</span>
-      <span class="mol-bracket">]</span><sub class="mol-sub">n</sub>
-      <span class="mol-bond">─</span>
-    </div>
-    <div class="mol-note">Cellulosa · β-1,4-glykosidiska bindningar · OH-grupper skapar H-bindningar = papperets styrka</div>
-    <div class="mol-branch-note" style="margin-top:4px">
-      <span class="mol-atom methyl" style="font-size:.65rem">${paperId==="tidning"?"0.3–0.8mm":paperId==="kartong"?"2–4mm":"Laminat"}</span>
-      <span style="font-size:.65rem;color:rgba(255,255,255,.5)"> ← ${fibDesc[paperId]}</span>
-    </div>
-  </div>`;
+  return molImgHTML("mol_cellulosa.jpg", "🌿", caps[paperId] || "Cellulosa · β-1,4-glykosidiska bindningar");
 }
 
 function buildMoleculeHTML(subId) {
