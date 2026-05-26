@@ -3,7 +3,8 @@ import { readFileSync, writeFileSync } from "fs";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 
-const API_KEY = "OPENAI_KEY_REMOVED";
+const env     = readFileSync(join(dirname(fileURLToPath(import.meta.url)), ".env"), "utf8");
+const API_KEY = env.match(/OPENAI_API_KEY=(.+)/)?.[1]?.trim();
 const OUT_DIR = join(dirname(fileURLToPath(import.meta.url)), "game/assets/items");
 
 const ITEMS = [
