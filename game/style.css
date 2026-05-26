@@ -1050,14 +1050,14 @@ kbd {
 }
 .cpk { color: rgba(255,255,255,.45); }
 .cpv { font-weight: 700; }
-.chem-facts-hdr { font-size: .66rem; color: rgba(255,255,255,.38); text-transform: uppercase; letter-spacing: .06em; margin: 6px 0 4px; }
+.chem-facts-hdr { font-size: .76rem; color: rgba(255,255,255,.45); text-transform: uppercase; letter-spacing: .06em; margin: 8px 0 5px; }
 .chem-fact {
-  display: flex; gap: 6px; padding: 5px 0;
-  border-bottom: 1px solid rgba(255,255,255,.05); font-size: .67rem;
+  display: flex; gap: 8px; padding: 7px 0;
+  border-bottom: 1px solid rgba(255,255,255,.05); font-size: .78rem;
 }
-.cf-icon { flex-shrink: 0; }
-.cf-key { font-size: .67rem; display: block; }
-.cf-text { color: rgba(255,255,255,.6); margin-top: 2px; }
+.cf-icon { flex-shrink: 0; font-size: 1rem; }
+.cf-key { font-size: .78rem; display: block; }
+.cf-text { font-size: .74rem; color: rgba(255,255,255,.65); margin-top: 3px; line-height: 1.45; }
 .chem-product {
   display: flex; align-items: center; gap: 6px;
   padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,.05); font-size: .67rem;
@@ -1190,25 +1190,25 @@ kbd {
   background: rgba(255,255,255,.04); margin-bottom: 8px;
 }
 .cph-badge {
-  font-size: .78rem; font-weight: 800; letter-spacing: .06em;
-  padding: 4px 9px; border-radius: 5px; color: #fff; flex-shrink: 0;
+  font-size: .9rem; font-weight: 800; letter-spacing: .06em;
+  padding: 5px 11px; border-radius: 5px; color: #fff; flex-shrink: 0;
 }
-.cph-name { font-size: .72rem; color: rgba(255,255,255,.6); line-height: 1.3; }
+.cph-name { font-size: .88rem; color: rgba(255,255,255,.75); line-height: 1.35; }
 
 .chem-quickstats {
   display: grid; grid-template-columns: 1fr 1fr;
-  gap: 4px; margin-bottom: 8px;
+  gap: 5px; margin-bottom: 10px;
 }
 .cqs-item {
   background: rgba(0,0,0,.28); border-radius: 6px;
-  padding: 5px 7px; display: flex; flex-direction: column;
+  padding: 6px 9px; display: flex; flex-direction: column;
 }
-.cqs-k { font-size: .6rem; color: rgba(255,255,255,.4); text-transform: uppercase; letter-spacing: .05em; }
-.cqs-v { font-size: .78rem; font-weight: 700; margin-top: 1px; }
+.cqs-k { font-size: .68rem; color: rgba(255,255,255,.45); text-transform: uppercase; letter-spacing: .05em; }
+.cqs-v { font-size: .9rem; font-weight: 700; margin-top: 2px; }
 
 .chem-sec-lbl {
-  font-size: .63rem; text-transform: uppercase; letter-spacing: .06em;
-  color: rgba(255,255,255,.38); margin: 6px 0 5px;
+  font-size: .72rem; text-transform: uppercase; letter-spacing: .06em;
+  color: rgba(255,255,255,.5); margin: 8px 0 6px;
 }
 
 /* Product grid in chemistry panel */
@@ -1245,8 +1245,8 @@ kbd {
 }
 .cprod-badge-ok   { background: rgba(76,175,80,.88); color: #fff; }
 .cprod-badge-lock { background: rgba(0,0,0,.6); color: rgba(255,255,255,.55); }
-.cprod-name { font-size: .57rem; font-weight: 600; padding: 3px 4px 1px; line-height: 1.2; }
-.cprod-req  { font-size: .52rem; color: rgba(255,255,255,.35); padding: 0 4px 4px; }
+.cprod-name { font-size: .72rem; font-weight: 600; padding: 5px 6px 2px; line-height: 1.2; }
+.cprod-req  { font-size: .64rem; color: rgba(255,255,255,.45); padding: 0 6px 6px; }
 
 /* Product pool cards with images */
 .ppc-media {

@@ -3484,11 +3484,13 @@ function buildMoleculeHTML(subId) {
 function renderProcChemPanel(polyId) {
   const body = document.getElementById("proc-chem-body");
   if (!body) return;
-  const p = state.proc.cfg[polyId];
-  const q = state.proc ? state.proc.quality[polyId] : 0;
-  const matId = state.proc.matId;
-  // blend/jungfru check for product unlock
-  const blendOrJungfru = state.proc ? (state.proc.settings[`blend_${polyId}`] || state.proc.settings[`jungfru_${polyId}`] || 0) : 0;
+  const p    = state.proc.cfg[polyId];
+  const q    = state.proc ? state.proc.quality[polyId] : 0;
+  const matId    = state.proc.matId;
+  const inChem   = state.proc && state.proc.phase === "chem";
+  const blendOrJungfru = state.proc
+    ? (state.proc.settings[`blend_${polyId}`] || state.proc.settings[`jungfru_${polyId}`] || 0)
+    : 0;
 
   // Build quickstats: use material-specific fields if available, else generic
   let quickstatsHTML = "";
@@ -3502,6 +3504,10 @@ function renderProcChemPanel(polyId) {
     </div>`;
   }
 
+  const prodSectionLbl = inChem
+    ? `${p.fullName} kan bli →`
+    : `Möjliga produkter — din kvalitet: <strong style="color:${q>=80?"#81C784":q>=60?"#FFB74D":"#EF9A9A"}">${q}%</strong>`;
+
   body.innerHTML = `
     <div class="chem-poly-hdr" style="border-color:${p.color}40">
       <div class="cph-badge" style="background:${p.darkColor}">${p.label}</div>
@@ -3510,20 +3516,20 @@ function renderProcChemPanel(polyId) {
 
     ${quickstatsHTML}
 
-    <div class="chem-sec-lbl">Möjliga produkter — din kvalitet: <strong style="color:${q>=80?"#81C784":q>=60?"#FFB74D":"#EF9A9A"}">${q}%</strong></div>
+    <div class="chem-sec-lbl">${prodSectionLbl}</div>
     <div class="chem-prod-grid">
       ${p.products.map(pr => {
         const ok = q >= pr.minQuality && (pr.minBlend === 0 || blendOrJungfru >= pr.minBlend);
         return `
-          <div class="cprod-card ${ok?"cprod-ok":"cprod-locked"}">
+          <div class="cprod-card cprod-ok">
             <div class="cprod-img-wrap">
               <span class="cprod-fallback">${pr.emoji}</span>
               <img class="cprod-img" src="assets/proc_${pr.id}.jpg" alt=""
                    onerror="this.style.display='none'">
-              <div class="cprod-badge ${ok?"cprod-badge-ok":"cprod-badge-lock"}">${ok?"✓":"🔒"}</div>
+              ${!inChem ? `<div class="cprod-badge ${ok?"cprod-badge-ok":"cprod-badge-lock"}">${ok?"✓":"🔒"}</div>` : ""}
             </div>
             <div class="cprod-name">${pr.name}</div>
-            <div class="cprod-req">≥${pr.minQuality}%${pr.minBlend>0?" · "+pr.minBlend+"% J":""}</div>
+            ${!inChem ? `<div class="cprod-req">≥${pr.minQuality}%${pr.minBlend>0?" · "+pr.minBlend+"% J":""}</div>` : ""}
           </div>`;
       }).join("")}
     </div>
