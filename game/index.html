@@ -66,6 +66,26 @@
     </div>
   </div>
 
+  <!-- ══ STATIONSVAL (Nivå 2) ══ -->
+  <div id="station-screen" class="screen hidden">
+    <div class="station-wrapper">
+      <h2 class="section-title">Välj sorteringsstation</h2>
+      <p class="station-intro">Klara varje station med minst 90&nbsp;% batchkvalitet</p>
+      <div id="station-grid" class="station-grid"></div>
+      <button id="btn-station-back" class="btn-sec" style="margin-top:1.5rem">← Tillbaka</button>
+    </div>
+  </div>
+
+  <!-- ══ RESEVÄLJARE (Nivå 3) ══ -->
+  <div id="journey-screen" class="screen hidden">
+    <div class="station-wrapper">
+      <h2 class="section-title">Välj materialets resa</h2>
+      <p class="station-intro">Följ ett material hela vägen — från sorterad batch till ny produkt</p>
+      <div id="journey-grid" class="station-grid"></div>
+      <button id="btn-journey-back" class="btn-sec" style="margin-top:1.5rem">← Tillbaka</button>
+    </div>
+  </div>
+
   <!-- ══ INSTRUKTIONSSKÄRM ══ -->
   <div id="instruction-screen" class="screen hidden">
     <div class="panel">
@@ -112,6 +132,10 @@
         <img class="dbin-img" src="assets/bins/bin_restavfall.png" alt="" onerror="this.style.display='none'">
         <span class="dbin-lbl">Restavfall</span>
       </div>
+      <div class="dbin" data-cat="organiskt">
+        <img class="dbin-img" src="assets/bins/bin_organiskt.png" alt="" onerror="this.style.display='none'">
+        <span class="dbin-lbl">Mat&shy;avfall</span>
+      </div>
     </div>
 
     <div id="drag-toast" class="hidden"></div>
@@ -119,6 +143,12 @@
 
   <!-- ══ SPELSKÄRM ══ -->
   <div id="game-screen" class="screen hidden">
+
+    <!-- Multisortering: vänster sidopanel (inkommande) — innehåll renderas av JS -->
+    <div id="multi-panel-left" class="multi-side-panel hidden"></div>
+
+    <!-- Multisortering: höger sidopanel (utgående) — innehåll renderas av JS -->
+    <div id="multi-panel-right" class="multi-side-panel hidden"></div>
 
     <!-- HUD -->
     <div id="hud">
@@ -130,11 +160,35 @@
       <div id="prog-val">1/10</div>
     </div>
 
+    <!-- Batchkvalitetsmätare (stationsläge) -->
+    <div id="quality-row" class="hidden">
+      <span id="quality-label">Batchkvalitet</span>
+      <div id="quality-bar-bg">
+        <div id="quality-threshold"></div>
+        <div id="quality-fill"></div>
+      </div>
+      <span id="quality-pct">100%</span>
+    </div>
+
+    <!-- Processflödesindikator (glassortering) -->
+    <div id="process-flow" class="hidden">
+      <div class="pf-step pf-done"  data-pf="0"><span class="pf-icon">🚛</span><span class="pf-lbl">Ankomst</span></div>
+      <div class="pf-arrow">›</div>
+      <div class="pf-step pf-done"  data-pf="1"><span class="pf-icon">🔧</span><span class="pf-lbl">FK-rensning</span></div>
+      <div class="pf-arrow">›</div>
+      <div class="pf-step pf-active" data-pf="2"><span class="pf-icon">🎨</span><span class="pf-lbl">Färgsortering</span></div>
+      <div class="pf-arrow">›</div>
+      <div class="pf-step" data-pf="3"><span class="pf-icon">✅</span><span class="pf-lbl">Kvalitet</span></div>
+      <div class="pf-arrow">›</div>
+      <div class="pf-step" data-pf="4"><span class="pf-icon">🚛</span><span class="pf-lbl">Utlastning</span></div>
+    </div>
+
     <!-- Löpande band -->
     <div id="belt-wrap">
       <div class="roller"></div>
       <div id="belt-track">
         <div id="item-card">
+          <img id="ic-img" class="ic-img hidden" alt="">
           <div id="ic-emoji"></div>
           <div id="ic-name"></div>
           <div id="ic-condition" class="hidden"></div>
@@ -184,6 +238,77 @@
         <kbd>5</kbd>
       </button>
     </div>
+
+    <!-- Stationsläge: Acceptera / Avvisa -->
+    <div id="station-sort-row" class="hidden">
+      <button id="btn-accept" class="sbtn station-accept">
+        <span class="sb-icon">✅</span>
+        <span class="sb-lbl">Acceptera — hör hit</span>
+        <kbd>1</kbd>
+      </button>
+      <button id="btn-reject" class="sbtn station-reject">
+        <span class="sb-icon">❌</span>
+        <span class="sb-lbl">Avvisa — hör ej hit</span>
+        <kbd>2</kbd>
+      </button>
+    </div>
+
+    <!-- Multisortering: startknapp (visas innan bandet startar) -->
+    <div id="multi-start-overlay" class="hidden">
+      <p class="gso-hint">Studera panelerna till vänster och höger — klicka sedan för att starta!</p>
+      <button id="btn-multi-start" class="btn-main">Starta sorteringen →</button>
+    </div>
+
+    <!-- Multisortering: sorteringsknappar — renderas dynamiskt av JS -->
+    <div id="multi-sort-row" class="hidden"></div>
+  </div>
+
+  <!-- ══ SLIDERSKÄRM (Nivå 3 kalibrering) ══ -->
+  <div id="slider-screen" class="screen hidden">
+    <div class="panel slider-panel">
+      <div id="sldr-icon" class="big-icon"></div>
+      <h1 id="sldr-title"></h1>
+      <p id="sldr-body" class="sldr-body"></p>
+      <div class="sldr-zone">
+        <div id="sldr-track">
+          <div id="sldr-target-zone"></div>
+          <div id="sldr-handle"></div>
+        </div>
+        <div class="sldr-labels">
+          <span id="sldr-min-lbl"></span>
+          <span id="sldr-val-display"></span>
+          <span id="sldr-max-lbl"></span>
+        </div>
+      </div>
+      <div id="sldr-feedback" class="sldr-feedback"></div>
+      <div class="sldr-hint">Dra reglaget · Piltangenter · Klicka i spåret</div>
+      <button id="btn-sldr-confirm" class="btn-main" style="margin-top:16px">Bekräfta inställning →</button>
+    </div>
+  </div>
+
+  <!-- ══ KONSEKVENSKÄRM (Nivå 3 slutprodukt) ══ -->
+  <div id="consequence-screen" class="screen hidden">
+    <div class="panel csq-panel">
+      <p id="csq-step" class="csq-step"></p>
+      <h1 id="csq-title"></h1>
+      <p id="csq-subtitle" class="csq-subtitle"></p>
+      <div id="csq-card" class="csq-card">
+        <div id="csq-product-emoji" class="csq-emoji"></div>
+        <div id="csq-product-name" class="csq-product-name"></div>
+        <p id="csq-desc" class="csq-desc"></p>
+        <div id="csq-co2" class="csq-co2-badge"></div>
+        <p id="csq-fact" class="csq-fact"></p>
+      </div>
+      <div id="csq-quality-row" class="csq-quality-row">
+        <span class="csq-qlbl">Slutkvalitet:</span>
+        <div id="csq-bar-bg" class="csq-bar-bg">
+          <div id="csq-bar-fill" class="csq-bar-fill"></div>
+        </div>
+        <span id="csq-pct" class="csq-pct"></span>
+      </div>
+      <div id="csq-circle" class="csq-circle"></div>
+      <button id="btn-csq-next" class="btn-main" style="margin-top:14px">Fortsätt →</button>
+    </div>
   </div>
 
   <!-- ══ RESULTATSKÄRM ══ -->
@@ -195,9 +320,25 @@
       <div id="res-msg"></div>
       <div id="res-unlock" class="hidden"></div>
       <div class="res-btns">
-        <button id="btn-retry"  class="btn-main">Försök igen</button>
-        <button id="btn-levels" class="btn-sec">Nivåer</button>
+        <button id="btn-retry"        class="btn-main">Försök igen</button>
+        <button id="btn-next-station" class="btn-main hidden">Välj station →</button>
+        <button id="btn-next-journey" class="btn-main hidden">Välj ny resa →</button>
+        <button id="btn-levels"       class="btn-sec">Nivåer</button>
       </div>
+    </div>
+  </div>
+
+  <!-- ══ PROCESSFLÖDE (Nivå 3 — plastens resa) ══ -->
+  <div id="process-screen" class="screen hidden">
+    <div id="proc-left" class="proc-side-panel">
+      <div class="psp-hdr">🔬 Polymerkemi</div>
+      <div id="proc-poly-tabs" class="proc-tabs"></div>
+      <div id="proc-chem-body"></div>
+    </div>
+    <div id="proc-main"></div>
+    <div id="proc-right" class="proc-side-panel">
+      <div class="psp-hdr">📋 Processlog</div>
+      <div id="proc-log-body"></div>
     </div>
   </div>
 
